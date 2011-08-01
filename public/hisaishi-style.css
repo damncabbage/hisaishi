@@ -1,0 +1,116 @@
+/* Basic */
+
+.line {
+	text-shadow: 
+		0 0 1px black,
+		0 0 4px black,
+		0 0 10px black,
+		0 0 20px black
+	;
+	background: rgba(0,0,0,0.5);
+}
+
+.word {
+	-webkit-transition: all 0.2s ease-in-out;
+}
+
+.word-highlight {
+	color: #f00;
+}
+
+/* Layout */
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+	background: #555;
+	color: white;
+	text-shadow: 0 0 4px black;
+}
+
+body#hisaishi-song-list {
+	padding: 1em;
+}
+
+#hisaishi-display {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 80%;
+	height: 100%;
+	overflow: hidden;
+}
+
+ol#hisaishi-list {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 20%;
+	height: 100%;
+	overflow: auto;
+	border-left: 1px solid #ccc;
+	padding: 0;
+	margin: 0;
+	list-style: 0;
+	z-index: 999;
+	background: #555;
+	text-shadow: 0 0 4px white;
+}
+
+#hisaishi-list li {
+	padding: 10px;
+	margin: 0;
+}
+
+#hisaishi-list li:hover {
+	background: #888;
+}
+
+.hisaishi-scaffold {
+	position: relative;
+}
+
+.hisaishi-scaffold img {
+	position: absolute;
+	z-index: 1;
+	width: 100%;
+}
+
+.controls-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+}
+
+.controls-container a {
+	color: white;
+	display: inline-block;
+	margin: 0 0.5em 0 1px;
+	text-decoration: none;
+}
+
+.lyrics-container {
+	position: absolute;
+	top: 1em;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	text-align: center;
+	font-size: 4em;
+}
+
+.rating-container {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 1000;
+}
+
+.rating-container a {
+	color: white;
+	display: inline-block;
+	margin: 0 1px 0 0.5em;
+	text-decoration: none;
+}

@@ -1,0 +1,12 @@
+%html
+	%head
+		%title= "Hisaishi Song List"
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+	%body{:id => "hisaishi-song-list"}
+		%h1= "Hisaishi Song List"
+		%ol{:id => "hisaishi-all-songs"}
+		- songs.each do |song|
+			%li
+				%span{:class => "song-title"}= song.title
+				%span{:class => "song-yes"}= song.yes
+				%span{:class => "song-no"}= song.no
