@@ -1,6 +1,6 @@
 %html
 	%head
-		%title= "Hisaishi"
+		%title= "Karaoke"
 		%link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
 	%body
 		#hisaishi-display
@@ -25,3 +25,5 @@
 					}
 				});
 			});
+		#main-controls
+			%a{:href => '/logout', :title => "Log out"}= "Log out"

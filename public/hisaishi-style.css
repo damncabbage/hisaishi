@@ -29,6 +29,8 @@ body {
 	text-shadow: 0 0 4px black;
 }
 
+body#hisaishi-login, 
+body#hisaishi-no-song, 
 body#hisaishi-song-list {
 	padding: 1em;
 }
@@ -81,6 +83,7 @@ ol#hisaishi-list {
 	position: absolute;
 	top: 0;
 	left: 0;
+	padding: 10px;
 	z-index: 1000;
 }
 
@@ -105,6 +108,7 @@ ol#hisaishi-list {
 	position: absolute;
 	top: 0;
 	right: 0;
+	padding: 10px;
 	z-index: 1000;
 }
 
@@ -113,4 +117,65 @@ ol#hisaishi-list {
 	display: inline-block;
 	margin: 0 1px 0 0.5em;
 	text-decoration: none;
+}
+
+#main-controls {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 10px;
+	z-index: 1000;
+}
+#main-controls a {
+	color: white;
+	text-decoration: none;
+}
+
+a.hoverable {
+	padding-right: 10px;
+}
+a.hoverable span {
+	-moz-transition-property: all;
+	-moz-transition-duration: 0.1s;
+	-webkit-transition-property: all;
+	-webkit-transition-duration: 0.1s;
+	-o-transition-property: all;
+	-o-transition-duration: 0.1s;
+	-ms-transition-property: all;
+	-ms-transition-duration: 0.1s;
+}
+
+a span.show-on-hover {
+	overflow: hidden;
+	white-space: nowrap;
+	position: absolute;
+	top: 5px;
+	
+	background: black;
+	color: white;
+	font-size: 0.8em;
+	padding: 5px;
+	border-radius: 5px;
+	
+	opacity: 0;
+	width: 0;
+	left: 0;
+}
+a:hover span.show-on-hover,
+a:active span.show-on-hover{
+	opacity: 1;
+	width: auto;
+	left: 100%;
+}
+
+body#hisaishi-login input {
+	font-size: 1.2em;
+	padding: 0.3em;
+	min-width: 300px;
+}
+
+body#hisaishi-login a, 
+body#hisaishi-no-song a, 
+body#hisaishi-song-list a {
+	color: #bcf;
 }

@@ -7,6 +7,9 @@ require 'dm-migrations'
 require 'dm-ar-finders'
 require 'haml'
 
+Dir["#{File.dirname(__FILE__)}/vendor/**/*.rb"].each { |f| load(f) }
+
+enable :sessions
 set :public, Proc.new { File.join(root, "public") }
 
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/data/hisaishi.sqlite")
@@ -25,10 +28,22 @@ class Song
 	property :no,			Integer, 	:default => 0
 end
 
-DataMapper.auto_migrate! unless Song.storage_exists?
+class Vote
+	include DataMapper::Resource
+	property :vote_id,		Serial
+	property :user,			String
+	property :song_id,		Integer
+	property :vote,			Integer
+end
+
+Song.auto_migrate! unless Song.storage_exists?
+Vote.auto_migrate! unless Vote.storage_exists?
 
 get '/' do
-	song = rand_song()
+	unless is_logged_in
+		redirect '/login'
+	end
+	song = rand_song
 	if song.length > 0
 		@song_data = []
 		song.all.each do |s|
@@ -44,33 +59,108 @@ get '/' do
 			}
 		end
 		song_json = @song_data.to_json
-		haml :song, :locals => {:song => song, :song_json => song_json}
+		haml :song, :locals => {
+			:song => song, 
+			:song_json => song_json,
+			:user => session[:username]
+		}
 	else
 		haml :no_song
 	end
 end
 
 put '/song/:song_id/yes' do
-	song = song_by_id(params[:song_id])
-	song.update(:yes => song.yes + 1)
-	'+1 yes'
+	if is_logged_in
+		vote_for_song(params[:song_id], true)
+		'+1 yes'
+	else
+		halt 403, 'you are not logged in'
+	end
 end
 
 put '/song/:song_id/no' do
-	song = song_by_id(params[:song_id])
-	song.update(:no => song.no + 1)
-	'+1 no'
+	if is_logged_in
+		vote_for_song(params[:song_id], false)
+		'+1 no'
+	else
+		halt 403, 'you are not logged in'
+	end
 end
 
 get '/list-songs' do
-	songs = Song.all
-	haml :song_list, :locals => {:songs => songs}
+	if is_logged_in
+		songs = Song.all
+		haml :song_list, :locals => {:songs => songs}
+	else
+		redirect '/login'
+	end
+end
+
+get '/login' do
+	if is_logged_in
+		redirect '/'
+	else
+		haml :login
+	end
+end
+
+post '/login' do
+	host = params[:host] + '.basecamphq.com'
+	begin
+		Basecamp.establish_connection! host, params[:username], params[:password], true
+		token = Basecamp.get_token
+		session[:username] = params[:username] unless token.nil?
+	rescue ArgumentError
+	end
+	redir = '/login'
+	if is_logged_in
+		redir = '/'
+	end
+	redirect redir
+end
+
+get '/logout' do
+	session[:username] = nil
+	redirect '/login'
+end
+
+def is_logged_in
+	if session.has_key?(:username)
+		if x ||= session[:username]
+			return true
+		else
+			return false
+		end
+	else
+		return false
+	end
 end
 
 def song_by_id(id)
 	return Song.get(id)
 end
 
-def rand_song()
-	return Song.find_by_sql("SELECT * FROM songs ORDER BY RANDOM() LIMIT 1;")
+def rand_song
+	return Song.find_by_sql(
+		'SELECT * FROM songs s ' + 
+		'LEFT JOIN votes v ON (v.song_id = s.id AND v.user="' + session[:username] + '") ' + 
+		'WHERE v.vote_id IS NULL ' + 
+		'ORDER BY RANDOM() LIMIT 1;'
+	)
+end
+
+def vote_for_song(id, is_yes)
+	song = song_by_id(id)
+	vote_int = 0
+	if is_yes
+		vote_int = 1
+		song.update(:yes => song.yes + 1)
+	else
+		song.update(:no => song.no + 1)
+	end
+	vote = Vote.create(
+		:user => session[:username],
+		:song_id => song.id,
+		:vote => vote_int
+	)
 end
