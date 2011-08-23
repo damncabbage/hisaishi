@@ -179,3 +179,18 @@ body#hisaishi-no-song a,
 body#hisaishi-song-list a {
 	color: #bcf;
 }
+
+table#hisaishi-all-songs th,
+table#hisaishi-all-songs td {
+	padding: 5px;
+}
+table#hisaishi-all-songs td.song-yes,
+table#hisaishi-all-songs td.song-no {
+	text-align: right;
+}
+table#hisaishi-all-songs .song-yes {
+	color: #6f6;
+}
+table#hisaishi-all-songs .song-no {
+	color: #f66;
+}

@@ -145,7 +145,7 @@ def rand_song
 		'SELECT * FROM songs s ' + 
 		'LEFT JOIN votes v ON (v.song_id = s.id AND v.user="' + session[:username] + '") ' + 
 		'WHERE v.vote_id IS NULL ' + 
-		'AND v.no < 3 AND v.yes < 1 ' + 
+		'AND s.no < 1 AND s.yes < 3 ' + 
 		'ORDER BY RANDOM() LIMIT 1;'
 	)
 end
