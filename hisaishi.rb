@@ -142,11 +142,20 @@ end
 
 def rand_song
 	return Song.find_by_sql(
-		'SELECT * FROM songs s ' + 
-		'LEFT JOIN votes v ON (v.song_id = s.id AND v.user="' + session[:username] + '") ' + 
-		'WHERE v.vote_id IS NULL ' + 
+		#'SELECT * FROM songs s ' + 
+		#'LEFT JOIN votes v ON (v.song_id = s.id AND v.user="' + session[:username] + '") ' + 
+		#'WHERE v.vote_id IS NULL ' + 
+		#'AND s.no < 1 AND s.yes < 3 ' + 
+		#'ORDER BY RANDOM() LIMIT 1;'
+		
+		'SELECT s.* FROM songs s ' + 
+		'WHERE s.id NOT IN (' +
+		'  SELECT song_id FROM votes ' + 
+		'  WHERE user = "' + session[:username] + '"' + 
+		'  GROUP BY user HAVING COUNT(*) > 0 ' + 
+		') ' + 
 		'AND s.no < 1 AND s.yes < 3 ' + 
-		'ORDER BY RANDOM() LIMIT 1;'
+		'ORDER BY RANDOM();'
 	)
 end
 
