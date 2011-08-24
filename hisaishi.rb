@@ -7,7 +7,7 @@ require 'dm-migrations'
 require 'dm-ar-finders'
 require 'haml'
 
-Dir["#{File.dirname(__FILE__)}/vendor/**/*.rb"].each { |f| load(f) }
+Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
 
 enable :sessions
 set :public, Proc.new { File.join(root, "public") }

@@ -1,0 +1,87 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    activemodel (3.0.10)
+      activesupport (= 3.0.10)
+      builder (~> 2.1.2)
+      i18n (~> 0.5.0)
+    activeresource (3.0.10)
+      activemodel (= 3.0.10)
+      activesupport (= 3.0.10)
+    activesupport (3.0.10)
+    addressable (2.2.6)
+    bcrypt-ruby (2.1.4)
+    builder (2.1.2)
+    data_mapper (1.1.0)
+      dm-aggregates (= 1.1.0)
+      dm-constraints (= 1.1.0)
+      dm-core (= 1.1.0)
+      dm-migrations (= 1.1.0)
+      dm-serializer (= 1.1.0)
+      dm-timestamps (= 1.1.0)
+      dm-transactions (= 1.1.0)
+      dm-types (= 1.1.0)
+      dm-validations (= 1.1.0)
+    data_objects (0.10.6)
+      addressable (~> 2.1)
+    dm-aggregates (1.1.0)
+      dm-core (~> 1.1.0)
+    dm-ar-finders (1.1.0)
+      dm-core (~> 1.1.0)
+    dm-constraints (1.1.0)
+      dm-core (~> 1.1.0)
+    dm-core (1.1.0)
+      addressable (~> 2.2.4)
+    dm-do-adapter (1.1.0)
+      data_objects (~> 0.10.2)
+      dm-core (~> 1.1.0)
+    dm-migrations (1.1.0)
+      dm-core (~> 1.1.0)
+    dm-serializer (1.1.0)
+      dm-core (~> 1.1.0)
+      fastercsv (~> 1.5.4)
+      json (~> 1.4.6)
+    dm-sqlite-adapter (1.1.0)
+      dm-do-adapter (~> 1.1.0)
+      do_sqlite3 (~> 0.10.2)
+    dm-timestamps (1.1.0)
+      dm-core (~> 1.1.0)
+    dm-transactions (1.1.0)
+      dm-core (~> 1.1.0)
+    dm-types (1.1.0)
+      bcrypt-ruby (~> 2.1.4)
+      dm-core (~> 1.1.0)
+      fastercsv (~> 1.5.4)
+      json (~> 1.4.6)
+      stringex (~> 1.2.0)
+      uuidtools (~> 2.1.2)
+    dm-validations (1.1.0)
+      dm-core (~> 1.1.0)
+    do_sqlite3 (0.10.6)
+      data_objects (= 0.10.6)
+    fastercsv (1.5.4)
+    haml (3.1.2)
+    i18n (0.5.0)
+    json (1.4.6)
+    rack (1.3.2)
+    sinatra (1.2.6)
+      rack (~> 1.1)
+      tilt (< 2.0, >= 1.2.2)
+    sqlite3 (1.3.4)
+    stringex (1.2.2)
+    tilt (1.3.2)
+    uuidtools (2.1.2)
+    xml-simple (1.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activeresource
+  data_mapper
+  dm-ar-finders
+  dm-sqlite-adapter
+  haml
+  sinatra
+  sqlite3
+  xml-simple
