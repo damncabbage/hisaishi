@@ -12,7 +12,7 @@ Dir["#{File.dirname(__FILE__)}/vendor/**/*.rb"].each { |f| load(f) }
 enable :sessions
 set :public, Proc.new { File.join(root, "public") }
 
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/data/hisaishi.sqlite")
+DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data/hisaishi.sqlite")
 
 class Song
 	include DataMapper::Resource
