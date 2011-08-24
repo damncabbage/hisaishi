@@ -148,13 +148,13 @@ def rand_song
 		#'AND s.no < 1 AND s.yes < 3 ' + 
 		#'ORDER BY RANDOM() LIMIT 1;'
 		
-		'SELECT s.* FROM songs s ' + 
-		'WHERE s.id NOT IN (' +
+		'SELECT * FROM songs ' + 
+		'WHERE id NOT IN (' +
 		'  SELECT song_id FROM votes ' + 
 		'  WHERE user = "' + session[:username] + '"' + 
 		'  GROUP BY user HAVING COUNT(*) > 0 ' + 
 		') ' + 
-		'AND s.no < 1 AND s.yes < 3 ' + 
+		'AND no < 1 AND yes < 3 ' + 
 		'ORDER BY RANDOM();'
 	)
 end
