@@ -6,8 +6,6 @@ require 'data_mapper'
 require 'dm-migrations'
 require 'dm-ar-finders'
 require 'haml'
-require 'net/http'
-require 'uri'
 
 Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
 
@@ -128,7 +126,8 @@ end
 
 get '/proxy' do
   url = params[:url]
-  Net::HTTP.get_print URI.parse(url)
+  require 'open-uri'
+  open(url).read
 end
 
 def is_logged_in
