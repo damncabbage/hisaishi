@@ -143,7 +143,10 @@ var HisaishiEngine = function(params) {
 		var that = this;
 		$.ajax({
 			type: "GET",
-			url: this.params.src.lyrics,
+			url: '/proxy',
+			data: {
+				url: this.params.src.lyrics
+			},
 			async: true,
 			success: function(data){
 				that.parseLyricsFormat(data, function(){
