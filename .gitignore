@@ -4,7 +4,6 @@ vendor/bundler
 
 # Seeding files
 seeds.csv
-seeds.rb
 
 # Music files
 public/music
