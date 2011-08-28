@@ -46,7 +46,6 @@ end
 
 post '/login' do
   host = settings.host + '.basecamphq.com'
-  puts Basecamp.inspect
   begin
     Basecamp.establish_connection! host, params[:username], params[:password], true
     token = Basecamp.get_token
