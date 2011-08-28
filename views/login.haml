@@ -1,14 +1,12 @@
 %html
 	%head
-		%title= "The Karaoke machine wants you to log in."
+		%title= "Hisaishi needs you to log in."
 		%link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
 	%body{:id => "hisaishi-login"}
-		%h1= "The Karaoke machine wants you to log in."
+		%h1= "Hisaishi needs you to log in."
 		%p 
-			Use your smash.org.au Basecamp account to log in. 
-			Don't worry, we won't be using it for anything else.
+			Use your SMASH! Basecamp account to log in. Don't worry, we won't be using it for anything else.
 		%form{:action => "/login", :method => "post"}
-			%input{:name => "host", :required => "true", :placeholder => "Your Basecamp host"}
 			%input{:name => "username", :required => "true", :placeholder => "Your Basecamp username"}
 			%input{:name => "password", :type => "password", :required => "true", :placeholder => "Your password"}
 			%input{:type => "submit", :value => "Log in"}
