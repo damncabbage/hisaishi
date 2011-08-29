@@ -1,0 +1,46 @@
+<html>
+	<head>
+    <title>Karaoke</title>
+    <link href="hisaishi-style.css?1" rel="stylesheet" type="text/css" />
+		<script src="/jquery-1.6.2.min.js" type="text/javascript"></script>
+		<script src="/jquery-ui-1.8.16.min.js" type="text/javascript"></script>
+		<script src="/HisaishiEngine.js" type="text/javascript"></script>
+		<script src="/effects.js" type="text/javascript"></script>		
+  </head>
+  <body>
+    <div id="hisaishi-display">
+			<div id="scaffold-0" class="hisaishi-scaffold">
+				<img id="track-image-0" src="http://localhost:4567/music/colossal/colossal.jpg" class="track-image" />
+				<div id="lyrics-container-0" class="lyrics-container">
+				</div>
+				<div id="audio-container-0" class="audio-container">
+				</div>
+				<div id="hisaishi-controls">
+					<div id="controls-container-0" class="controls-container">
+						<a title="Play" href="#"><img src="/play.png" /></a><a title="Pause" href="#"><img src="/pause.png" /></a><a title="Stop" href="#"><img src="/stop.png" /></a><input type="range" class="song-range" min="0" max="100" value="0"><span class="timer">0s</span>
+					</div>
+					<br class="clear" />
+				</div>
+				<br class="clear" />
+			</div>
+		</div>
+    <ol id="hisaishi-list">
+			<li id="select-track-0" class="selected">
+				<div id="rating-container-0" class="rating-container">
+					<a title="Yes, these lyrics are accurate." href="#" class="vote-yes"><img src="/thumbs-up.png" /></a><a title="I don't know this song, skip to another one." href="#" class="vote-skip"><img src="/dunno.png" /></a><a title="No, these lyrics are not accurate." href="#" class="vote-no"><img src="/thumbs-down.png" /></a>
+				</div>
+				<div class="track-title">Colossal</div>
+				<div class="track-artist">Wolfmother</div>
+				<div class="track-album">Wolfmother</div>
+			</li>
+			<li id="select-track-1">
+				<div class="track-title">Fly Me to the Moon</div>
+				<div class="track-artist">Claire</div>
+				<div class="track-album">Neon Genesis Evangelion</div>
+			</li>			
+		</ol>
+		<div id="main-controls">
+      <a href="/logout" title="Log out">Log out</a>
+    </div>
+	</body>
+</html>

@@ -337,7 +337,7 @@ var HisaishiEngine = function(params) {
 	that.renderControls = function() {
 		var that = this;
 		$('<a />', {
-			text: '▶',
+		  html: '<img src="/play.png" />',
 			title: 'Play',
 			href: '#'
 		}).mousedown( function(e){
@@ -346,7 +346,7 @@ var HisaishiEngine = function(params) {
 		}).appendTo(this.params.containers.controls);
 		
 		$('<a />', {
-			text: '▮▮',
+		  html: '<img src="/pause.png" />',
 			title: 'Pause',
 			href: '#'
 		}).mousedown( function(e){
@@ -355,7 +355,7 @@ var HisaishiEngine = function(params) {
 		}).appendTo(this.params.containers.controls);
 		
 		$('<a />', {
-			text: '▇',
+		  html: '<img src="/stop.png" />',
 			title: 'Stop', 
 			href: '#'
 		}).mousedown( function(e){
@@ -450,20 +450,27 @@ var HisaishiList = function(params) {
 			id: 'audio-container-' + ident,
 			'class': 'audio-container'
 		}),
+		controlbar = $('<div />', {
+			id: 'controlbar-container-' + ident,
+			'class': 'controlbar-container'
+		}),
 		controls = $('<div />', {
 			id: 'controls-container-' + ident,
 			'class': 'controls-container'
-		});
+		}),
 		rating = $('<div />', {
 			id: 'rating-container-' + ident,
 			'class': 'rating-container'
 		});
+		controlbar
+		  .append(controls)
+		  .append(rating);
+		
 		display
 			.append(cover)
 			.append(lyrics)
 			.append(audio)
-			.append(controls)
-			.append(rating);
+			.append(controlbar);
 		
 		if (this.params.containers.display) {
 			$(this.params.containers.display).append(display);
@@ -606,7 +613,7 @@ var HisaishiRate = function(params) {
 	that.renderControls = function() {
 		var that = this;
 		$('<a />', {
-			text: '✔',
+			html: '<img src="/thumbs-up.png" />',
 			title: 'Yes, these lyrics are accurate.',
 			href: '#', 
 			'class': 'vote-yes'
@@ -614,25 +621,26 @@ var HisaishiRate = function(params) {
 			e.preventDefault();
 			that.voteYes();
 		}).appendTo(this.params.containers.rating);
-		
+
 		$('<a />', {
-			text: '✘',
-			title: 'No, these lyrics are not accurate.',
-			href: '#', 
-			'class': 'vote-no'
-		}).mousedown( function(e){
-			e.preventDefault();
-			that.voteNo();
-		}).appendTo(this.params.containers.rating);
-		
-		$('<a />', {
-			text: '↪',
+			html: '<img src="/dunno.png" />',
 			title: 'I don\'t know this song, skip to another one.',
 			href: '#', 
 			'class': 'vote-skip'
 		}).mousedown( function(e){
 			e.preventDefault();
 			that.voteSkip();
+		}).appendTo(this.params.containers.rating);
+
+		
+		$('<a />', {
+			html: '<img src="/thumbs-down.png" />',
+			title: 'No, these lyrics are not accurate.',
+			href: '#', 
+			'class': 'vote-no'
+		}).mousedown( function(e){
+			e.preventDefault();
+			that.voteNo();
 		}).appendTo(this.params.containers.rating);
 	};
 	
