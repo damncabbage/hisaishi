@@ -44,7 +44,7 @@ get '/login' do
 end
 
 post '/login' do
-  host = settings.host + '.basecamphq.com'
+  host = settings.basecamp_domain + '.basecamphq.com'
   begin
     Basecamp.establish_connection! host, params[:username], params[:password], true
     token = Basecamp.get_token
@@ -66,7 +66,7 @@ end
 
 get '/proxy' do
   url = params[:url]
-  require 'open-uri'
+  puts 'The URL was: ' + url
   open(url).read
 end
 

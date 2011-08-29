@@ -4,15 +4,30 @@ require 'haml'
 require 'sqlite3'
 require 'data_mapper'
 require 'dm-ar-finders'
+require 'open-uri'
+
+# Change these depending on your settings.
+
+configure do
+  set :basecamp_domain, 'smashconvention'
+end
+
+configure :development do
+  set :files, 'http://localhost:4567/music/'
+end
+
+configure :production do
+  set :files, 'http://allthethings.smash.org.au/karaoke/'
+end
+
+# No need to change anything below this point.
 
 configure do
   enable :sessions
-  set :host, 'smashconvention'
-  set :files, 'http://localhost:4567/music/'
   
   # Load models.
-  $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/lib")
-  Dir.glob("#{File.dirname(__FILE__)}/lib/*.rb") { |lib| require File.basename(lib, '.*') }
+  $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/models")
+  Dir.glob("#{File.dirname(__FILE__)}/models/*.rb") { |models| require File.basename(models, '.*') }
   
   # Load plugins.
   Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
