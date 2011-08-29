@@ -8,6 +8,7 @@
 		0 0 20px black
 	;
 	background: rgba(0,0,0,0.5);
+	-webkit-transition: opacity 0.2s ease-in-out;
 }
 
 .word {
@@ -20,6 +21,10 @@
 
 .clear {
 	clear: both;
+}
+
+.hidden-line, .queued-line, .complete-line {
+	opacity: 0.5;
 }
 
 /* Layout */

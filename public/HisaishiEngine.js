@@ -11,21 +11,23 @@ var HisaishiEngine = function(params) {
 			timecodeKey:0
 		},
 		lyrics: {
-			lines: {
-			},
-			words: {
-			},
-			timecode: {
-			},
+			lines: {},
+			words: {},
+			timecode: {},
 			timecodeKeys: []
 		},
 		classes: {
-			wordHighlight: 'word-highlight'
+			wordHighlight: 	'word-highlight',
+			hidden:			'hidden-line',
+			queued: 		'queued-line',
+			current:		'current-line',
+			complete:		'complete-line'
 		},
 		params: {
 			preroll: {
-				line: 0,
-				word: 0
+				queue: 	0,
+				line: 	0,
+				word: 	0
 			},
 			offset: 0,
 			src: {
@@ -67,20 +69,34 @@ var HisaishiEngine = function(params) {
 		var i 		= 0, 
 			linenum = 0, 
 			partnum = 0,
+			pre     = this.params.preroll,
 			line, 
 			parts,
 			time,
 			timePreroll;
 		
 		var that = this;
-		var PushPreroll = function(ident) {
-			if (!that.lyrics.timecode[timePreroll]) {
-				that.lyrics.timecode[timePreroll] = [];
-			}
-			that.lyrics.timecode[timePreroll].push(ident);
+		
+		/**
+		 * PushPreroll pushes a new timecode reference to dictate 
+		 * that something should happen to a given object with 
+		 * reference ident at a given time.
+		 * It takes the ident, and the timecode at which to trigger.
+		 */
+		
+		var PushPreroll = function(ident, time, delta) {
+			if (!delta) 	delta = 0;
+			if (time < 0) 	time = 0;
 			
-			if (that.lyrics.timecodeKeys.indexOf(timePreroll) < 0) {
-				that.lyrics.timecodeKeys.push(timePreroll);
+			time -= (delta - that.params.offset);
+			
+			if (!that.lyrics.timecode[time]) {
+				that.lyrics.timecode[time] = [];
+			}
+			that.lyrics.timecode[time].push(ident);
+			
+			if (that.lyrics.timecodeKeys.indexOf(time) < 0) {
+				that.lyrics.timecodeKeys.push(time);
 			}
 		};
 		
@@ -113,21 +129,26 @@ var HisaishiEngine = function(params) {
 				if (!this.lyrics.lines[linenum].start) {
 					this.lyrics.lines[linenum].start = time;
 					
-					timePreroll = time - this.params.preroll.line + this.params.offset;
+					PushPreroll(this.lyrics.lines[linenum].id, time, pre.queue);
+					PushPreroll(this.lyrics.lines[linenum].id, time, pre.line);
 					
-					PushPreroll(this.lyrics.lines[linenum].id);
+					if (linenum > 0) {
+						PushPreroll(this.lyrics.lines[linenum-1].id, time, pre.line);
+					}
 				}
 				
-				timePreroll = time - this.params.preroll.word + this.params.offset;
-				
-				PushPreroll(this.lyrics.words[partnum].id);
+				PushPreroll(this.lyrics.words[partnum].id, time, pre.word);
+				if (partnum > 0) {
+					PushPreroll(this.lyrics.words[partnum-1].id, time, pre.word);
+				}
 				
 				partnum++;
-				
 			} while (re.lastIndex < line.length);
-			
 			linenum++;
 		}
+		this.lyrics.timecodeKeys.sort(function(a, b) {
+			return a - b;
+		});
 		callback();
 	};
 	
@@ -167,7 +188,7 @@ var HisaishiEngine = function(params) {
 				
 				line = $('<div />', {
 					id: 		lineData.id,
-					'class':	'line'
+					'class':	'line ' + this.classes.hidden
 				});
 				
 				for (var j in lineData.words) {
@@ -193,6 +214,36 @@ var HisaishiEngine = function(params) {
 		}
 	};
 	
+	/* Lyrics animation */
+	
+	that.advanceLine = function(line) {
+		var c = this.classes,
+			p = this.params.preroll,
+			map = {
+				'current': 	'complete',
+				'queued': 	'current',
+				'hidden': 	'queued'
+			};
+			mapFX = {
+				'hidden':	'slideDown',
+				'current':	'slideUp'
+			};
+		
+		for (var i in map) {
+			if (line.hasClass(c[i])) {
+				obj.removeClass(c[i]).addClass(c[map[i]]);
+				
+				if (!!mapFX[i]) {
+					obj[mapFX[i]](p.line);
+				}
+			}
+		}
+	};
+	
+	that.advanceWord = function(word) {
+		word.toggleClass(this.classes.wordHighlight);
+	};
+	
 	that.animLyrics = function(timecode) {
 		var ctx = this.params.containers.lyrics;
 		for (var i in this.lyrics.timecode[timecode]) {
@@ -201,12 +252,10 @@ var HisaishiEngine = function(params) {
 				if (!obj.size()) continue;
 				
 				if (obj.hasClass('line')) {
-					$('.line:visible', ctx).slideUp(this.params.preroll.line);
-					obj.slideDown(this.params.preroll.line);
+					this.advanceLine(obj);
 				}
 				else if (obj.hasClass('word')) {
-					$('.' + this.classes.wordHighlight, ctx).removeClass(this.classes.wordHighlight);
-					obj.addClass(this.classes.wordHighlight);
+					this.advanceWord(obj);
 				}
 			}
 		}
@@ -301,12 +350,17 @@ var HisaishiEngine = function(params) {
 		if (this.state.playing) {
 			this.pauseSong();
 		}
-		this.state.audio.currentTime = 0;
-		this.state.time 	= 0;
-		this.state.lastTime = 0;
-		$('.line', this.params.containers.lyrics).hide();
-		$('.' + this.classes.wordHighlight, this.params.containers.lyrics)
-		  .removeClass(this.classes.wordHighlight);
+		this.state.audio.currentTime 	= 0;
+		this.state.time 				= 0;
+		this.state.timecodeKey 			= 0;
+		
+		var c = this.classes;
+		$('.line', this.params.containers.lyrics)
+			.hide()
+			.removeClass([c.queued, c.current, c.complete].join(' '))
+			.addClass(c.hidden);
+		$('.' + c.wordHighlight, this.params.containers.lyrics)
+			.removeClass(c.wordHighlight);
 	};
 	
 	that.seekSong 	= function(percent) {
@@ -513,7 +567,7 @@ var HisaishiList = function(params) {
 		if (!this.hs[currentTrack]) {
 			var track = this.params.tracks[currentTrack];
 			
-			this.hs[currentTrack] = new HisaishiEngine({
+			var hsParams = {
 				src: {
 					lyrics: track.compiledLyrics,
 					audio: 	track.compiledAudio
@@ -524,11 +578,15 @@ var HisaishiList = function(params) {
 					controls: 	'#controls-container-' 	+ currentTrack
 				},
 				preroll: {
-					line: 500,
-					word: 200
+					queue: 	5000,
+					line: 	500,
+					word: 	200
 				},
 				offset: (!!track.offset ? track.offset: 0)
-			});
+			};
+			$.extend(true, hsParams, this.params.hsParams);
+			
+			this.hs[currentTrack] = new HisaishiEngine(hsParams);
 			
 			this.hr[currentTrack] = new HisaishiRate({
 				id: this.params.tracks[currentTrack].id,
