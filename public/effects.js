@@ -1,5 +1,6 @@
-$(document).ready(function() {
+var prepControls = function() {
 	$('.controlbar-container').hide();
-	
-	$(document).hover(function() { $('.controlbar-container').slideToggle(); });
-});
+	$('.hisaishi-scaffold').hover(function() {
+		$(this).find('.controlbar-container').slideToggle();
+	});
+};

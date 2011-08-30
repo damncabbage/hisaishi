@@ -139,7 +139,7 @@ div.details {
 	height: 50px;
 	width: 100%;
 	z-index: 2;
-	display: none;
+	/* display: none; */
 }
 
 .controls-container {
@@ -150,8 +150,13 @@ div.details {
 .controls-container a {
 	color: white;
 	display: inline-block;
-	margin: 0 0.5em 0 1px;
 	text-decoration: none;
+}
+
+.controls-container a, 
+.controls-container span, 
+.controls-container input {
+	margin: 0 0.5em 0 1px;
 }
 
 .controls-container input {

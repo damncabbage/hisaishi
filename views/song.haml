@@ -5,7 +5,8 @@
     %script{:type => "text/javascript",:src  => "/jquery-1.6.2.min.js"}
     %script{:type => "text/javascript",:src  => "/mediaelement-and-player.min.js"}
     %script{:type => "text/javascript",:src  => "/HisaishiEngine.js"}    
-    %script{:type => "text/javascript",:src  => "/effects.js"}        
+    %script{:type => "text/javascript",:src  => "/effects.js"}
+    %script{:type => "text/javascript",:src  => "/html5slider.js"}
     :javascript
       var trax = #{song_json};
       var hl = null;
@@ -14,7 +15,7 @@
           tracks: trax,
           hsParams: {
             preroll: {
-              line: 500,
+              line: 1000,
               word: 200
             }
           },
@@ -23,6 +24,7 @@
             list:  '#hisaishi-list'
           }
         });
+        prepControls();
       });   
   %body
     #hisaishi-display
