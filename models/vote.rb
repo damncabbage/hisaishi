@@ -4,4 +4,5 @@ class Vote
   property :user,      String
   property :song_id,    Integer
   property :vote,      Integer
+  property :comment,  String
 end

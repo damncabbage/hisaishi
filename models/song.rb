@@ -27,7 +27,7 @@ class Song
     return song_data.to_json
   end
   
-  def vote(vote, session)
+  def vote(vote, comment, session)
     if vote == 'yes'
       vote_int = 1
       self.yes = self.yes + 1
@@ -44,7 +44,8 @@ class Song
     vote = Vote.create(
       :user => session[:username],
       :song_id => self.id,
-      :vote => vote_int
+      :vote => vote_int,
+      :comment => comment
     )
   end  
 end

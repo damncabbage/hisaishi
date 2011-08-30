@@ -14,28 +14,11 @@ get '/' do
   end
 end
 
-put '/song/:song_id/yes' do
+post '/song/:song_id/vote' do
   authenticate
   
   song = song_by_id(params[:song_id])
-  song.vote('yes', session)
-  '+1 yes'
-end
-
-put '/song/:song_id/no' do
-  authenticate
-
-  song = song_by_id(params[:song_id])
-  song.vote('no', session)
-  '+1 no'
-end
-
-put '/song/:song_id/dunno' do
-  authenticate
-
-  song = song_by_id(params[:song_id])
-  song.vote('dunno', session)
-  '+1 dunno'
+  song.vote(params[:vote], params[:comment], session)
 end
 
 get '/list-songs' do

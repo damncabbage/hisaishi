@@ -168,6 +168,37 @@ span.timer {
 	text-decoration: none;
 }
 
+.rating-container div.vote-comment {
+	display: none;
+	position: absolute;
+	top: 150%;
+	right: 1%;
+	z-index: 3000;
+	background: rgba(0,0,0,0.8);
+	padding: 10px;	
+}
+
+.rating-container div.vote-comment p {
+	font-weight: bold;
+	font-size: 0.9em;
+	margin: 0 0 10px 0;
+}
+
+.rating-container div.vote-comment form {
+	margin: 0;
+}
+
+.rating-container div.vote-comment textarea {
+	display: block;
+	height: 75px;
+	width: 300px;
+	margin-bottom: 10px;
+}
+
+.rating-container div.vote-comment input {
+	display: block;
+}
+
 .lyrics-container {
 	position: absolute;
 	top: 40%;

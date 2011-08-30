@@ -642,10 +642,11 @@ var HisaishiRate = function(params) {
 	
 	/* Voting */
 	
-	that.voteCallback = function(vote) {
+	that.voteCallback = function(vote, comment) {
 		$.ajax({
-			url: '/song/' + this.params.id + '/' + (vote),
-			type: 'PUT',
+			url: '/song/' + this.params.id + '/vote',
+			type: 'POST',
+			data: 'vote=' + vote + '&comment=' + comment,
 			success: function(){
 				alert("Thanks for voting!");
 				window.location.href = '/';
@@ -654,51 +655,72 @@ var HisaishiRate = function(params) {
 	};
 	
 	that.voteYes = function() {
-		this.voteCallback('yes');
+		this.voteCallback('yes', null);
 	};
 	
-	that.voteNo = function() {
-		this.voteCallback('no');
+	that.voteNo = function(comment) {
+		this.voteCallback('no', comment);
 	};
 	
 	that.voteSkip = function() {
-		this.voteCallback('dunno');
+		this.voteCallback('dunno', null);
 	};
 	
 	/* Controls */
 	
 	that.renderControls = function() {
 		var that = this;
-		$('<a />', {
+
+    /* Create the controls */
+
+		var yes = $('<a />', {
 			html: '<img src="/thumbs-up.png" />',
 			title: 'Yes, these lyrics are accurate.',
 			href: '#', 
 			'class': 'vote-yes'
-		}).mousedown( function(e){
-			e.preventDefault();
-			that.voteYes();
-		}).appendTo(this.params.containers.rating);
-
-		$('<a />', {
+		}), 
+		dunno = $('<a />', {
 			html: '<img src="/dunno.png" />',
 			title: 'I don\'t know this song, skip to another one.',
 			href: '#', 
 			'class': 'vote-skip'
-		}).mousedown( function(e){
-			e.preventDefault();
-			that.voteSkip();
-		}).appendTo(this.params.containers.rating);
-
-		
-		$('<a />', {
+		}),
+		no = $('<a />', {
 			html: '<img src="/thumbs-down.png" />',
 			title: 'No, these lyrics are not accurate.',
 			href: '#', 
 			'class': 'vote-no'
-		}).mousedown( function(e){
+		}),
+		comment = $('<div />', {
+			html: '<p>What was wrong with it?</p><form><textarea></textarea><input type="submit"></form>',
+			'class': 'vote-comment'
+		});
+		
+		/* Attach the listeners */
+		
+		yes.mousedown( function(e){
 			e.preventDefault();
-			that.voteNo();
+			that.voteYes();
 		}).appendTo(this.params.containers.rating);
+		
+		dunno.mousedown( function(e){
+			e.preventDefault();
+			that.voteSkip();
+		}).appendTo(this.params.containers.rating);
+	
+		no.mousedown( function(e){
+			e.preventDefault();
+			comment.show();
+		}).appendTo(this.params.containers.rating);
+
+		var textarea = comment.find('textarea');
+		
+		comment.find('input').mousedown( function(e){
+			e.preventDefault();
+			that.voteNo(textarea.val());
+		})
+		
+		comment.appendTo(this.params.containers.rating);
 	};
 	
 	$.extend(true, that, {params: params});
