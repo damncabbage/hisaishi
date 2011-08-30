@@ -10,6 +10,7 @@ class Song
   property :image_file,   String
   property :yes,      Integer,   :default => 0
   property :no,      Integer,   :default => 0
+  property :dunno,      Integer,   :default => 0  
   
   def json
     song_data = []
@@ -26,13 +27,16 @@ class Song
     return song_data.to_json
   end
   
-  def vote(is_yes, session)
-    vote_int = 0
-    if is_yes
+  def vote(vote, session)
+    if vote == 'yes'
       vote_int = 1
       self.yes = self.yes + 1
-    else
+    elsif vote == 'no'
+      vote_int = 0
       self.no = self.no + 1
+    elsif vote == 'dunno'
+      vote_int = -1
+      self.dunno = self.dunno + 1
     end
     
     self.save!

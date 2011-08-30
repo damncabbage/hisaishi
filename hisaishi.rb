@@ -18,7 +18,7 @@ put '/song/:song_id/yes' do
   authenticate
   
   song = song_by_id(params[:song_id])
-  song.vote(true, session)
+  song.vote('yes', session)
   '+1 yes'
 end
 
@@ -26,8 +26,16 @@ put '/song/:song_id/no' do
   authenticate
 
   song = song_by_id(params[:song_id])
-  song.vote(false, session)
+  song.vote('no', session)
   '+1 no'
+end
+
+put '/song/:song_id/dunno' do
+  authenticate
+
+  song = song_by_id(params[:song_id])
+  song.vote('dunno', session)
+  '+1 dunno'
 end
 
 get '/list-songs' do

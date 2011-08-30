@@ -642,10 +642,9 @@ var HisaishiRate = function(params) {
 	
 	/* Voting */
 	
-	that.voteCallback = function(voteYes) {
-		if (!voteYes) voteYes = false;
+	that.voteCallback = function(vote) {
 		$.ajax({
-			url: '/song/' + this.params.id + '/' + (voteYes ? 'yes' : 'no'),
+			url: '/song/' + this.params.id + '/' + (vote),
 			type: 'PUT',
 			success: function(){
 				alert("Thanks for voting!");
@@ -655,15 +654,15 @@ var HisaishiRate = function(params) {
 	};
 	
 	that.voteYes = function() {
-		this.voteCallback(true);
+		this.voteCallback('yes');
 	};
 	
 	that.voteNo = function() {
-		this.voteCallback(false);
+		this.voteCallback('no');
 	};
 	
 	that.voteSkip = function() {
-		window.location.href = '/';
+		this.voteCallback('dunno');
 	};
 	
 	/* Controls */
