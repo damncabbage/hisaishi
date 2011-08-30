@@ -124,6 +124,13 @@ div.details {
 	width: 100%;
 }
 
+.audio-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
+}
+
 .controlbar-container {
 	position: relative;
 	top: 0;

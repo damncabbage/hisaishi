@@ -262,40 +262,6 @@ var HisaishiEngine = function(params) {
 	};
 	
 	/* Audio */
-	
-	/* that.loadAudio = function() {
-
-		if (!this.params.src.audio) {
-			throw {
-				type: 		'HisaishiEngineNoAudioSrcException',
-				message:	'No karaoke audio file found.'
-			};
-		}
-		
-		$('audio').bind('stall', function() {
-			var audio = $(this)[0];
-			audio.load();
-			audio.play();
-			audio.pause();
-		});
-		
-		var that = this;
-
-  	this.state.audio = soundManager.createSound({
-      id: 'bgm',
-      url: this.params.src.audio,
-      onload: true,
-      // whileplaying: that.setTimerControl()
-      // other options here..
-    });
-		
-		this.state.audio.load();
-		$(this.params.containers.audio).append(this.state.audio);
-		
-		that.loaded.audio = true;
-		
-		$(that).trigger('checkload');
-	}; */
 
 	that.loadAudio = function() {
 		
@@ -329,7 +295,17 @@ var HisaishiEngine = function(params) {
 		this.state.audio.load();
 		$(this.params.containers.audio).append(this.state.audio);
 		
-		$('audio').mediaelementplayer();
+		this.state.audio = new MediaElementPlayer('#bgm', {
+			// remove or reorder to change plugin priority
+			plugins: ['flash'],
+			// path to Flash and Silverlight plugins
+			pluginPath: '/',
+			// name of flash file
+			flashName: 'flashmediaelement.swf',
+			// rate in milliseconds for Flash and Silverlight to fire the timeupdate event
+			// larger number is less accurate, but less strain on plugin->JavaScript bridge
+			timerRate: 100
+		});
 		
 		that.loaded.audio = true;
 		
@@ -418,7 +394,7 @@ var HisaishiEngine = function(params) {
 			
 			that.state.time += 10;
 			
-			var audioTime = Math.round(that.state.audio.currentTime * 1000);
+			var audioTime = Math.round(that.state.audio.getCurrentTime() * 1000);
 			if (that.state.time != audioTime) {
 				that.state.time = audioTime;
 				timeout += that.state.time % 10;
@@ -471,7 +447,7 @@ var HisaishiEngine = function(params) {
 	
 	that.seekSong 	= function(percent) {
 		var newTime = percent * this.state.audio.duration;
-		this.state.audio.currentTime = newTime;
+		this.state.audio.setCurrentTime(newTime);
 		this.playSong();
 	};
 	
@@ -496,19 +472,21 @@ var HisaishiEngine = function(params) {
 
 	that.setTimerControl = function() {
 		
-		var length = this.state.audio.duration;
+		var length = this.state.audio.media.duration;
 		if (length == NaN) {
 			length = 0;
 		}
 		
-		var secs = this.state.audio.currentTime;
-		var progress = (secs / length) * 100;
+		var secs 		= this.state.audio.getCurrentTime(),
+			progress 	= (secs / length) * 100,
+			roundSecs 	= Math.floor(secs),
+			timeParts	= [Math.floor(roundSecs / 60), Math.floor(roundSecs % 60)];
 		
 		$('.song-range', this.params.containers.controls)
 			.attr('value', progress);
 		
 		$('.timer', this.params.containers.controls)
-			.text(Math.round(secs) + 's');
+			.text(timeParts.join('m ') + 's');
 	};
 	
 	that.renderControls = function() {
