@@ -3,29 +3,25 @@
     %title= "Karaoke"
     %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
     %script{:type => "text/javascript",:src  => "/jquery-1.6.2.min.js"}
-    %script{:type => "text/javascript",:src  => "/soundmanager2-nodebug.js"}    
+    %script{:type => "text/javascript",:src  => "/mediaelement-and-player.min.js"}
     %script{:type => "text/javascript",:src  => "/HisaishiEngine.js"}    
     %script{:type => "text/javascript",:src  => "/effects.js"}        
     :javascript
-      soundManager.url = '/'; // directory where SM2 .SWFs live
-        
       var trax = #{song_json};
       var hl = null;
       $(document).ready(function(){
-        soundManager.onready(function(){
-          hl = new HisaishiList({
-            tracks: trax,
-            hsParams: {
-              preroll: {
-                line: 500,
-                word: 200
-              }
-            },
-            containers: {
-              display: '#hisaishi-display',
-              list:  '#hisaishi-list'
+        hl = new HisaishiList({
+          tracks: trax,
+          hsParams: {
+            preroll: {
+              line: 500,
+              word: 200
             }
-          });
+          },
+          containers: {
+            display: '#hisaishi-display',
+            list:  '#hisaishi-list'
+          }
         });
       });   
   %body

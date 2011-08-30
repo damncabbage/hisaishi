@@ -263,7 +263,7 @@ var HisaishiEngine = function(params) {
 	
 	/* Audio */
 	
-	that.loadAudio = function() {
+	/* that.loadAudio = function() {
 
 		if (!this.params.src.audio) {
 			throw {
@@ -295,9 +295,9 @@ var HisaishiEngine = function(params) {
 		that.loaded.audio = true;
 		
 		$(that).trigger('checkload');
-	};
+	}; */
 
-	/* that.loadAudio = function() {
+	that.loadAudio = function() {
 		
 		if (!this.params.src.audio) {
 			throw {
@@ -329,6 +329,8 @@ var HisaishiEngine = function(params) {
 		this.state.audio.load();
 		$(this.params.containers.audio).append(this.state.audio);
 		
+		$('audio').mediaelementplayer();
+		
 		that.loaded.audio = true;
 		
 		$(that).trigger('checkload');
@@ -336,7 +338,7 @@ var HisaishiEngine = function(params) {
 	
 	/* Playback */
 	
-	that.runLoop	= function(timeout) {
+	/* that.runLoop	= function(timeout) {
 		var that = this;
 		var CheckEvents = function(){
 			var checkTime = that.lyrics.timecodeKeys[that.state.timecodeKey];
@@ -402,9 +404,9 @@ var HisaishiEngine = function(params) {
 		var newTime = percent * this.state.audio.duration;
 		this.state.audio.currentTime = newTime;
 		this.playSong();
-	};
+	}; */
 	
-	/*	that.runLoop	= function(timeout) {
+	that.runLoop	= function(timeout) {
 		var that = this;
 		var CheckEvents = function(){
 			var checkTime = that.lyrics.timecodeKeys[that.state.timecodeKey];
@@ -453,7 +455,8 @@ var HisaishiEngine = function(params) {
 		if (this.state.playing) {
 			this.pauseSong();
 		}
-		this.state.audio.currentTime 	= 0;
+		// this.state.audio.currentTime 	= 0;
+		this.state.audio.setCurrentTime(0);
 		this.state.time 				= 0;
 		this.state.timecodeKey 			= 0;
 		
@@ -470,11 +473,11 @@ var HisaishiEngine = function(params) {
 		var newTime = percent * this.state.audio.duration;
 		this.state.audio.currentTime = newTime;
 		this.playSong();
-	}; */	
+	};
 	
 	/* Controls */
 	
-	that.setTimerControl = function() {
+	/* that.setTimerControl = function() {
 		
 		var length = this.state.audio.duration;
 		if (length == NaN) {
@@ -489,9 +492,9 @@ var HisaishiEngine = function(params) {
 		
 		$('.timer', this.params.containers.controls)
 			.text(Math.round(secs) + 's');
-	};
+	}; */
 
-	/* that.setTimerControl = function() {
+	that.setTimerControl = function() {
 		
 		var length = this.state.audio.duration;
 		if (length == NaN) {
@@ -506,7 +509,7 @@ var HisaishiEngine = function(params) {
 		
 		$('.timer', this.params.containers.controls)
 			.text(Math.round(secs) + 's');
-	}; */
+	};
 	
 	that.renderControls = function() {
 		var that = this;
@@ -694,7 +697,7 @@ var HisaishiList = function(params) {
 				},
 				containers: {
 					lyrics:		'#lyrics-container-' 	+ currentTrack,
-					audio:		'#music-container-' 	+ currentTrack,
+					audio:		'#audio-container-' 	+ currentTrack,
 					controls: 	'#controls-container-' 	+ currentTrack
 				},
 				preroll: {
