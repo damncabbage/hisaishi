@@ -14,10 +14,11 @@ CSV.foreach(File.dirname(__FILE__) + "/seeds.csv") do |row|
     song.anime = row[3]
     song.genre = row[4]
     song.language = row[5]
-    song.source_dir = row[6]
-    song.audio_file = row[7]
-    song.lyrics_file = row[8]
-    song.image_file = row[9]
+    song.karaoke = row[6]
+    song.source_dir = row[7]
+    song.audio_file = row[8]
+    song.lyrics_file = row[9]
+    song.image_file = row[10]
     song.save!
   end
   

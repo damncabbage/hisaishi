@@ -7,6 +7,7 @@ class Song
   property :anime,    String
   property :genre,    String
   property :language, String
+  property :karaoke,  String
   property :source_dir,   String
   property :audio_file,   String
   property :lyrics_file,   String
@@ -25,6 +26,7 @@ class Song
       :anime  => anime,
       :genre   => genre,
       :language => language,
+      :karaoke => karaoke,
       :folder  => settings.files + source_dir,
       :lyrics  => lyrics_file,
       :audio   => audio_file,
