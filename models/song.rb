@@ -20,6 +20,7 @@ class Song
       :title   => title,
       :artist  => artist,
       :album   => album,
+      :genre   => genre,
       :folder  => settings.files + source_dir,
       :lyrics  => lyrics_file,
       :audio   => audio_file,
