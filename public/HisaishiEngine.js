@@ -264,6 +264,40 @@ var HisaishiEngine = function(params) {
 	/* Audio */
 	
 	that.loadAudio = function() {
+
+		if (!this.params.src.audio) {
+			throw {
+				type: 		'HisaishiEngineNoAudioSrcException',
+				message:	'No karaoke audio file found.'
+			};
+		}
+		
+		$('audio').bind('stall', function() {
+			var audio = $(this)[0];
+			audio.load();
+			audio.play();
+			audio.pause();
+		});
+		
+		var that = this;
+
+  	this.state.audio = soundManager.createSound({
+      id: 'bgm',
+      url: this.params.src.audio,
+      onload: true,
+      // whileplaying: that.setTimerControl()
+      // other options here..
+    });
+		
+		this.state.audio.load();
+		$(this.params.containers.audio).append(this.state.audio);
+		
+		that.loaded.audio = true;
+		
+		$(that).trigger('checkload');
+	};
+
+	/* that.loadAudio = function() {
 		
 		if (!this.params.src.audio) {
 			throw {
@@ -284,7 +318,7 @@ var HisaishiEngine = function(params) {
 		this.state.audio = document.createElement('audio');
 		this.state.audio.id = 'bgm';
 		this.state.audio.setAttribute('src', this.params.src.audio);
-		
+
 		this.state.audio.addEventListener('load', function() {
 		}, true);
 		
@@ -296,12 +330,81 @@ var HisaishiEngine = function(params) {
 		$(this.params.containers.audio).append(this.state.audio);
 		
 		that.loaded.audio = true;
+		
 		$(that).trigger('checkload');
-	};
+	}; 
 	
 	/* Playback */
 	
 	that.runLoop	= function(timeout) {
+		var that = this;
+		var CheckEvents = function(){
+			var checkTime = that.lyrics.timecodeKeys[that.state.timecodeKey];
+			
+			if (that.state.time >= checkTime) {
+				that.animLyrics(checkTime);
+				that.state.timecodeKey++;
+			}
+			
+			that.state.time += 10;
+			
+			var audioTime = Math.round(that.state.audio.position);
+			if (that.state.time != audioTime) {
+				that.state.time = audioTime;
+				timeout += that.state.time % 10;
+			}
+			
+			if (!!that.state.playing) {
+				that.runLoop();
+			}
+		};
+		
+		this.timer = setTimeout(CheckEvents, timeout);
+	};
+	
+	that.playSong 	= function() {
+		if (!this.state.playing) {
+			that.state.playing = true;
+			this.state.audio.play();
+			that.runLoop(10);
+		}
+	};
+	
+	that.pauseSong 	= function() {
+		if (this.state.playing) {
+			this.state.playing = false;
+			this.state.audio.pause();
+			clearTimeout(this.timer);
+		}
+		else {
+			that.playSong();
+		}
+	};
+	
+	that.stopSong 	= function() {
+		if (this.state.playing) {
+			this.pauseSong();
+		}
+		this.state.audio.setPosition(0);
+		this.state.time 				= 0;
+		this.state.timecodeKey 			= 0;
+		
+		var c = this.classes;
+		$('.line', this.params.containers.lyrics)
+			.hide()
+			.removeClass([c.queued, c.current, c.complete].join(' '))
+			.addClass(c.hidden);
+		$('.' + c.wordHighlight, this.params.containers.lyrics)
+			.removeClass(c.wordHighlight);
+	};
+	
+	that.seekSong 	= function(percent) {
+		var newTime = percent * this.state.audio.duration;
+		this.state.audio.currentTime = newTime;
+		this.playSong();
+	};
+	
+	/*	that.runLoop	= function(timeout) {
 		var that = this;
 		var CheckEvents = function(){
 			var checkTime = that.lyrics.timecodeKeys[that.state.timecodeKey];
@@ -367,11 +470,28 @@ var HisaishiEngine = function(params) {
 		var newTime = percent * this.state.audio.duration;
 		this.state.audio.currentTime = newTime;
 		this.playSong();
-	};
+	}; */	
 	
 	/* Controls */
 	
 	that.setTimerControl = function() {
+		
+		var length = this.state.audio.duration;
+		if (length == NaN) {
+			length = 0;
+		}
+		
+		var secs = this.state.audio.position / 1000;
+		var progress = (secs / length) * 100;
+		
+		$('.song-range', this.params.containers.controls)
+			.attr('value', progress);
+		
+		$('.timer', this.params.containers.controls)
+			.text(Math.round(secs) + 's');
+	};
+
+	/* that.setTimerControl = function() {
 		
 		var length = this.state.audio.duration;
 		if (length == NaN) {
@@ -386,7 +506,7 @@ var HisaishiEngine = function(params) {
 		
 		$('.timer', this.params.containers.controls)
 			.text(Math.round(secs) + 's');
-	};
+	}; */
 	
 	that.renderControls = function() {
 		var that = this;
