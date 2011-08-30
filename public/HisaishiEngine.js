@@ -473,9 +473,11 @@ var HisaishiEngine = function(params) {
 	};
 	
 	that.seekSong 	= function(percent) {
+		/*
 		var newTime = percent * this.state.audio.media.duration;
 		this.state.audio.setCurrentTime(newTime);
 		this.playSong();
+		*/
 	};
 	
 	/* Controls */
@@ -528,17 +530,11 @@ var HisaishiEngine = function(params) {
 			that.stopSong();
 		}).appendTo(this.params.containers.controls);
 		
-		$('<input />', {
-			'type': 	'range',
+		$('<progress />', {
 			'class': 	'song-range',
 			'min':		0,
-			'max':		100
-		}).mousedown( function(e){
-			e.preventDefault();
-			that.pauseSong();
-		}).mouseup( function(e){
-			e.preventDefault();
-			that.seekSong($(this).val() / $(this).attr('max'));
+			'max':		100,
+			'value':	0
 		}).appendTo(this.params.containers.controls);
 		
 		$('<span />', {

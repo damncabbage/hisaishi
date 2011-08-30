@@ -147,7 +147,8 @@ div.details {
 	padding: 10px;
 }
 
-.controls-container a {
+.controls-container a,
+.controls-container progress {
 	color: white;
 	display: inline-block;
 	text-decoration: none;
@@ -155,8 +156,14 @@ div.details {
 
 .controls-container a, 
 .controls-container span, 
+.controls-container progress, 
 .controls-container input {
 	margin: 0 0.5em 0 1px;
+}
+
+.controls-container progress {
+	width: 200px;
+	vertical-align: 50%;
 }
 
 .controls-container input {
