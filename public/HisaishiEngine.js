@@ -31,7 +31,7 @@ var HisaishiEngine = function(params) {
 				word: 	0
 			},
 			transition: {
-				line:	100,
+				line:	200,
 				word:	0
 			},
 			offset: 0,
