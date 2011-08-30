@@ -4,7 +4,9 @@ class Song
   property :title,     String
   property :artist,     String
   property :album,     String
+  property :anime,    String
   property :genre,    String
+  property :language, String
   property :source_dir,   String
   property :audio_file,   String
   property :lyrics_file,   String
@@ -20,7 +22,9 @@ class Song
       :title   => title,
       :artist  => artist,
       :album   => album,
+      :anime  => anime,
       :genre   => genre,
+      :language => language,
       :folder  => settings.files + source_dir,
       :lyrics  => lyrics_file,
       :audio   => audio_file,
