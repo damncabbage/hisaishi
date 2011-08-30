@@ -4,6 +4,7 @@ class Song
   property :title,     String
   property :artist,     String
   property :album,     String
+  property :genre,    String
   property :source_dir,   String
   property :audio_file,   String
   property :lyrics_file,   String
