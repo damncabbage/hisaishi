@@ -11,10 +11,11 @@ var HisaishiEngine = function(params) {
 			timecodeKey:0
 		},
 		lyrics: {
-			lines: {},
-			words: {},
-			timecode: {},
-			timecodeKeys: []
+			numlines: 		0,
+			lines: 			{},
+			words: 			{},
+			timecode: 		{},
+			timecodeKeys: 	[]
 		},
 		classes: {
 			wordHighlight: 	'word-highlight',
@@ -28,6 +29,10 @@ var HisaishiEngine = function(params) {
 				queue: 	0,
 				line: 	0,
 				word: 	0
+			},
+			transition: {
+				line:	100,
+				word:	0
 			},
 			offset: 0,
 			src: {
@@ -64,12 +69,13 @@ var HisaishiEngine = function(params) {
 	/* Lyrics */
 	
 	that.parseLyricsFormat = function(raw, callback) {
-		var re 		= /\[([0-9:]+)\]([^\[]+)/g;
+		var re 		= /\[([0-9:]+)\]([^\[]*)/g;
 		var lines 	= raw.split(/[\r\n]/g);
 		var i 		= 0, 
 			linenum = 0, 
 			partnum = 0,
 			pre     = this.params.preroll,
+			trans	= this.params.transition,
 			line, 
 			parts,
 			time,
@@ -100,6 +106,8 @@ var HisaishiEngine = function(params) {
 			}
 		};
 		
+		/* Handle line & word splitting within first loop */
+		
 		for (var i = 0; i < lines.length; i++) {
 			line = this.util.trim(lines[i]);
 			if (line.length == 0) continue;
@@ -107,48 +115,135 @@ var HisaishiEngine = function(params) {
 			this.lyrics.lines[linenum] = {
 				id:		'lyricsline-' + linenum,
 				words:	[],
-				start:	null
+				start:	null,
+				raw:	line
 			};
 			
 			re.lastIndex = 0;
-			
 			do {
 				parts = re.exec(line);
-				if (!parts || parts.length == 0) break;
+				if (!parts || parts.length == 0) continue;
 				
 				time = this.util.convertTime(parts[1]);
 				
 				this.lyrics.words[partnum] = {
-					id: 	'lyricspart-' + partnum,
-					phrase: parts[2],
-					time:	time
+					id: 		'lyricspart-' + partnum,
+					partnum: 	partnum,
+					phrase: 	parts[2],
+					time:		time
 				};
 				
 				this.lyrics.lines[linenum].words.push(partnum);
 				
 				if (!this.lyrics.lines[linenum].start) {
 					this.lyrics.lines[linenum].start = time;
-					
-					PushPreroll(this.lyrics.lines[linenum].id, time, pre.queue);
-					PushPreroll(this.lyrics.lines[linenum].id, time, pre.line);
-					
-					if (linenum > 0) {
-						PushPreroll(this.lyrics.lines[linenum-1].id, time, pre.line);
-					}
 				}
-				
-				PushPreroll(this.lyrics.words[partnum].id, time, pre.word);
-				if (partnum > 0) {
-					PushPreroll(this.lyrics.words[partnum-1].id, time, pre.word);
-				}
-				
 				partnum++;
 			} while (re.lastIndex < line.length);
+			
 			linenum++;
+			this.lyrics.numlines++;
 		}
+		
+		/* Handle timing within second loop */
+		
+		linenum = 0, partnum = 0;
+		
+		for (var i in this.lyrics.lines) {
+			if (this.lyrics.lines.hasOwnProperty(i)) {
+				var words 		= this.lyrics.lines[i].words,
+					lastWord 	= this.lyrics.words[words[words.length - 1]],
+					linePrompt 	= pre.line,
+					index		= parseInt(i,10),
+					startTime 	= this.lyrics.lines[i].start,
+					endTime		= lastWord.time;
+				
+				/* Add three queue points per line */
+				
+				PushPreroll(this.lyrics.lines[index].id, startTime, pre.queue);
+				
+				if (index > 0 && index < this.lyrics.numlines - 1) {
+					var nextLine 	= this.lyrics.lines[index+1],
+						diff 		= nextLine.start - lastWord.time;
+					if (diff < linePrompt) {
+						linePrompt = diff;
+					}
+				}
+				PushPreroll(this.lyrics.lines[index].id, startTime, linePrompt);
+				PushPreroll(this.lyrics.lines[index].id, endTime);
+				
+				/* Add two queue points per word */
+				
+				for (var j in words) {
+					if (words.hasOwnProperty(j) && j != 'length') {
+						var partnum = words[j];
+						if (!this.lyrics.words[partnum]) continue;
+						
+						var word 	= this.lyrics.words[partnum];
+						PushPreroll(word.id, word.time, pre.word);
+						if (partnum > 0) {
+							PushPreroll(this.lyrics.words[partnum-1].id, word.time, pre.word);
+						}
+					}
+				}
+			}
+		}
+		
+		/*
+		for (var i in this.lyrics.lines) {
+			if (this.lyrics.lines.hasOwnProperty(i)) {
+				re.lastIndex = 0;
+				
+				var line = this.lyrics.lines[i].text;
+				do {
+					parts = re.exec(line);
+					time = this.util.convertTime(parts[1]);
+					
+					this.lyrics.words[partnum] = {
+						id: 	'lyricspart-' + partnum,
+						phrase: parts[2],
+						time:	time
+					};
+					
+					this.lyrics.lines[i].words.push(partnum);
+					
+					if (!this.lyrics.lines[i].start) {
+						this.lyrics.lines[i].start = time;
+						
+						PushPreroll(this.lyrics.lines[i].id, time, pre.queue);
+						
+						var linePrompt = pre.line;
+						
+						if (linenum > 0 && linenum < this.lyrics.lines.length) {
+							diff = this.lyrics.lines[linenum+1].start - this.lyrics.words[partnum].time;
+							if (diff < linePrompt) {
+								diff = linePrompt;
+							}
+						}
+						
+						PushPreroll(this.lyrics.lines[i].id, time, linePrompt);
+						
+						if (linenum > 0) {
+							PushPreroll(this.lyrics.lines[i-1].id, time, pre.line);
+						}
+					}
+					
+					PushPreroll(this.lyrics.words[partnum].id, time, pre.word);
+					if (partnum > 0) {
+						PushPreroll(this.lyrics.words[partnum-1].id, time, pre.word);
+					}
+					
+					partnum++;
+				} while (re.lastIndex < line.length);
+				linenum++;
+			}
+		}
+		*/
+		
 		this.lyrics.timecodeKeys.sort(function(a, b) {
 			return a - b;
 		});
+		
 		callback();
 	};
 	
@@ -219,6 +314,7 @@ var HisaishiEngine = function(params) {
 	that.advanceLine = function(line) {
 		var c = this.classes,
 			p = this.params.preroll,
+			t = this.params.transition,
 			map = {
 				'current': 	'complete',
 				'queued': 	'current',
@@ -234,7 +330,7 @@ var HisaishiEngine = function(params) {
 				obj.removeClass(c[i]).addClass(c[map[i]]);
 				
 				if (!!mapFX[i]) {
-					obj[mapFX[i]](p.line);
+					obj[mapFX[i]](t.line);
 				}
 			}
 		}
@@ -613,6 +709,18 @@ var HisaishiList = function(params) {
 		$('#scaffold-' + currentTrack).show();
 	};
 	
+	that.append = function(newSong) {
+		this.params.tracks.push(newSong);
+		this.init();
+	};
+	
+	that.remove = function(id) {
+		$('#scaffold-' + id).hide(function(){
+			delete this.params.tracks[id];
+			this.init();
+		});
+	};
+	
 	$.extend(true, that, {params: params});
 	
 	that.init = function() {
@@ -621,6 +729,8 @@ var HisaishiList = function(params) {
 				if (this.state.track == null) {
 					this.state.track = i;
 				}
+				
+				if (!!this.params.tracks[i].loaded) continue;
 				
 				var folder = this.params.tracks[i].folder,
 					lyrics = this.params.tracks[i].lyrics,
@@ -632,6 +742,8 @@ var HisaishiList = function(params) {
 				this.params.tracks[i].compiledCover 	= folder + cover;
 				
 				this.scaffold(i);
+				
+				this.params.tracks[i].loaded = true;
 			}
 		}
 		this.setup();

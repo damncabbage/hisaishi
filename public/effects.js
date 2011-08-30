@@ -24,5 +24,5 @@ var hideCursor = function() {
     }
     oldX = newX;
     oldY = newY;
-  })
-}
+  });
+};
