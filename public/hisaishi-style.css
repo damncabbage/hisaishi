@@ -221,6 +221,11 @@ span.timer {
 	margin-bottom: 10px;
 }
 
+.rating-container div.vote-comment a {
+	font-size: 0.8em;
+	float: right;
+}
+
 .rating-container div.vote-comment input {
 	display: block;
 }

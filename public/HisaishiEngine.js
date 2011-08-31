@@ -809,7 +809,7 @@ var HisaishiRate = function(params) {
 			'class': 'vote-no'
 		}),
 		comment = $('<div />', {
-			html: '<p>What was wrong with it?</p><form><textarea></textarea><input type="submit"></form>',
+			html: '<p>What was wrong with it?</p><form><textarea></textarea><a href="#">Cancel</a><input type="submit"></form>',
 			'class': 'vote-comment'
 		});
 		
@@ -835,7 +835,12 @@ var HisaishiRate = function(params) {
 		comment.find('input').mousedown( function(e){
 			e.preventDefault();
 			that.voteNo(textarea.val());
-		})
+		});
+		
+		comment.find('a').mousedown( function(e){
+		  e.preventDefault();
+		  comment.hide();
+		});
 		
 		comment.appendTo(this.params.containers.rating);
 	};
