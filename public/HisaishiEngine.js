@@ -592,7 +592,7 @@ var HisaishiList = function(params) {
 			id: 'scaffold-' + ident,
 			'class': 'hisaishi-scaffold'
 		}),
-		cover = $('<img />', {
+		cover = (track.compiledCover == '') ? '' : $('<img />', {
 			id: 'track-image-' + ident,
 			src: track.compiledCover,
 			'class': 'track-image'
@@ -729,7 +729,7 @@ var HisaishiList = function(params) {
 				
 				this.params.tracks[i].compiledLyrics 	= folder + lyrics;
 				this.params.tracks[i].compiledAudio 	= folder + audio;
-				this.params.tracks[i].compiledCover 	= folder + cover;
+				this.params.tracks[i].compiledCover 	= (cover == '') ? '' : folder + cover;
 				
 				this.scaffold(i);
 				

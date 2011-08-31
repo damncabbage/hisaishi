@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'sinatra' unless defined?(Sinatra)
+require 'active_resource'
 require 'haml'
 require 'sqlite3'
 require 'data_mapper'
