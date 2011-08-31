@@ -729,7 +729,7 @@ var HisaishiList = function(params) {
 				
 				this.params.tracks[i].compiledLyrics 	= folder + lyrics;
 				this.params.tracks[i].compiledAudio 	= folder + audio;
-				this.params.tracks[i].compiledCover 	= (cover == '') ? '' : folder + cover;
+				this.params.tracks[i].compiledCover 	= (cover == null) ? '' : folder + cover;
 				
 				this.scaffold(i);
 				
