@@ -230,6 +230,28 @@ span.timer {
 	font-size: 4em;
 }
 
+/* multipart */
+
+.lyrics-container.multipart {
+	top: 0px;
+	margin-top: 50px;
+}
+.lyrics-container.multipart .multipart-line-group {
+	overflow: hidden;
+}
+
+.lyrics-container.multipart-2-parts .multipart-line-group {
+	height: 50%;
+}
+.lyrics-container.multipart-3-parts .multipart-line-group {
+	height: 33%;
+}
+.lyrics-container.multipart-4-parts .multipart-line-group {
+	height: 25%;
+}
+
+/* controls */
+
 #main-controls {
 	position: absolute;
 	bottom: 0;

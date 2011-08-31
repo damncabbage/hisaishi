@@ -17,7 +17,7 @@ var HisaishiEngine = function(params) {
 			timecode: 		{},
 			timecodeKeys: 	[],
 			groups:			{},
-			hasGroups:		false
+			hasGroups:		1
 		},
 		classes: {
 			wordHighlight: 	'word-highlight',
@@ -148,9 +148,7 @@ var HisaishiEngine = function(params) {
 					this.lyrics.groups[group] = {
 						color: fontparts[1]
 					};
-				}
-				if (!this.lyrics.hasGroups) {
-					this.lyrics.hasGroups = true;
+					this.lyrics.hasGroups++;
 				}
 				
 				line = line.replace(fontparts[0], '');
@@ -199,13 +197,6 @@ var HisaishiEngine = function(params) {
 				/* Add three queue points per line */
 				
 				PushPreroll(this.lyrics.lines[index].id, startTime, pre.queue);
-				/* if (index > 0 && index < this.lyrics.numlines - 1) {
-					var nextLine 	= this.lyrics.lines[index+1],
-						diff 		= nextLine.start - lastWord.time;
-					if (diff < linePrompt) {
-						linePrompt = diff;
-					}
-				} */
 				PushPreroll(this.lyrics.lines[index].id, startTime, linePrompt);
 				PushPreroll(this.lyrics.lines[index].id, endTime);
 				
@@ -260,7 +251,31 @@ var HisaishiEngine = function(params) {
 	};
 	
 	that.renderLyrics = function() {
-		var line, lineData, wordkey, word, wordData;
+		var line, 
+			lineData, 
+			wordkey, 
+			word, 
+			wordData,
+			lc 		= this.params.containers.lyrics;
+		
+		if (this.lyrics.hasGroups > 1) {
+			$(lc).addClass('multipart multipart-' + this.lyrics.hasGroups + '-parts');
+			
+			$('<style />', {
+				type: 	'text/css',
+				scoped: 'scoped',
+			}).text(this.util.renderCSS(this.lyrics.groups))
+			.appendTo(this.params.containers.lyrics);
+			
+			$('<div />', {
+				'class': 'multipart-line-group default-line-group'
+			}).appendTo(this.params.containers.lyrics);
+			for (var i in this.lyrics.groups) {
+				$('<div />', {
+					'class': 'multipart-line-group ' + i + '-line-group'
+				}).appendTo(this.params.containers.lyrics);				
+			}
+		}
 		
 		for (var i in this.lyrics.lines) {
 			if (this.lyrics.lines.hasOwnProperty(i)) {
@@ -290,16 +305,16 @@ var HisaishiEngine = function(params) {
 				
 				line.hide();
 				
-				$(this.params.containers.lyrics).append(line);
+				var target 	= $(lc);
+				
+				if (this.lyrics.hasGroups > 1) {
+					target = $('.default-line-group', lc);
+					if (!!lineData['class']) {
+						target = $('.' + lineData['class'] + '-line-group', lc);
+					}
+				}
+				target.append(line);
 			}
-		}
-		
-		if (this.lyrics.hasGroups) {
-			$('<style />', {
-				type: 	'text/css',
-				scoped: 'scoped',
-			}).text(this.util.renderCSS(this.lyrics.groups))
-			.appendTo(this.params.containers.lyrics);
 		}
 	};
 	
