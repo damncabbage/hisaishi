@@ -245,6 +245,7 @@ span.timer {
 .lyrics-container.multipart {
 	top: 0px;
 	margin-top: 50px;
+	height: 100%;
 }
 .lyrics-container.multipart .multipart-line-group {
 	overflow: hidden;
