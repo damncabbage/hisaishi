@@ -9,7 +9,8 @@ gem 'dm-postgres-adapter', :group => :production
 gem 'dm-sqlite-adapter', :group => :development
 
 gem 'xml-simple'
-gem 'activeresource'
+gem 'activeresource', '3.0.10'
 
 gem 'haml'
 
+gem 'rake'
