@@ -15,7 +15,9 @@ var HisaishiEngine = function(params) {
 			lines: 			{},
 			words: 			{},
 			timecode: 		{},
-			timecodeKeys: 	[]
+			timecodeKeys: 	[],
+			groups:			{},
+			hasGroups:		false
 		},
 		classes: {
 			wordHighlight: 	'word-highlight',
@@ -63,13 +65,28 @@ var HisaishiEngine = function(params) {
 					 (parseInt(timeParts[1], 10) * 1000) + 
 					 (parseInt(timeParts[0], 10) * 60000)
 			return ms;
+		},
+		renderCSS: function(dict) {
+			var css 	= [],
+				value 	= '',
+				paramlist;
+			for (var className in dict) {
+				paramlist = [];
+				for (param in dict[className]) {
+					value = dict[className][param];
+					paramlist.push(param + ': ' + value + ';');
+				}
+				css.push('.' + className + '{' + paramlist.join('') + '}');
+			}
+			return css.join('\n');
 		}
 	};
 	
 	/* Lyrics */
 	
 	that.parseLyricsFormat = function(raw, callback) {
-		var re 		= /\[([0-9:]+)\]([^\[]*)/g;
+		var re 		= /\[([0-9:]+)\]([^\[]*)/g,
+			fontre	= /<FONT COLOR = "(#[0-9A-F]+)">/g;
 		var lines 	= raw.split(/[\r\n]/g);
 		var i 		= 0, 
 			linenum = 0, 
@@ -78,6 +95,7 @@ var HisaishiEngine = function(params) {
 			trans	= this.params.transition,
 			line, 
 			parts,
+			fontparts,
 			time,
 			timePreroll;
 		
@@ -113,11 +131,31 @@ var HisaishiEngine = function(params) {
 			if (line.length == 0) continue;
 			
 			this.lyrics.lines[linenum] = {
-				id:		'lyricsline-' + linenum,
-				words:	[],
-				start:	null,
-				raw:	line
+				id:			'lyricsline-' + linenum,
+				words:		[],
+				start:		null,
+				raw:		line,
+				'class':	''
 			};
+			
+			fontre.lastIndex = 0;
+			fontparts = fontre.exec(line);
+			if (!!fontparts && fontparts.length > 0) {
+				var group = fontparts[1].toLowerCase().replace('#', 'colourgroup-');
+				
+				this.lyrics.lines[linenum]['class'] = group;
+				if (!this.lyrics.groups[group]) {
+					this.lyrics.groups[group] = {
+						color: fontparts[1]
+					};
+				}
+				if (!this.lyrics.hasGroups) {
+					this.lyrics.hasGroups = true;
+				}
+				
+				line = line.replace(fontparts[0], '');
+				this.lyrics.lines[linenum].raw = line;
+			}
 			
 			re.lastIndex = 0;
 			do {
@@ -161,14 +199,13 @@ var HisaishiEngine = function(params) {
 				/* Add three queue points per line */
 				
 				PushPreroll(this.lyrics.lines[index].id, startTime, pre.queue);
-				
-				if (index > 0 && index < this.lyrics.numlines - 1) {
+				/* if (index > 0 && index < this.lyrics.numlines - 1) {
 					var nextLine 	= this.lyrics.lines[index+1],
 						diff 		= nextLine.start - lastWord.time;
 					if (diff < linePrompt) {
 						linePrompt = diff;
 					}
-				}
+				} */
 				PushPreroll(this.lyrics.lines[index].id, startTime, linePrompt);
 				PushPreroll(this.lyrics.lines[index].id, endTime);
 				
@@ -188,57 +225,6 @@ var HisaishiEngine = function(params) {
 				}
 			}
 		}
-		
-		/*
-		for (var i in this.lyrics.lines) {
-			if (this.lyrics.lines.hasOwnProperty(i)) {
-				re.lastIndex = 0;
-				
-				var line = this.lyrics.lines[i].text;
-				do {
-					parts = re.exec(line);
-					time = this.util.convertTime(parts[1]);
-					
-					this.lyrics.words[partnum] = {
-						id: 	'lyricspart-' + partnum,
-						phrase: parts[2],
-						time:	time
-					};
-					
-					this.lyrics.lines[i].words.push(partnum);
-					
-					if (!this.lyrics.lines[i].start) {
-						this.lyrics.lines[i].start = time;
-						
-						PushPreroll(this.lyrics.lines[i].id, time, pre.queue);
-						
-						var linePrompt = pre.line;
-						
-						if (linenum > 0 && linenum < this.lyrics.lines.length) {
-							diff = this.lyrics.lines[linenum+1].start - this.lyrics.words[partnum].time;
-							if (diff < linePrompt) {
-								diff = linePrompt;
-							}
-						}
-						
-						PushPreroll(this.lyrics.lines[i].id, time, linePrompt);
-						
-						if (linenum > 0) {
-							PushPreroll(this.lyrics.lines[i-1].id, time, pre.line);
-						}
-					}
-					
-					PushPreroll(this.lyrics.words[partnum].id, time, pre.word);
-					if (partnum > 0) {
-						PushPreroll(this.lyrics.words[partnum-1].id, time, pre.word);
-					}
-					
-					partnum++;
-				} while (re.lastIndex < line.length);
-				linenum++;
-			}
-		}
-		*/
 		
 		this.lyrics.timecodeKeys.sort(function(a, b) {
 			return a - b;
@@ -283,7 +269,7 @@ var HisaishiEngine = function(params) {
 				
 				line = $('<div />', {
 					id: 		lineData.id,
-					'class':	'line ' + this.classes.hidden
+					'class':	['line', this.classes.hidden, lineData['class']].join(' ')
 				});
 				
 				for (var j in lineData.words) {
@@ -306,6 +292,14 @@ var HisaishiEngine = function(params) {
 				
 				$(this.params.containers.lyrics).append(line);
 			}
+		}
+		
+		if (this.lyrics.hasGroups) {
+			$('<style />', {
+				type: 	'text/css',
+				scoped: 'scoped',
+			}).text(this.util.renderCSS(this.lyrics.groups))
+			.appendTo(this.params.containers.lyrics);
 		}
 	};
 	
@@ -538,7 +532,7 @@ var HisaishiEngine = function(params) {
 		}).appendTo(this.params.containers.controls);
 		
 		$('<span />', {
-			text: 		'0',
+			text: 		'0m 0s',
 			'class':	'timer'
 		}).appendTo(this.params.containers.controls);
 	};
