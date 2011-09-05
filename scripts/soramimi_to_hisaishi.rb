@@ -23,6 +23,14 @@ class HisaishiSong
   attr_accessor :lyrics_file
   attr_accessor :image_file
 
+  def lyrics_file
+    title + ".txt" # TODO
+  end
+
+  def audio_file
+    title + ".mp3" # TODO
+  end
+
   class << self
     def to_csv(collection)
       result = ""
@@ -35,14 +43,14 @@ class HisaishiSong
 end
 
 class SoramimiSong
-  attr_accessor :audio_filename
+  attr_accessor :audio_file
 
-  def initializer(audio_filename)
-    self.audio_filename = audio_filename
+  def initialize(audio_file)
+    self.audio_file = audio_file
   end
 
-  def lyrics_filename
-    audio_filename.sub(/.mp3$/, '.txt')
+  def lyrics_file
+    audio_file.sub(/.mp3$/, '.txt')
   end
   def title
     "Dummy"
@@ -79,6 +87,7 @@ source_path = normalise_directory(ARGV[0])
 target_path = normalise_directory(ARGV[1])
 
 songs = []
+file_ops = []
 
 Dir[File.join(source_path, "**", "*.mp3")].each do |sora_audio_file|
   sora_song = SoramimiSong.new(sora_audio_file)
@@ -86,7 +95,16 @@ Dir[File.join(source_path, "**", "*.mp3")].each do |sora_audio_file|
   new_song = HisaishiSong.new
   new_song.title = sora_song.title
 
+  file_ops << [sora_song.audio_file,  File.join(target_path, new_song.audio_file)] 
+  file_ops << [sora_song.lyrics_file, File.join(target_path, new_song.lyrics_file)] 
+
   songs << new_song
+end
+
+file_ops.each do |op|
+  from, to = op[0], op[1]
+  puts "Copying from '#{from}' to '#{to}'..." # TODO: Use STDERR for reporting.
+  # TODO
 end
 
 puts HisaishiSong.to_csv(songs)
