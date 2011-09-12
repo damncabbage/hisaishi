@@ -795,7 +795,7 @@ var HisaishiRate = function(params) {
 	};
 	
 	that.voteSkip = function() {
-		this.voteCallback('dunno', null);
+		this.voteCallback('unknown', null);
 	};
 	
 	/* Controls */
@@ -811,7 +811,7 @@ var HisaishiRate = function(params) {
 			href: '#', 
 			'class': 'vote-yes'
 		}), 
-		dunno = $('<a />', {
+		unknown = $('<a />', {
 			html: '<img src="/dunno.png" />',
 			title: 'I don\'t know this song, skip to another one.',
 			href: '#', 
@@ -835,7 +835,7 @@ var HisaishiRate = function(params) {
 			that.voteYes();
 		}).appendTo(this.params.containers.rating);
 		
-		dunno.mousedown( function(e){
+		unknown.mousedown( function(e){
 			e.preventDefault();
 			that.voteSkip();
 		}).appendTo(this.params.containers.rating);

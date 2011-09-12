@@ -9,14 +9,14 @@ class Song
   property :origin_medium,    String
   property :genre,    String
   property :language, String
-  property :karaoke,  Enum[ :true, :false, :dunno ], :default => :dunno
+  property :karaoke,  Enum[ :true, :false, :unknown ], :default => :unknown
   property :source_dir,   String
   property :audio_file,   String
   property :lyrics_file,   String
   property :image_file,   String
   property :yes,      Integer,   :default => 0
   property :no,      Integer,   :default => 0
-  property :dunno,      Integer,   :default => 0  
+  property :unknown,      Integer,   :default => 0  
   
   def json
     song_data = []
@@ -44,9 +44,9 @@ class Song
     elsif vote == 'no'
       vote_int = 0
       self.no = self.no + 1
-    elsif vote == 'dunno'
+    elsif vote == 'unknown'
       vote_int = -1
-      self.dunno = self.dunno + 1
+      self.unknown = self.unknown + 1
     end
     
     self.save!
