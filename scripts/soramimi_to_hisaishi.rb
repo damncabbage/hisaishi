@@ -101,17 +101,19 @@ module Hisaishi
       end
 
       def title
-        matches = stem.match(/_([^_]+)$/)
-        if matches
-          # Before returning, remove "[Foobar Baz]", "(Karaoke)",
-          # "(Sakamoto ArtistName)" and "Artist Name - " because
-          # some song titles are stuffed and/or have other things
-          # mixed in.
-          matches[1].sub(/\[[^\]]+\]/, '')
-                    .sub(/\([^)]+\)/i, '')
-                    .sub(/^[^-]+- /i, '')
-                    .strip
-        end
+        tmp_title = stem
+
+        matches   = tmp_title.match(/_([^_]+)$/)
+        tmp_title = matches[1] if matches
+ 
+        # Remove "[Foobar Baz]", "(Karaoke)",
+        # "(Sakamoto ArtistName)" and "Artist Name - ", because
+        # some song titles are stuffed and/or have other things
+        # mixed in.
+        tmp_title.sub(/\[[^\]]+\]/, '')
+                 .gsub(/\([^)]+\)/i, '') # Shows up multiple times, eg. "(Artist Name) (Karaoke)"
+                 .sub(/^[^-]+- /i, '')
+                 .strip
       end
 
       def series
@@ -147,7 +149,7 @@ module Hisaishi
         #   - "FLOW!" picked up by self.title
         #   - "Awesome Guy" picked up by the code below
         stem.scan(/\(([^)]+)\)/i).each do |m|
-          artist = m[0] unless m[0].match(/(Karaoke|Original)/)
+          artist = m[0] unless m[0].match(/(Karaoke|Original|Vocal)/)
         end
         return artist if artist
 
