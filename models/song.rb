@@ -9,7 +9,7 @@ class Song
   property :origin_medium,    String
   property :genre,    String
   property :language, String
-  property :karaoke,  Boolean
+  property :karaoke,  Enum[ :true, :false, :dunno ], :default => :dunno
   property :source_dir,   String
   property :audio_file,   String
   property :lyrics_file,   String
