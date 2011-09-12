@@ -4,10 +4,12 @@ class Song
   property :title,     String
   property :artist,     String
   property :album,     String
-  property :anime,    String
+  property :origin_title,    String
+  property :origin_type,    String
+  property :origin_medium,    String
   property :genre,    String
   property :language, String
-  property :karaoke,  String
+  property :karaoke,  Boolean
   property :source_dir,   String
   property :audio_file,   String
   property :lyrics_file,   String

@@ -64,7 +64,6 @@ ol#hisaishi-list {
 	padding: 0;
 	margin: 0;
 	list-style: 0;
-	z-index: 999;
 	background: #383838;
 }
 
@@ -120,7 +119,6 @@ div.details {
 
 .hisaishi-scaffold img.track-image {
 	position: absolute;
-	z-index: 1;
 	width: 100%;
 }
 
@@ -128,7 +126,6 @@ div.details {
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index: 0;
 }
 
 .audio-container div.mejs-controls {
@@ -142,7 +139,6 @@ div.details {
 	background: rgba(0,0,0,0.5);
 	height: 50px;
 	width: 100%;
-	z-index: 2;
 	/* display: none; */
 }
 
@@ -199,7 +195,6 @@ span.timer {
 	position: absolute;
 	top: 150%;
 	right: 1%;
-	z-index: 3000;
 	background: rgba(0,0,0,0.8);
 	padding: 10px;	
 }
@@ -235,7 +230,6 @@ span.timer {
 	top: 40%;
 	left: 0;
 	width: 100%;
-	z-index: 1000;
 	text-align: center;
 	font-size: 4em;
 }
@@ -268,7 +262,6 @@ span.timer {
 	bottom: 0;
 	right: 0;
 	padding: 10px;
-	z-index: 1000;
 }
 #main-controls a {
 	color: white;
