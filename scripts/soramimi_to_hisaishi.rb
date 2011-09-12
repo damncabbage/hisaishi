@@ -9,6 +9,7 @@
 #
 
 require 'pp'
+require 'csv'
 
 # TODO: Move this off to lib/hisaishi/import/
 module Hisaishi
@@ -35,29 +36,54 @@ module Hisaishi
         self.base_dir = base_dir
       end
 
-      # eg. "/jp/Bleach/FLOW!/Bleach - FLOW! (Karaoke).mp3"
-      def file_path_template(ext)
-        origin_or_artist = (origin_title ? origin_title : artist)
-        karaoke_suffix = " (Karaoke)" if karaoke
-        File.join(language, origin_or_artist, title, "#{origin_or_artist} - #{title}#{karaoke_suffix}.#{ext}")
+      # eg. "jp/Bleach/FLOW!/"
+      def source_dir
+        # Our directory format requires a hanging '/'.
+        File.join(language, origin_or_artist, title) + File::SEPARATOR
       end
 
       def lyrics_file
-        file_path_template('txt')
+        filename_template('txt')
       end
 
       def audio_file
-        file_path_template('mp3')
+        filename_template('mp3')
       end
 
       class << self
         def to_csv(collection)
-          result = ""
-          collection.each do |song|
-            result << song.title + "\n"
+          csv_string = CSV.generate do |csv|
+            headers = ['title', 'artist', 'album', 'origin_title', 'origin_type',
+                       'origin_medium', 'genre', 'language', 'karaoke', 'source_dir',
+                       'audio_file', 'lyrics_file', 'image_file']
+            csv << headers
+            collection.each do |song|
+              row = []
+              headers.each do |field|
+                row << case field
+                       when 'karaoke' then (song.karaoke === nil ? "unknown" : song.karaoke.to_s)
+                       else song.send(field)
+                       end
+              end
+              csv << row
+            end
           end
-          result
+
+          # Hand the blob back to the caller for writing.
+          csv_string
         end
+      end
+
+      protected
+
+      # eg. "Bleach - FLOW! (Karaoke).mp3"
+      def filename_template(ext)
+        karaoke_suffix = " (Karaoke)" if karaoke
+        "#{origin_or_artist} - #{title}#{karaoke_suffix}.#{ext}"
+      end
+
+      def origin_or_artist
+        (origin_title ? origin_title : artist)
       end
     end
 
@@ -157,13 +183,14 @@ module Hisaishi
       def initialize(src, dest)
         self.src = src
         self.dest = dest
-        @utils = FileUtils::DryRun
+        @utils = FileUtils
       end
       def to_s
         "Copying '#{src}' => '#{dest}'"
       end
       def run
         @utils.mkdir_p(File.dirname(dest))
+        @utils.touch(src) unless File.exists?(src) 
         @utils.cp(src, dest)
       end
     end
@@ -211,8 +238,8 @@ Dir[File.join(source_path, "**", "*.mp3")].each do |sora_audio_file_absolute|
   new_song.language     = sora_song.language
   new_song.karaoke      = sora_song.karaoke
 
-  file_ops << CopyOperation.new(File.join(source_path, sora_song.audio_file),  File.join(target_path, new_song.audio_file))
-  file_ops << CopyOperation.new(File.join(source_path, sora_song.lyrics_file), File.join(target_path, new_song.lyrics_file))
+  file_ops << CopyOperation.new(File.join(source_path, sora_song.audio_file),  File.join(target_path, new_song.source_dir + new_song.audio_file))
+  file_ops << CopyOperation.new(File.join(source_path, sora_song.lyrics_file), File.join(target_path, new_song.source_dir + new_song.lyrics_file))
 
   songs << new_song
 end
@@ -222,4 +249,6 @@ file_ops.each do |op|
   op.run
 end
 
-#puts HisaishiSong.to_csv(songs)
+File.open(File.join(target_path, "seeds.#{Time.now.strftime('%Y%m%d-%H%M')}.csv"), 'w') do |f|
+  f.write HisaishiSong.to_csv(songs)
+end
