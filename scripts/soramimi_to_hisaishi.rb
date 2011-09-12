@@ -20,7 +20,9 @@ module Hisaishi
       attr_accessor :title
       attr_accessor :artist
       attr_accessor :album
-      attr_accessor :series
+      attr_accessor :origin_title
+      attr_accessor :origin_type
+      attr_accessor :origin_medium
       attr_accessor :genre
       attr_accessor :language
       attr_accessor :karaoke
@@ -33,9 +35,11 @@ module Hisaishi
         self.base_dir = base_dir
       end
 
+      # eg. "/jp/Bleach/FLOW!/Bleach - FLOW! (Karaoke).mp3"
       def file_path_template(ext)
-        series_or_artist = (series ? series : artist)
-        File.join(language, series_or_artist, title + '.' + ext)
+        origin_or_artist = (origin_title ? origin_title : artist)
+        karaoke_suffix = " (Karaoke)" if karaoke
+        File.join(language, origin_or_artist, title, "#{origin_or_artist} - #{title}#{karaoke_suffix}.#{ext}")
       end
 
       def lyrics_file
@@ -122,7 +126,7 @@ module Hisaishi
         return artist if artist
 
         # Second attempt "Artist Name - Song Title"
-        matches = stem.match(/^[^_]+_(?:\[[^\]]+\]) ([^-]+)-/i)
+        matches = stem.match(/^[^_]+_(?:\[[^\]]+\] )?([^-]+)-/i)
         return matches[1].strip if matches
         
         # Okay, neither worked, just bail if we've already got the series info.
@@ -200,11 +204,12 @@ Dir[File.join(source_path, "**", "*.mp3")].each do |sora_audio_file_absolute|
 
   new_song = HisaishiSong.new(target_path)
 
-  new_song.title    = sora_song.title
-  new_song.artist   = sora_song.artist
-  new_song.series   = sora_song.series
-  new_song.language = sora_song.language
-  new_song.karaoke  = sora_song.karaoke
+  new_song.title        = sora_song.title
+  new_song.artist       = sora_song.artist
+  new_song.origin_title = sora_song.series
+  new_song.origin_type  = 'anime' if (sora_song.series && sora_song.language == 'jp') # Hey, it's a hack.
+  new_song.language     = sora_song.language
+  new_song.karaoke      = sora_song.karaoke
 
   file_ops << CopyOperation.new(File.join(source_path, sora_song.audio_file),  File.join(target_path, new_song.audio_file))
   file_ops << CopyOperation.new(File.join(source_path, sora_song.lyrics_file), File.join(target_path, new_song.lyrics_file))
