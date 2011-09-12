@@ -149,7 +149,7 @@ module Hisaishi
         #   - "FLOW!" picked up by self.title
         #   - "Awesome Guy" picked up by the code below
         stem.scan(/\(([^)]+)\)/i).each do |m|
-          artist = m[0] unless m[0].match(/(Karaoke|Original|Vocal)/)
+          artist = m[0] unless m[0].match(/(Karaoke|Original|Vocal)/i)
         end
         return artist if artist
 
