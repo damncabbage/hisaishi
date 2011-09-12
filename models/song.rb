@@ -25,14 +25,16 @@ class Song
       :title   => title,
       :artist  => artist,
       :album   => album,
-      :anime  => anime,
-      :genre   => genre,
+      :origin_title  => origin_title,
+      :origin_type   => origin_type,
+      :origin_medium => origin_medium,
+      :genre    => genre,
       :language => language,
-      :karaoke => karaoke,
-      :folder  => settings.files + source_dir,
-      :lyrics  => lyrics_file,
-      :audio   => audio_file,
-      :cover   => image_file
+      :karaoke  => karaoke,
+      :folder   => settings.files + source_dir,
+      :lyrics   => lyrics_file,
+      :audio    => audio_file,
+      :cover    => image_file
     }
     return song_data.to_json
   end
