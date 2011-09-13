@@ -158,7 +158,7 @@ var HisaishiEngine = function(params) {
 			re.lastIndex = 0;
 			do {
 				parts = re.exec(line);
-				if (!parts || parts.length == 0) continue;
+				if (!parts || parts.length == 0) break;
 				
 				time = this.util.convertTime(parts[1]);
 				
