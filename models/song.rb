@@ -1,19 +1,19 @@
 class Song
   include DataMapper::Resource
   property :id,      Serial
-  property :title,     String
-  property :artist,     String
-  property :album,     String
-  property :origin_title,    String
-  property :origin_type,    String
-  property :origin_medium,    String
-  property :genre,    String
-  property :language, String
+  property :title,     Text
+  property :artist,     Text
+  property :album,     Text
+  property :origin_title,    Text
+  property :origin_type,    Text
+  property :origin_medium,    Text
+  property :genre,    Text
+  property :language, Text
   property :karaoke,  Enum[ :true, :false, :unknown ], :default => :unknown
-  property :source_dir,   String
-  property :audio_file,   String
-  property :lyrics_file,   String
-  property :image_file,   String
+  property :source_dir,   Text
+  property :audio_file,   Text
+  property :lyrics_file,   Text
+  property :image_file,   Text
   property :yes,      Integer,   :default => 0
   property :no,      Integer,   :default => 0
   property :unknown,      Integer,   :default => 0  
@@ -25,13 +25,15 @@ class Song
       :title   => title,
       :artist  => artist,
       :album   => album,
-      :anime  => anime,
-      :genre   => genre,
+      :origin_title  => origin_title,
+      :origin_medium   => origin_medium,
+      :origin_type => origin_type,
+      :genre => genre,
       :language => language,
       :karaoke => karaoke,
       :folder  => settings.files + source_dir,
-      :lyrics  => lyrics_file,
       :audio   => audio_file,
+      :lyrics  => lyrics_file,
       :cover   => image_file
     }
     return song_data.to_json
