@@ -14,6 +14,18 @@ get '/' do
   end
 end
 
+get '/song/:song_id' do
+  redirect '/login' unless is_logged_in
+  
+  song = Song.get(song_id)
+
+  if song
+    haml :song, :locals => { :song_json => song.json, :user => session[:username] }
+  else
+    haml :no_song
+  end
+end
+
 post '/song/:song_id/vote' do
   authenticate
   
