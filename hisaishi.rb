@@ -58,7 +58,7 @@ end
 get '/proxy' do
   url = params[:url]
   puts 'The URL was: ' + url
-  open(URI.encode(url.gsub('[', '%5B').gsub(']', '%5D'))).read
+  open(URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')).read
 end
 
 def authenticate
