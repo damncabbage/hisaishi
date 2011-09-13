@@ -17,7 +17,7 @@ end
 get '/song/:song_id' do
   redirect '/login' unless is_logged_in
   
-  song = song_by_id(params[:song_id])
+  song = Song.get(params[:song_id])
 
   if song
     haml :song, :locals => { :song_json => song.json, :user => session[:username] }
@@ -29,7 +29,7 @@ end
 post '/song/:song_id/vote' do
   authenticate
   
-  song = song_by_id(params[:song_id])
+  song = Song.get(params[:song_id])
   song.vote(params[:vote], params[:comment], session)
 end
 
@@ -83,10 +83,6 @@ def is_logged_in
   end
   
   return false
-end
-
-def song_by_id(id)
-  return Song.get(id)
 end
 
 def rand_song
