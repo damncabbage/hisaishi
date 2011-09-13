@@ -36,10 +36,10 @@ module Hisaishi
         self.base_dir = base_dir
       end
 
-      # eg. "jp/Bleach/FLOW!/"
+      # eg. "Bleach/FLOW!/"
       def source_dir
         # Our directory format requires a hanging '/'.
-        File.join(language, origin_or_artist, title) + File::SEPARATOR
+        File.join(origin_or_artist, title) + File::SEPARATOR
       end
 
       def lyrics_file
@@ -76,10 +76,10 @@ module Hisaishi
 
       protected
 
-      # eg. "Bleach - FLOW! (Karaoke).mp3"
+      # eg. "Bleach - FLOW! (Karaoke) [ja].mp3"
       def filename_template(ext)
         karaoke_suffix = " (Karaoke)" if karaoke
-        "#{origin_or_artist} - #{title}#{karaoke_suffix}.#{ext}"
+        "#{origin_or_artist} - #{title}#{karaoke_suffix} [#{language}].#{ext}"
       end
 
       def origin_or_artist
@@ -169,7 +169,7 @@ module Hisaishi
         # Return Japanese unless the file path starts with "English/..."
         # (We suck, this is a hack, etc.)
         matches = audio_file.match(/^English/i)
-        matches ? "en" : "jp"
+        matches ? "en" : "ja"
       end
 
       protected
