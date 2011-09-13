@@ -6,6 +6,7 @@ require 'sqlite3'
 require 'data_mapper'
 require 'dm-ar-finders'
 require 'open-uri'
+require 'cgi'
 
 # Change these depending on your settings.
 

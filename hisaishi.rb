@@ -58,7 +58,7 @@ end
 get '/proxy' do
   url = params[:url]
   puts 'The URL was: ' + url
-  open(URI.encode(url)).read
+  open(CGI.escape(url)).read
 end
 
 def authenticate
