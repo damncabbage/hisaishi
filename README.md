@@ -16,8 +16,8 @@ git clone git://github.com/smashcon/hisaishi.git  # Warning: read-only.
 cd hisaishi
 
 bundle install
-alias be="bundle exec" # If you don't want to use this alias, just replace all the 'be's in this code block with 'bundle exec'
-be rake hisaishi:install # Sets up config/environments.rb
+alias be="bundle exec"    # If you don't want this alias, just replace all the 'be's in this code block with 'bundle exec'
+be rake hisaishi:install  # Sets up config/environments.rb
 be rake db:create
 
 # Optional:
@@ -36,4 +36,4 @@ Caveats
 
 Hisaishi was developed for internal use. We wanted to open source it so that people could see what we were up to but there are elements of it that are still pretty tightly tied to our needs at the moment. (This is why there's voting and why we have it coupled with Basecamp's authentication API.)
 
-We haven't yet had time to split out the authentication into a Warden strategy yet. Ignoring the `set :basecamp_domain` directive in the config files, however, disables the login entirely. In that case, the username is assumed to 'guest'.
+We haven't had time to split out the authentication into a Warden strategy yet. Ignoring the `set :basecamp_domain` directive in the config files, however, disables the login entirely. In that case, the username is assumed to 'guest'.
