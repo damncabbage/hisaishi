@@ -1,11 +1,13 @@
-= Hisaishi
+Hisaishi
+========
 
 It's for showing Karaoke on the web.
 
 (Accepts [Soramimi Karaoke](http://soramimi.nl/) song timestamp formats.)
 
 
-== Installation
+Installation
+------------
 
 ```bash
 git clone git://github.com/smashcon/hisaishi.git  # Warning: read-only.
@@ -27,7 +29,8 @@ be ruby hisaishi.rb
 Now go and open http://localhost:4567/ in your browser and sample the *PHAT BEATS*.
 
 
-== Caveats
+Caveats
+-------
 
 Hisaishi is pretty heavily coupled with Basecamp's authentication API; this is a hacky internal project and haven't yet had time to split out the authentication into a Warden strategy yet.
 
