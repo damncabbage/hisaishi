@@ -42,7 +42,8 @@ end
 
 get '/login' do
   redirect '/' if is_logged_in
-  
+  session[:intended_url] ||= request.referer
+
   haml :login
 end
 
@@ -56,14 +57,14 @@ post '/login' do
   end
 
   if is_logged_in
-    redirect '/'
+    redirect session.delete(:intended_url) || '/'
   else
     redirect '/login'
   end
 end
 
 get '/logout' do
-  session[:username] = nil
+  session.clear
   redirect '/login'
 end
 
