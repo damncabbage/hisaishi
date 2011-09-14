@@ -39,15 +39,12 @@ class Song
     return song_data.to_json
   end
   
-  def vote(vote, comment, session)
+  def vote(vote, reasons, session)
     if vote == 'yes'
-      vote_int = 1
       self.yes = self.yes + 1
     elsif vote == 'no'
-      vote_int = 0
       self.no = self.no + 1
     elsif vote == 'unknown'
-      vote_int = -1
       self.unknown = self.unknown + 1
     end
     
@@ -56,8 +53,17 @@ class Song
     vote = Vote.create(
       :user => session[:username],
       :song_id => self.id,
-      :vote => vote_int,
-      :comment => comment
+      :vote => vote
     )
+    
+    # I'm expecting that reasons is an array like this: [0 => { 'type' => ''mistimed', 'comment' => 'The lyrics are mistimed.' }, 1 => { 'type' => 'misspelt', 'At the 3 minute mark the spelling is wrong.'} ]
+    
+    reasons.each do |reason|
+      vote.reasons.create(
+        :type => reason['type'],
+        :comment => reason['comment']
+      )
+    end
+
   end  
 end
