@@ -30,7 +30,7 @@ post '/song/:song_id/vote' do
   authenticate
   
   song = Song.get(params[:song_id])
-  song.vote(params[:vote], params[:comment], session)
+  song.vote(params[:vote], params[:reasons], session)
 end
 
 get '/list-songs' do
