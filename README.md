@@ -37,3 +37,8 @@ Caveats
 Hisaishi was developed for internal use. We wanted to open source it so that people could see what we were up to but there are elements of it that are still pretty tightly tied to our needs at the moment. (This is why there's voting and why we have it coupled with Basecamp's authentication API.)
 
 We haven't had time to split out the authentication into a Warden strategy yet. Ignoring the `set :basecamp_domain` directive in the config files, however, disables the login entirely. In that case, the username is assumed to 'guest'.
+
+Licence
+-------
+
+Hisaishi is copyright 2011 Geoffrey Roberts, Robert Howard and Michael Camilleri. It is distributed under an [MIT Licence](http://en.wikipedia.org/wiki/MIT_License).
