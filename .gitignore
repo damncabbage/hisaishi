@@ -3,10 +3,13 @@
 vendor/bundler
 
 # Seeding files
-seeds.csv
+data/seeds.csv
 
 # Music files
 public/music
+
+# Generated configs
+config/environments.rb
 
 # The usual suspects
 Thumbs.db

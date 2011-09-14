@@ -8,31 +8,22 @@ require 'dm-ar-finders'
 require 'open-uri'
 require 'cgi'
 
-# Change these depending on your settings.
-
-configure do
-  set :basecamp_domain, 'smashconvention'
-end
-
-configure :development do
-  set :files, 'http://localhost:4567/music/'
-end
-
-configure :production do
-  set :files, 'http://allthethings.smash.org.au/karaoke/'
-end
-
-# No need to change anything below this point.
-
 configure do
   enable :sessions
-  
-  # Load models.
-  $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/models")
-  Dir.glob("#{File.dirname(__FILE__)}/models/*.rb") { |models| require File.basename(models, '.*') }
-  
-  # Load plugins.
-  Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
-
-  DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/data/hisaishi.sqlite")
+  set :basecamp_domain, ENV['BASECAMP_DOMAIN']
+  set :files,        ENV['HISAISHI_FILES'] || "http://localhost:4567/music/"
+  set :database_url, ENV['DATABASE_URL']   || "sqlite3://#{File.expand_path('data/hisaishi.sqlite', File.dirname(__FILE__))}"
 end
+
+# Per-environment configs; use 'rake hisaishi:install' to create this with defaults.
+environments_config = File.expand_path('config/environments.rb', File.dirname(__FILE__))
+require environments_config if File.exists?(environments_config)
+
+# Load models.
+$LOAD_PATH.unshift("#{File.dirname(__FILE__)}/models")
+Dir.glob("#{File.dirname(__FILE__)}/models/*.rb") { |models| require File.basename(models, '.*') }
+
+# Load plugins (and step around /vendor/bundler).
+Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
+DataMapper.setup(:default, settings.database_url)
+

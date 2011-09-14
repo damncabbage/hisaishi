@@ -1,5 +1,5 @@
 require 'rubygems'
-require File.join(File.dirname(__FILE__), 'environment')
+require File.expand_path('environment.rb', File.dirname(__FILE__))
 
 namespace :db do
   desc 'Create the databases and, if they exist, clear the data in them.'
@@ -9,8 +9,36 @@ namespace :db do
   end
 
   desc 'Load the seed data from data/seeds.rb.'
-  task :seed  do
+  task :seed do
     seed_file = "./data/seeds.rb"
     load(seed_file) if File.exist?(seed_file)
+  end
+end
+
+namespace :hisaishi do
+  desc 'Generate the installation-specific config file.'
+  task :install do
+    template = File.expand_path('tasks/templates/environments.rb', File.dirname(__FILE__))
+    config   = File.expand_path('config/environments.rb', File.dirname(__FILE__))
+
+    raise "The environments.rb config already exists!" if File.exists?(config)
+    cp template, config, :verbose => true
+  end
+
+  desc "Set up an example song and seed file."
+  task :example do
+    base_path      = File.realdirpath(File.dirname(__FILE__))
+    music_path    = File.join(base_path, 'public', 'music')
+    examples_path = File.join(base_path, 'tasks', 'examples')
+
+    puts "Setting up example music and lyrics."
+    mkdir music_path
+    cp File.join(examples_path, 'Jeris - Grease Man in a Jam.mp3'), music_path
+    cp File.join(examples_path, 'Jeris - Grease Man in a Jam.txt'), music_path
+
+    puts "Setting up seeds.csv"
+    cp File.join(examples_path, 'seeds.csv'), File.join(base_path, 'data')
+
+    puts "Done! Next, run 'bundle exec rake db:seed'."
   end
 end

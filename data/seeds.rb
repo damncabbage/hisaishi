@@ -2,9 +2,8 @@
 # The data can then be loaded with the rake db:seed
 
 require 'csv'
-require 'pp'
 
-seeds_path = File.dirname(__FILE__) + "/seeds.csv"
+seeds_path = File.expand_path('seeds.csv', File.dirname(__FILE__))
 
 CSV.foreach(seeds_path, :headers => :first_row) do |row|
   song = Song.new

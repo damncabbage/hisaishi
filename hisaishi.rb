@@ -1,6 +1,9 @@
 require 'rubygems'
 require 'sinatra'
-require File.join(File.dirname(__FILE__), 'environment')
+
+# Pulls in settings and required gems.
+require File.expand_path('environment.rb', File.dirname(__FILE__))
+
 
 get '/' do
   redirect '/login' unless is_logged_in
@@ -79,11 +82,10 @@ def authenticate
 end
 
 def is_logged_in
-  if session.has_key?(:username)
-    return (x ||= session[:username]) ? true : false
+  unless settings.basecamp_domain
+    return (session[:username] = 'guest')
   end
-  
-  return false
+  session[:username] # Nil if not set, otherwise truthy.
 end
 
 def rand_song
