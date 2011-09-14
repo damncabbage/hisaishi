@@ -2,7 +2,8 @@ class Vote
   include DataMapper::Resource
   property :vote_id,    Serial
   property :user,      String
+  property :vote,      Enum[ :yes, :no, :unknown ], :default => :unknown
   property :song_id,    Integer
-  property :vote,      Integer
-  property :comment,  String
+  
+  has n, :reasons
 end
