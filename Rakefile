@@ -6,7 +6,7 @@ namespace :db do
   task :create do
     Song.auto_migrate!
     Vote.auto_migrate!
-    Reasons.auto_migrate!
+    Reason.auto_migrate!
   end
 
   desc 'Load the seed data from data/seeds.rb.'
