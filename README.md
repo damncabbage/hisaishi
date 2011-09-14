@@ -41,4 +41,4 @@ We haven't had time to split out the authentication into a Warden strategy yet. 
 Licence
 -------
 
-Hisaishi is &copy; 2011 Geoffrey Roberts, Robert Howard and Michael Camilleri. It is distributed under an [MIT Licence](http://en.wikipedia.org/wiki/MIT_License).
+&copy; 2011 Geoffrey Roberts, Robert Howard and Michael Camilleri. Hisaishi is distributed under an [MIT Licence](http://en.wikipedia.org/wiki/MIT_License).
