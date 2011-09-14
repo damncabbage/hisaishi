@@ -16,7 +16,7 @@ git clone git://github.com/smashcon/hisaishi.git  # Warning: read-only.
 cd hisaishi
 
 bundle install
-alias be="bundle exec"    # If you don't want this alias, just replace all the 'be's in this code block with 'bundle exec'
+alias be="bundle exec"
 be rake hisaishi:install  # Sets up config/environments.rb
 be rake db:create
 
