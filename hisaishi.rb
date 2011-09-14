@@ -89,22 +89,17 @@ def is_logged_in
 end
 
 def rand_song
-  songs = Song.find_by_sql(
-    #'SELECT * FROM songs s ' + 
-    #'LEFT JOIN votes v ON (v.song_id = s.id AND v.user="' + session[:username] + '") ' + 
-    #'WHERE v.vote_id IS NULL ' + 
-    #'AND s.no < 1 AND s.yes < 3 ' + 
-    #'ORDER BY RANDOM() LIMIT 1;'
-    
-    'SELECT * FROM songs ' + 
-    'WHERE "id" NOT IN (' +
-    '  SELECT "song_id" FROM votes ' + 
-    '  WHERE "user" = \'' + session[:username] + '\'' + 
-    '  GROUP BY "song_id" HAVING COUNT(*) > 0 ' + 
-    ') ' + 
-    'AND "no" < 1 AND "yes" < 3 ' + 
-    'ORDER BY RANDOM();'
-  )
+  songs = Song.find_by_sql([
+   'SELECT * FROM songs
+    WHERE "id" NOT IN (
+      SELECT "song_id" FROM votes
+      WHERE "user" = ?
+      GROUP BY "song_id" HAVING COUNT(*) > 0
+    )
+    AND "no" < 1 AND "yes" < 3 
+    ORDER BY RANDOM();',
+    session[:username]
+  ])
   
   if songs.length > 0
     return songs.pop
