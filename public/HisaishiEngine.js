@@ -417,7 +417,7 @@ var HisaishiEngine = function(params) {
 		});
 		
 		// If Firefox worked properly, this would be all I needed.
-    document.addEventListener('canplay', function() {
+    document.addEventListener('loadeddata', function() {
       $('.play-button').trigger('mousedown');
     }, true);
 	}; 
