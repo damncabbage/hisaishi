@@ -921,7 +921,7 @@ var HisaishiRate = function(params) {
 		
 		comment.find('form').submit( function(e){
 			e.preventDefault();
-			if($(this).find('input :checked').length == 0) {
+			if($(this).find('input:checked').length == 0) {
 			  alert('You must select one reason with your error report.');
 			} else {
 			  $(this).find('textarea:hidden').remove();
