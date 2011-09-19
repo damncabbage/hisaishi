@@ -533,7 +533,8 @@ var HisaishiEngine = function(params) {
 		$('<a />', {
 		  html: '<img src="/pause.png" />',
 			title: 'Pause',
-			href: '#'
+			href: '#',
+			class: 'pause-button'
 		}).mousedown( function(e){
 			e.preventDefault();
 			that.pauseSong();
@@ -909,6 +910,7 @@ var HisaishiRate = function(params) {
 	
 		no.mousedown( function(e){
 			e.preventDefault();
+			$('.pause-button').trigger('mousedown');
 			comment.show();
 		}).appendTo(this.params.containers.rating);
 
@@ -921,6 +923,7 @@ var HisaishiRate = function(params) {
 		
 		comment.find('a').mousedown( function(e){
 		  e.preventDefault();
+		  $('.play-button').trigger('mousedown');
 		  comment.hide();
 		});
 		
