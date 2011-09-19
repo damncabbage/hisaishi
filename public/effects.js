@@ -1,14 +1,16 @@
-var hideFlag = false;
+var hiding = 'unset';
 
 var prepControls = function() {
 	setTimeout(function() {
-	  $('.controlbar-container').slideToggle();
-	  hideFlag = true;
+	  if(hiding == 'unset') {
+	    $('.controlbar-container').slideToggle();
+	    hiding = 'enabled';
+    }
 	}, 5000);
 
   var toggleControls = function() {
-    if(hideFlag) {
-    	$(this).find('.controlbar-container').slideToggle();
+    if(hiding == 'enabled') {
+    	$('.controlbar-container').slideToggle();
   	}
   };
 
