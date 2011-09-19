@@ -914,6 +914,7 @@ var HisaishiRate = function(params) {
 			e.preventDefault();
 			$('.pause-button').trigger('mousedown');
 			comment.show();
+			hideFlag = false;
 		}).appendTo(this.params.containers.rating);
 
 		var textarea = comment.find('textarea');
@@ -928,6 +929,7 @@ var HisaishiRate = function(params) {
 		  e.preventDefault();
 		  $('.play-button').trigger('mousedown');
 		  comment.hide();
+		  hideFlag = true;
 		});
 		
 		comment.appendTo(this.params.containers.rating);

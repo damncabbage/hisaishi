@@ -1,8 +1,18 @@
+var hideFlag = false;
+
 var prepControls = function() {
-	$('.controlbar-container').hide();
-	$('.hisaishi-scaffold').hover(function() {
-		$(this).find('.controlbar-container').slideToggle();
-	});
+	setTimeout(function() {
+	  $('.controlbar-container').slideToggle();
+	  hideFlag = true;
+	}, 5000);
+
+  var toggleControls = function() {
+    if(hideFlag) {
+    	$(this).find('.controlbar-container').slideToggle();
+  	}
+  };
+
+	$('.hisaishi-scaffold').hover(toggleControls);
 };
 
 var hideCursor = function() {
