@@ -211,14 +211,25 @@ span.timer {
 
 .rating-container div.vote-comment textarea {
 	display: block;
-	height: 75px;
+	height: 50px;
 	width: 300px;
 	margin-bottom: 10px;
+}
+
+.rating-container div.vote-comment ul,
+.rating-container div.vote-comment ul li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 .rating-container div.vote-comment a {
 	font-size: 0.8em;
 	float: right;
+}
+
+.rating-container div.vote-comment button.vote-add-reason {
+	width: 100%;
 }
 
 .rating-container div.vote-comment input {
