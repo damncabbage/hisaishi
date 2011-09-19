@@ -783,11 +783,11 @@ var HisaishiRate = function(params) {
 	
 	/* Voting */
 	
-	that.voteCallback = function(vote, comment) {
+	that.voteCallback = function(vote, data) {
 		$.ajax({
 			url: '/song/' + this.params.id + '/vote',
 			type: 'POST',
-			data: 'vote=' + vote + '&comment=' + comment,
+			data: 'vote=' + vote + (!!data ? '&' + data : ''),
 			success: function(){
 				alert("Thanks for voting!");
 				window.location.href = '/';
@@ -796,15 +796,15 @@ var HisaishiRate = function(params) {
 	};
 	
 	that.voteYes = function() {
-		this.voteCallback('yes', null);
+		this.voteCallback('yes');
 	};
 	
-	that.voteNo = function(comment) {
-		this.voteCallback('no', comment);
+	that.voteNo = function(data) {
+		this.voteCallback('no', data);
 	};
 	
 	that.voteSkip = function() {
-		this.voteCallback('unknown', null);
+		this.voteCallback('unknown');
 	};
 	
 	/* Controls */
@@ -812,7 +812,7 @@ var HisaishiRate = function(params) {
 	that.renderControls = function() {
 		var that = this;
 
-    /* Create the controls */
+    	/* Create the controls */
 
 		var yes = $('<a />', {
 			html: '<img src="/thumbs-up.png" />',
@@ -833,9 +833,67 @@ var HisaishiRate = function(params) {
 			'class': 'vote-no'
 		}),
 		comment = $('<div />', {
-			html: '<p>What was wrong with it?</p><form><textarea></textarea><a href="#">Cancel</a><input type="submit"></form>',
+			html: '<p>What was wrong with it?</p>' + 
+			'<form>' + 
+			'<ul></ul>' + 
+			'<a href="#">Cancel</a><input type="submit">' + 
+			'</form>',
 			'class': 'vote-comment'
 		});
+		
+		var commentIndex = 0;
+		
+		var commentOptions = '<option value="none">This song has no lyrics</option>' + 
+			'<option value="wrong">This song\'s lyrics are wrong</option>' + 
+			'<option value="mistimed">The lyrics are mistimed</option>' + 
+			'<option value="misspelt">The lyrics are misspelt</option>' + 
+			'<option value="details">Something else is wrong, here are some details</option>';
+		
+		var addComment = function() {
+			var reasonSelect = $('<select />', {
+				html:    		commentOptions,
+				name:			'reasons[' + commentIndex + '][type]'
+			});
+			
+			var reasonInput = $('<textarea />', {
+				name:			'reasons[' + commentIndex + '][comment]',
+				placeholder:	'Please add more details.',
+				rows:			3,
+				style:			'display: none'
+			});
+			
+			var showReason = function(elem, selVal){
+				if (selVal == '1') {
+					$(elem).parent().find('textarea').slideUp();
+				}
+				else {
+					$(elem).parent().find('textarea').slideDown();
+				}
+			};
+			
+			reasonInput.keyup(function(e){
+				var isDel = (e.which == 46 || e.which == 8);
+				if (isDel && $(this).val().length == 0) {
+					$(this).parent().remove();
+				}
+			});
+			
+			var li = $('<li />');
+			li.append(reasonSelect).append(reasonInput)
+			li.find('select').change(function(){ showReason(this, $('option:selected', this).val()) });
+			li.appendTo(comment.find('ul'));
+			
+			commentIndex++;
+		};
+		$('<button />', {
+			text:		'Add more details',
+			'class':	'vote-add-reason'
+		}).click(function(e){
+			e.preventDefault();
+			addComment();
+		}).insertAfter(comment.find('ul'));
+		
+		addComment();
 		
 		/* Attach the listeners */
 		
@@ -856,9 +914,9 @@ var HisaishiRate = function(params) {
 
 		var textarea = comment.find('textarea');
 		
-		comment.find('input').mousedown( function(e){
+		comment.find('form').submit( function(e){
 			e.preventDefault();
-			that.voteNo(textarea.val());
+			that.voteNo($(this).serialize());
 		});
 		
 		comment.find('a').mousedown( function(e){
