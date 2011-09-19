@@ -920,6 +920,7 @@ var HisaishiRate = function(params) {
 		
 		comment.find('form').submit( function(e){
 			e.preventDefault();
+			$(this).find('textarea:hidden').remove();
 			that.voteNo($(this).serialize());
 		});
 		
