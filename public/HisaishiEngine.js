@@ -412,14 +412,14 @@ var HisaishiEngine = function(params) {
 				$(that).trigger('checkload');
 				
 				// We put this here because otherwise Firefox doesn't work.				
-			  $('.play-button').trigger('mousedown');
+//			  $('.play-button').trigger('mousedown');
 			}
 		});
 		
 		// If Firefox worked properly, this would be all I needed.
-    document.addEventListener('loadeddata', function() {
-      $('.play-button').trigger('mousedown');
-    }, true);
+//    document.addEventListener('loadeddata', function() {
+//      $('.play-button').trigger('mousedown');
+//    }, true);
 	}; 
 	
 	/* Playback */

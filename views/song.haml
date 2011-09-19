@@ -26,6 +26,9 @@
         });
         prepControls();
         hideCursor();
+        setTimeout(function() {
+          $('.play-button').trigger('mousedown');
+        }, 1000);
       });   
   %body
     #hisaishi-display
