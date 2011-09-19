@@ -846,7 +846,7 @@ var HisaishiRate = function(params) {
 		
 		var commentOptions = {
 			'none': 'This song has no lyrics.',
-			'wrong': 'This song\'s lyrics are wrong.',
+			'wrong': 'This song\'s lyrics are for another song.',
 			'mistimed': 'The lyrics are mistimed.',
 			'misspelt': 'The lyrics are misspelt.',
 			'details': 'Something else is wrong.'
