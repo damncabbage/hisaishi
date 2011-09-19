@@ -862,7 +862,7 @@ var HisaishiRate = function(params) {
 			
 			var reasonInput = $('<textarea />', {
 				name:			'reasons[' + commentIndex + '][comment]',
-				placeholder:	'Add some more details about this error.',
+				placeholder:	'Add some more details if you\'d like.',
 				rows:			3,
 				style:			'display: none'
 			});
@@ -870,10 +870,10 @@ var HisaishiRate = function(params) {
 			var showReason = function(elem){
 				var ta = $(elem).closest('li').find('textarea');
 				if ($(elem).is(':checked')) {
-					ta.slideDown();
+					ta.show();
 				}
 				else {
-					ta.slideUp();
+					ta.hide();
 				}
 			};
 			
@@ -921,8 +921,12 @@ var HisaishiRate = function(params) {
 		
 		comment.find('form').submit( function(e){
 			e.preventDefault();
-			$(this).find('textarea:hidden').remove();
-			that.voteNo($(this).serialize());
+			if($(this).find('input :checked').length == 0) {
+			  alert('You must select one reason with your error report.');
+			} else {
+			  $(this).find('textarea:hidden').remove();
+			  that.voteNo($(this).serialize());
+		  }
 		});
 		
 		comment.find('a').mousedown( function(e){

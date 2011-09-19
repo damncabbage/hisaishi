@@ -196,7 +196,8 @@ span.timer {
 	top: 150%;
 	right: 1%;
 	background: rgba(0,0,0,0.8);
-	padding: 10px;	
+	padding: 10px;
+	width: 325px;
 }
 
 .rating-container div.vote-comment p {
@@ -209,10 +210,28 @@ span.timer {
 	margin: 0;
 }
 
+.rating-container div.vote-comment label {
+	font-size: 0.9em;
+	width: 100%;
+	margin: 1em 0;
+	display: block;	
+}
+
+.rating-container div.vote-comment input[type="checkbox"] {
+	font-size: 20px;
+}
+
+.rating-container div.vote-comment input[type="submit"] {
+	font-size: 0.9em;
+}
+
 .rating-container div.vote-comment textarea {
+	font-size: 0.8em;
 	display: block;
-	height: 50px;
+	height: 75px;
 	width: 300px;
+	padding: 5px;
+	margin-left: 25px;
 	margin-bottom: 10px;
 }
 
@@ -224,14 +243,8 @@ span.timer {
 }
 
 .rating-container div.vote-comment a {
-	font-size: 0.8em;
+	font-size: 0.9em;
 	float: right;
-}
-
-.rating-container div.vote-comment label {
-	width: 100%;
-	margin: 1em 0;
-	display: block;
 }
 
 .lyrics-container {

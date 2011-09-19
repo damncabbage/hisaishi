@@ -23,7 +23,7 @@ var hideCursor = function() {
   var startTimer = function() {
     timer = setTimeout(function(){
       $('body').css({cursor: 'none'});
-    }, 10000);
+    }, 1000);
   };
   
   $(document).mousemove(function(e) {
