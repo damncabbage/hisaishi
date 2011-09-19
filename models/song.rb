@@ -56,14 +56,13 @@ class Song
       :vote => vote
     )
     
-    # I'm expecting that reasons is an array like this: [0 => { 'type' => ''mistimed', 'comment' => 'The lyrics are mistimed.' }, 1 => { 'type' => 'misspelt', 'comment' => 'At the 3 minute mark the spelling is wrong.'} ]
-    
-    reasons.each do |idx, reason|
-      vote.reasons.create(
-        :type => reason['type'],
-        :comment => reason['comment']
-      )
+    if vote == 'no'
+      reasons.each do |idx, reason|
+        vote.reasons.create(
+          :type => reason['type'],
+          :comment => reason['comment']
+        )
+      end
     end
-
   end  
 end
