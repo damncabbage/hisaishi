@@ -408,10 +408,18 @@ var HisaishiEngine = function(params) {
 					that.setTimerControl();
 				}, true);
 				
-				that.loaded.audio = true;
+		    that.loaded.audio = true;
 				$(that).trigger('checkload');
+				
+				// We put this here because otherwise Firefox doesn't work.				
+			  $('.play-button').trigger('mousedown');
 			}
 		});
+		
+		// If Firefox worked properly, this would be all I needed.
+    document.addEventListener('canplay', function() {
+      $('.play-button').trigger('mousedown');
+    }, true);
 	}; 
 	
 	/* Playback */
@@ -515,7 +523,8 @@ var HisaishiEngine = function(params) {
 		$('<a />', {
 		  html: '<img src="/play.png" />',
 			title: 'Play',
-			href: '#'
+			href: '#',
+		  class: 'play-button'
 		}).mousedown( function(e){
 			e.preventDefault();
 			that.playSong();
