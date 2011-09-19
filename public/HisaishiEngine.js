@@ -844,57 +844,59 @@ var HisaishiRate = function(params) {
 		
 		var commentIndex = 0;
 		
-		var commentOptions = '<option value="none">This song has no lyrics</option>' + 
-			'<option value="wrong">This song\'s lyrics are wrong</option>' + 
-			'<option value="mistimed">The lyrics are mistimed</option>' + 
-			'<option value="misspelt">The lyrics are misspelt</option>' + 
-			'<option value="details">Something else is wrong, here are some details</option>';
+		var commentOptions = {
+			'none': 'This song has no lyrics.',
+			'wrong': 'This song\'s lyrics are wrong.',
+			'mistimed': 'The lyrics are mistimed.',
+			'misspelt': 'The lyrics are misspelt.',
+			'details': 'Something else is wrong.'
+		};
 		
-		var addComment = function() {
-			var reasonSelect = $('<select />', {
-				html:    		commentOptions,
-				name:			'reasons[' + commentIndex + '][type]'
+		var addCheckbox = function(val) {
+			var checkbox = $('<input />', {
+				type:    		'checkbox',
+				name:			'reasons[' + commentIndex + '][type]',
+				value:			val,
+				checked:		false
 			});
 			
 			var reasonInput = $('<textarea />', {
 				name:			'reasons[' + commentIndex + '][comment]',
-				placeholder:	'Add some details. Delete if this isn\'t the right reason.',
+				placeholder:	'Add some more details about this error.',
 				rows:			3,
 				style:			'display: none'
 			});
 			
-			var showReason = function(elem, selVal){
-				if (selVal == '1') {
-					$(elem).parent().find('textarea').slideUp();
+			var showReason = function(elem){
+				var ta = $(elem).closest('li').find('textarea');
+				if ($(elem).is(':checked')) {
+					ta.slideDown();
 				}
 				else {
-					$(elem).parent().find('textarea').slideDown();
+					ta.slideUp();
 				}
 			};
 			
-			reasonInput.keyup(function(e){
-				var isDel = (e.which == 46 || e.which == 8);
-				if (isDel && $(this).val().length == 0) {
-					$(this).parent().remove();
-				}
+			var label = $('<label />', {
+				text: commentOptions[val]
 			});
 			
+			checkbox.change( function(){
+				showReason(this);
+			});
+			
+			label.prepend(checkbox);
+			
 			var li = $('<li />');
-			li.append(reasonSelect).append(reasonInput)
-			li.find('select').change(function(){ showReason(this, $('option:selected', this).val()) });
+			li.append(label).append(reasonInput);
 			li.appendTo(comment.find('ul'));
 			
 			commentIndex++;
 		};
-		$('<button />', {
-			text:		'Add more details',
-			'class':	'vote-add-reason'
-		}).click(function(e){
-			e.preventDefault();
-			addComment();
-		}).insertAfter(comment.find('ul'));
 		
-		addComment();
+		for (var i in commentOptions) {
+			addCheckbox(i);
+		}
 		
 		/* Attach the listeners */
 		

@@ -228,11 +228,9 @@ span.timer {
 	float: right;
 }
 
-.rating-container div.vote-comment button.vote-add-reason {
+.rating-container div.vote-comment label {
 	width: 100%;
-}
-
-.rating-container div.vote-comment input {
+	margin: 1em 0;
 	display: block;
 }
 
