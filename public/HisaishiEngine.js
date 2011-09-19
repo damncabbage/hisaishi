@@ -857,7 +857,7 @@ var HisaishiRate = function(params) {
 			
 			var reasonInput = $('<textarea />', {
 				name:			'reasons[' + commentIndex + '][comment]',
-				placeholder:	'Please add more details.',
+				placeholder:	'Add some details. Delete if this isn\'t the right reason.',
 				rows:			3,
 				style:			'display: none'
 			});
