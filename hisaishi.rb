@@ -6,7 +6,7 @@ require File.expand_path('environment.rb', File.dirname(__FILE__))
 
 
 get '/' do
-  redirect '/login' unless is_logged_in
+  authenticate true
   
   song = rand_song
 
@@ -18,8 +18,8 @@ get '/' do
 end
 
 get '/song/:song_id' do
-  redirect '/login' unless is_logged_in
-  
+  authenticate true
+
   song = Song.get(params[:song_id])
 
   if song
@@ -30,7 +30,7 @@ get '/song/:song_id' do
 end
 
 post '/song/:song_id/vote' do
-  authenticate
+  authenticate false
   
   song = Song.get(params[:song_id])
   song.vote(params[:vote], params[:reasons], session)
@@ -39,7 +39,7 @@ post '/song/:song_id/vote' do
 end
 
 get '/songs/list' do
-  redirect '/login' unless is_logged_in
+  authenticate true
 
   songs = Song.all
   haml :song_list, :locals => {:songs => songs}
@@ -47,7 +47,6 @@ end
 
 get '/login' do
   redirect '/' if is_logged_in
-  session[:intended_url] ||= request.referer
 
   haml :login
 end
@@ -79,8 +78,14 @@ get '/proxy' do
   open(URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')).read
 end
 
-def authenticate
-  halt(403, 'You are not logged in.') unless is_logged_in
+def authenticate(offer_login)
+  session[:intended_url] = request.referer
+  
+  if offer_login
+    redirect '/login' unless is_logged_in    
+  else  
+    halt(403, 'You are not logged in.') unless is_logged_in
+  end
 end
 
 def is_logged_in
