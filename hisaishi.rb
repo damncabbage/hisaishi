@@ -31,7 +31,7 @@ end
 
 post '/song/:song_id/vote' do
   authenticate false
-  
+
   song = Song.get(params[:song_id])
   song.vote(params[:vote], params[:reasons], session)
   
@@ -47,7 +47,7 @@ end
 
 get '/login' do
   redirect '/' if is_logged_in
-
+  
   haml :login
 end
 
@@ -59,7 +59,7 @@ post '/login' do
     session[:username] = params[:username] unless token.nil?
   rescue ArgumentError
   end
-
+  
   if is_logged_in
     redirect session.delete(:intended_url)
   else
@@ -79,7 +79,7 @@ get '/proxy' do
 end
 
 def authenticate(offer_login)
-  session[:intended_url] = request.referrer
+  session[:intended_url] = request.url  
   
   if offer_login
     redirect '/login' unless is_logged_in    
