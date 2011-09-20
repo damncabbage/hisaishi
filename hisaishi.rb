@@ -4,9 +4,8 @@ require 'sinatra'
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
 
-
 get '/' do
-  authenticate true
+  authenticate
   
   song = rand_song
 
@@ -18,7 +17,7 @@ get '/' do
 end
 
 get '/song/:song_id' do
-  authenticate true
+  authenticate
 
   song = Song.get(params[:song_id])
 
@@ -30,7 +29,7 @@ get '/song/:song_id' do
 end
 
 post '/song/:song_id/vote' do
-  authenticate false
+  authenticate!
 
   song = Song.get(params[:song_id])
   song.vote(params[:vote], params[:reasons], session)
@@ -39,7 +38,7 @@ post '/song/:song_id/vote' do
 end
 
 get '/songs/list' do
-  authenticate true
+  authenticate
 
   songs = Song.all
   haml :song_list, :locals => {:songs => songs}
@@ -78,14 +77,14 @@ get '/proxy' do
   open(URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')).read
 end
 
-def authenticate(offer_login)
+def authenticate
   session[:intended_url] = request.url  
   
-  if offer_login
-    redirect '/login' unless is_logged_in    
-  else  
-    halt(403, 'You are not logged in.') unless is_logged_in
-  end
+  redirect '/login' unless is_logged_in    
+end
+
+def authenticate!
+  halt(403, 'You are not logged in.') unless is_logged_in
 end
 
 def is_logged_in
