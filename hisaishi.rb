@@ -61,7 +61,7 @@ post '/login' do
   end
 
   if is_logged_in
-    redirect session.delete(:intended_url) || '/'
+    redirect session.delete(:intended_url)
   else
     redirect '/login'
   end
