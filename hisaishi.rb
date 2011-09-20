@@ -79,7 +79,7 @@ get '/proxy' do
 end
 
 def authenticate(offer_login)
-  session[:intended_url] = request.referer
+  session[:intended_url] = request.referrer
   
   if offer_login
     redirect '/login' unless is_logged_in    
