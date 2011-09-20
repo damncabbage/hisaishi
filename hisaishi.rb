@@ -39,7 +39,7 @@ post '/song/:song_id/vote' do
 end
 
 get '/songs/list' do
-  authenticate
+  redirect '/login' unless is_logged_in
 
   songs = Song.all
   haml :song_list, :locals => {:songs => songs}
