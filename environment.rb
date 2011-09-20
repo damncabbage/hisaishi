@@ -10,7 +10,7 @@ require 'cgi'
 
 configure do
   enable :sessions
-  set :basecamp_domain, 'smashconvention'
+  set :basecamp_domain, 'ENV['BASECAMP_DOMAIN']'
   set :files,        ENV['HISAISHI_FILES'] || "http://localhost:4567/music/"
   set :database_url, ENV['DATABASE_URL']   || "sqlite3://#{File.expand_path('data/hisaishi.sqlite', File.dirname(__FILE__))}"
 end
