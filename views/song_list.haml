@@ -7,6 +7,7 @@
 		%table{:id => "hisaishi-all-songs"}
 			%thead
 				%tr
+					%th= "No"
 					%th= "Title"
 					%th= "Artist"
 					%th= "Album"
@@ -15,6 +16,8 @@
 			%tbody
 			- songs.each do |song|
 				%tr
+					%td
+						%a{:href => "/song/#{song.id}"} #{song.id}
 					%td= song.title
 					%td= song.artist
 					%td= song.album
