@@ -155,10 +155,15 @@ var HisaishiEngine = function(params) {
 				this.lyrics.lines[linenum].raw = line;
 			}
 			
+			var parsed = true;
+			
 			re.lastIndex = 0;
 			do {
 				parts = re.exec(line);
-				if (!parts || parts.length == 0) break;
+				if (!parts || parts.length == 0) {
+					parsed = false;
+					break;
+				}
 				
 				time = this.util.convertTime(parts[1]);
 				
@@ -177,8 +182,10 @@ var HisaishiEngine = function(params) {
 				partnum++;
 			} while (re.lastIndex < line.length);
 			
-			linenum++;
-			this.lyrics.numlines++;
+			if (parsed) {
+				linenum++;
+				this.lyrics.numlines++;
+			}
 		}
 		
 		/* Handle timing within second loop */
