@@ -663,17 +663,29 @@ var HisaishiList = function(params) {
 			$(this.params.containers.display).append(display);
 		}
 		
-		var fields = ['title', 'artist', 'album'],
+		var fields = ['title', 'artist', 'album', 'karaoke'],
 		listitem = $('<li />', {
 			id:   'select-track-' + ident
 		});
 		
 		for (var i in fields) {
 			if (fields.hasOwnProperty(i) && i != 'length') {
-				var part = $('<div />', { 
-					text: 		track[fields[i]], 
-					'class': 	'track-' + fields[i]
-				});
+		    if (fields[i] == 'karaoke') {
+		      var karaoke_setting;
+		      if (track[fields[i]] == 'true') karaoke_setting = 'Karaoke version';
+		      else if (track[fields[i]] == 'false') karaoke_setting = 'Vocal version';
+		      else if (track[fields[i]] == 'unknown') karaoke_setting = 'Warning: Karaoke setting not set';
+		      
+			    var part = $('<div />', {
+				    text: karaoke_setting, 
+				    'class': 	'track-' + fields[i]
+			    });
+	      } else {
+			    var part = $('<div />', {
+				    text: track[fields[i]], 
+				    'class': 	'track-' + fields[i]
+			    });
+		    }
 				listitem.append(part);
 			}
 		}
@@ -841,7 +853,7 @@ var HisaishiRate = function(params) {
 			'class': 'vote-no'
 		}),
 		comment = $('<div />', {
-			html: '<p>What was wrong with it?</p>' + 
+			html: '<p>What\'s wrong? (You can select more than one.)</p>' + 
 			'<form>' + 
 			'<ul></ul>' + 
 			'<a href="#">Cancel</a><input type="submit">' + 
@@ -853,10 +865,11 @@ var HisaishiRate = function(params) {
 		
 		var commentOptions = {
 			'none': 'This song has no lyrics.',
-			'wrong': 'This song\'s lyrics are for another song.',
+			'wrong': 'The lyrics are for another song.',
 			'mistimed': 'The lyrics are mistimed.',
 			'misspelt': 'The lyrics are misspelt.',
-			'details': 'Something else is wrong.'
+			'details': 'The details for this song are incorrect.',
+			'other': 'Something else is wrong.'
 		};
 		
 		var addCheckbox = function(val) {

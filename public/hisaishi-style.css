@@ -112,6 +112,12 @@ div.details {
 	color: #c7c7c7;
 }
 
+.track-karaoke {
+	font-size: 0.8em;
+	color: #c7c7c7;
+	padding-top: 10px;
+}
+
 .hisaishi-scaffold {
 	position: relative;
 	height: 100%;
