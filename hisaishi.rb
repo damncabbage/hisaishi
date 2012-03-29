@@ -1,8 +1,11 @@
 require 'rubygems'
 require 'sinatra'
+require 'sinatra/jsonp'
 
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
+
+# Base hisaishi functionality
 
 get '/' do
   authenticate
@@ -44,6 +47,11 @@ get '/songs/list' do
   haml :song_list, :locals => {:songs => songs}
 end
 
+get '/songs/list.jsonp' do
+  songs = Song.all
+  JSONP songs
+end
+
 get '/login' do
   redirect '/' if is_logged_in
   
@@ -76,6 +84,45 @@ get '/proxy' do
   puts 'The URL was: ' + url
   open(URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')).read
 end
+
+# Browser
+
+get '/browse' do
+  haml :browser
+end
+
+# Queue
+
+get '/queue.jsonp' do
+  queue = Queue.all
+  JSONP queue
+end
+
+get '/queue/:song_id' do
+  authenticate!
+
+  song = Song.get(params[:song_id])
+  haml :enqueue, :locals => { :song_id => song.id, :song_title => song.title }
+end
+
+post '/queue/submit' do
+  authenticate!
+
+  song = Song.get(params[:song_id])
+  new_queue = song.enqueue(params[:requester])
+  puts new_queue.json
+end
+
+get '/songinfo/:song_id' do
+  authenticate!
+  
+  song = Song.get(params[:song_id])
+  data = song.get_data!
+  puts data
+  puts data.length.ceil
+end
+
+# Helper functions
 
 def authenticate
   session[:intended_url] = request.url  

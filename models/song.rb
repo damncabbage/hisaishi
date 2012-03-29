@@ -1,3 +1,6 @@
+require 'mp3info'
+require 'open-uri'
+
 class Song
   include DataMapper::Resource
   property :id,      Serial
@@ -18,6 +21,14 @@ class Song
   property :no,      Integer,   :default => 0
   property :unknown,      Integer,   :default => 0  
   
+  def path_base
+    return settings.files + source_dir
+  end
+  
+  def path
+    return self.path_base + audio_file
+  end
+  
   def json
     song_data = []
     song_data << {
@@ -31,7 +42,7 @@ class Song
       :genre => genre,
       :language => language,
       :karaoke => karaoke,
-      :folder  => settings.files + source_dir,
+      :folder  => self.path_base,
       :audio   => audio_file,
       :lyrics  => lyrics_file,
       :cover   => image_file
@@ -64,5 +75,25 @@ class Song
         )
       end
     end
-  end  
+  end
+  
+  def enqueue(requester)
+    data = self.get_data!
+    time = data.length.ceil
+    
+    new_queue = Queue.create(
+      :requester => requester,
+      :song_id => self.id,
+      :time => time
+    )
+    
+    return new_queue
+  end
+  
+  def get_data!
+    Mp3Info.open(self.path) do |mp3info|
+      data = mp3info
+    end
+    return data
+  end
 end

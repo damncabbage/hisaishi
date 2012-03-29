@@ -1,0 +1,12 @@
+!!! 5
+%html
+  %head
+    %title= "Karaoke"
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+  %body
+    %h1= "Enqueue #{song_title}?"
+    %form{:action => "/queue/submit", :method => "post"}
+      %input{:type => "hidden", :name => "song_id", :value => "#{song_id}"}
+      %label{:for => "requester"}= "Enter your name."
+      %input{:type => "text", :name => "requester", :name => "id"}
+      %input{:type => "submit", :value => "Add song to queue"}
