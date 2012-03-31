@@ -5,6 +5,17 @@ require 'sinatra/jsonp'
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
 
+# setup helpers
+helpers do
+  def csrf_token
+    Rack::Csrf.csrf_token(env)
+  end
+
+  def csrf_tag
+    Rack::Csrf.csrf_tag(env)
+  end
+end
+
 # Base hisaishi functionality
 
 get '/' do
@@ -94,7 +105,7 @@ end
 # Queue
 
 get '/queue.jsonp' do
-  queue = Queue.all
+  queue = HisaishiQueue.all
   JSONP queue
 end
 
@@ -105,7 +116,7 @@ get '/queue/:song_id' do
   haml :enqueue, :locals => { :song_id => song.id, :song_title => song.title }
 end
 
-post '/queue/submit' do
+post '/queue-submit' do
   authenticate!
 
   song = Song.get(params[:song_id])

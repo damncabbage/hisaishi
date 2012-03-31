@@ -7,6 +7,15 @@ namespace :db do
     Song.auto_migrate!
     Vote.auto_migrate!
     Reason.auto_migrate!
+    HisaishiQueue.auto_migrate!
+  end
+  
+  desc 'Upgrade db tables to most recent state.'
+  task :upgrade do
+    Song.auto_upgrade!
+    Vote.auto_upgrade!
+    Reason.auto_upgrade!
+    HisaishiQueue.auto_upgrade!
   end
 
   desc 'Load the seed data from data/seeds.rb.'

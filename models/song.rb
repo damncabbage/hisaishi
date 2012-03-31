@@ -17,6 +17,7 @@ class Song
   property :audio_file,   Text
   property :lyrics_file,   Text
   property :image_file,   Text
+  property :length,		Integer,   :default => 0
   property :yes,      Integer,   :default => 0
   property :no,      Integer,   :default => 0
   property :unknown,      Integer,   :default => 0  
@@ -79,19 +80,29 @@ class Song
   
   def enqueue(requester)
     data = self.get_data!
-    time = data.length.ceil
+    if !data.nil? then
+      time = data.length.ceil
+      
+      new_q = HisaishiQueue.new({
+        :requester => requester,
+        :song_id => self.id,
+        :time => time
+      })
+      new_q.save
+      return new_q
+    end
     
-    new_queue = Queue.create(
-      :requester => requester,
-      :song_id => self.id,
-      :time => time
-    )
-    
-    return new_queue
+    return nil
   end
   
   def get_data!
-    Mp3Info.open(self.path) do |mp3info|
+  	data = nil
+    mp3 = StringIO.new
+    open(self.path) do |data|  
+      mp3.write data.read(4096)
+    end
+    mp3.rewind
+    Mp3Info.open(mp3) do |mp3info|
       data = mp3info
     end
     return data

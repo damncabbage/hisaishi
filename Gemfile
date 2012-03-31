@@ -17,3 +17,4 @@ gem 'rake'
 
 gem 'sinatra-jsonp', :require => 'sinatra/jsonp'
 gem 'ruby-mp3info'
+gem 'rack_csrf'
