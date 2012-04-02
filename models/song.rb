@@ -79,31 +79,37 @@ class Song
   end
   
   def enqueue(requester)
-    data = self.get_data!
-    if !data.nil? then
-      time = data.length.ceil
-      
-      new_q = HisaishiQueue.new({
-        :requester => requester,
-        :song_id => self.id,
-        :time => time
-      })
-      new_q.save
-      return new_q
+    time = self.length
+    
+    if time == 0 then
+      data = self.get_data!
+      if !data.nil? then
+        time = data.length.ceil
+      end
     end
     
-    return nil
+    new_q = HisaishiQueue.new({
+      :requester => requester,
+      :song_id => self.id,
+      :time => time
+    })
+    new_q.save
+    new_q
   end
   
   def get_data!
   	data = nil
     mp3 = StringIO.new
-    open(self.path) do |data|  
-      mp3.write data.read(4096)
-    end
-    mp3.rewind
-    Mp3Info.open(mp3) do |mp3info|
-      data = mp3info
+    begin
+      open(self.path) do |data|  
+        mp3.write data.read(4096)
+      end
+      mp3.rewind
+      Mp3Info.open(mp3) do |mp3info|
+        data = mp3info
+      end
+    rescue StandardError => bang
+      puts "Error: #{bang}"
     end
     return data
   end

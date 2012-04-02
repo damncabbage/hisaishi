@@ -29,6 +29,7 @@ Dir.glob("#{File.dirname(__FILE__)}/models/*.rb") { |models| require File.basena
 DataMapper.finalize
 
 # Load plugins (and step around /vendor/bundler).
+load("#{File.dirname(__FILE__)}/vendor/sinatra_rack.rb")
 Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
 DataMapper.setup(:default, settings.database_url)
 

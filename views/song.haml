@@ -9,6 +9,7 @@
     %script{:type => "text/javascript",:src  => "/effects.js"}
     %script{:type => "text/javascript",:src  => "/html5slider.js"}
     :javascript
+      var csrf = "#{csrf_token}";
       var trax = #{song_json};
       var hl = null;
       $(document).ready(function(){

@@ -804,10 +804,11 @@ var HisaishiRate = function(params) {
 	/* Voting */
 	
 	that.voteCallback = function(vote, data) {
+		var csrf_str = (!!csrf) ? '&_csrf=' + csrf : '';
 		$.ajax({
 			url: '/song/' + this.params.id + '/vote',
 			type: 'POST',
-			data: 'vote=' + vote + (!!data ? '&' + data : ''),
+			data: 'vote=' + vote + (!!data ? '&' + data : '') + csrf_str,
 			success: function(){
 				alert("Thanks for voting!");
 				window.location.href = '/';

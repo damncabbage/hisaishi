@@ -6,7 +6,7 @@
   %body
     %h1= "Enqueue #{song_title}?"
     %form{:action => "/queue-submit", :method => "post"}
-      = crsf_tag
+      = csrf_tag
       %input{:type => "hidden", :name => "song_id", :value => "#{song_id}"}
       %label{:for => "requester"}= "Enter your name."
       %input{:type => "text", :name => "requester", :id => "requester"}

@@ -51,4 +51,19 @@ namespace :hisaishi do
 
     puts "Done! Next, run 'bundle exec rake db:seed'."
   end
+  
+  desc 'Calculates song lengths and saves to db.'
+  task :songlengths do
+    Song.all.each do |s|
+      next if s.length > 0
+      puts "Working on #{s.title}."
+      data = s.get_data!
+      if !data.nil? then
+        time = data.length.ceil
+        s.length = time
+        s.save
+      end
+      puts "Length: #{s.length} secs"
+    end
+  end
 end
