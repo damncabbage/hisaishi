@@ -8,6 +8,7 @@
 		%p 
 			Use your SMASH! Basecamp account to log in. Don't worry, we won't be using it for anything else.
 		%form{:action => "/login", :method => "post"}
+			= csrf_tag
 			%input{:name => "username", :required => "true", :placeholder => "Your Basecamp username"}
 			%input{:name => "password", :type => "password", :required => "true", :placeholder => "Your password"}
 			%input{:type => "submit", :value => "Log in"}
