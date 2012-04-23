@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'sinatra'
 
-gem 'sqlite3'
+gem 'sqlite3', :group => :development
 gem 'data_mapper'
 gem 'dm-ar-finders'
 gem 'dm-postgres-adapter', :group => :production
