@@ -1,0 +1,45 @@
+!!! 5
+%html
+	%head
+		%title= "Karaoke Queue"
+		%link{:rel => "stylesheet", :type => "text/css", :href => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.css"}
+		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}		
+		:javascript
+			var csrf = "#{csrf_token}";
+			var list = null;        
+			$(document).ready(function(){
+				list = new SortableList('#queue-listview', {
+				});
+				
+				$('#edit-toggle').click(function(){
+					if ($('#queue-listview').hasClass('editing-list')) {
+						list.destroy();
+						$(this).find('.ui-btn-text').text('Edit');
+						$('#queue-listview').removeClass('editing-list');
+					}
+					else {
+						list.init();
+						$(this).find('.ui-btn-text').text('Done');
+						$('#queue-listview').addClass('editing-list');
+					}
+				});
+			});
+	%body{:id => "hisaishi-song-list"}
+		#home{"data-role" => "page"}
+			%div{"data-role" => "header"}
+				%a{:class => "ui-btn-left", "data-icon" => "gear", :href => "#", :id => "edit-toggle"}= "Edit"
+				%h1= "Karaoke Queue"
+			%div{"data-role" => "content"}
+				%ul{"data-role" => "listview", "data_inset" => "true", :id => "queue-listview"}
+					- queue.each do |q|
+						%li{"data_theme" => "c"}
+							%a{"data-transition" => "slide", :href => "/queue-info/#{q.id}"}
+								%h3= q.requester
+								%p
+									%em= songs[q.song_id].artist
+									%em= songs[q.song_id].title
+				%div{"data-role" => "fieldcontain"}
+					%a{"data-role" => "button", "data-transition" => "slide", :href => "/search"}= "Add song"

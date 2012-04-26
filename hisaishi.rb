@@ -97,16 +97,55 @@ end
 
 # Queue
 
-get '/queue.jsonp' do
-  queue = HisaishiQueue.all
-  JSONP queue
+get '/queue' do
+  authenticate!
+  haml :queue, :locals => queue_songs
 end
 
-get '/queue/:song_id' do
+get '/queue.jsonp' do
   authenticate!
+  out = queue_songs
+  JSONP out
+end
 
+get '/search' do
+  haml :search, :locals => {
+  	:songs => Song.all,
+  	:authed => is_logged_in
+  }
+end
+
+get '/add/:song_id' do
   song = Song.get(params[:song_id])
-  haml :enqueue, :locals => { :song_id => song.id, :song_title => song.title }
+  haml :queue_song, :locals => {
+  	:song => song
+  }
+end
+
+post '/add-submit' do
+  song = Song.get(params[:song_id])
+  
+  last_q = last_song_by_requester(params[:requester])
+  diff = nil
+  if !last_q.nil? then
+    diff = Time.now - last_q.created_at
+  end
+  
+  if !is_logged_in and !last_q.nil? and diff.round <= 300 then
+    haml :queue_song_fail_limit, :locals => {
+      :requester => params[:requester],
+  	  :song => song,
+  	  :diff => diff.distance_of_time_in_words
+    }
+  else
+    new_queue = song.enqueue(params[:requester])
+    
+    haml :queue_song_ok, :locals => {
+  	  :song => song, 
+  	  :new_queue => new_queue,
+      :authed => is_logged_in
+    }
+  end
 end
 
 post '/queue-submit' do
@@ -127,12 +166,46 @@ get '/songinfo/:song_id' do
   puts data.length.ceil
 end
 
-# Helper functions
+# Announcements
+
+get '/announce' do
+	pin_auth!
+	
+	anns = Announcement.all(:order => [ :ann_order.asc ])
+	haml :announcements, :locals => {
+		:anns => anns
+	}
+end
+
+get '/announce.jsonp' do
+	pin_auth!
+	
+	anns = Announcement.all(:order => [ :ann_order.asc ])
+	JSONP anns
+end
+
+post '/announce' do
+	text = params[:text]
+	new_ann = Announcement.create(
+      :text => text,
+      :ann_order => Announcement.all.length
+    )
+    redirect '/announce'
+end
+
+# PIN auth screen
+
+get '/lock-screen' do
+  haml :lock_screen
+end
+
+# ##### HELPER FUNCTIONS
+
+# Login helper functions
 
 def authenticate
   session[:intended_url] = request.url  
-  
-  redirect '/login' unless is_logged_in    
+  redirect '/login' unless is_logged_in
 end
 
 def authenticate!
@@ -144,6 +217,46 @@ def is_logged_in
     return (session[:username] = 'guest')
   end
   session[:username] # Nil if not set, otherwise truthy.
+end
+
+# PIN auth helper functions
+
+def pin_auth
+  session[:intended_url] = request.url  
+  redirect '/lock-screen' unless has_admin_pin
+end
+
+def pin_auth!
+  halt(403, 'You are not logged in.') unless has_admin_pin
+end
+
+def has_admin_pin
+  unless settings.admin_pin
+    return false
+  end
+  session[:admin_pin] == settings.admin_pin
+end
+
+# DB Helper
+
+def queue_songs
+	song_list = {}
+	HisaishiQueue.all.each do |q|
+		s = Song.get(q.song_id)
+		song_list[s.id] = s
+	end
+	
+	{
+		:songs => song_list,
+		:queue => HisaishiQueue.all
+	}
+end
+
+def last_song_by_requester(requester)
+	HisaishiQueue.first(
+	  :requester => requester, 
+	  :order => [ :created_at.desc ]
+	)
 end
 
 def rand_song

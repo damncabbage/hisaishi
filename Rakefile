@@ -8,6 +8,7 @@ namespace :db do
     Vote.auto_migrate!
     Reason.auto_migrate!
     HisaishiQueue.auto_migrate!
+    Announcement.auto_migrate!    
   end
   
   desc 'Upgrade db tables to most recent state.'
@@ -16,6 +17,7 @@ namespace :db do
     Vote.auto_upgrade!
     Reason.auto_upgrade!
     HisaishiQueue.auto_upgrade!
+    Announcement.auto_upgrade!
   end
 
   desc 'Load the seed data from data/seeds.rb.'

@@ -1,0 +1,36 @@
+!!! 5
+%html
+	%head
+		%title= "Karaoke Queue"
+		%link{:rel => "stylesheet", :type => "text/css", :href => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.css"}
+		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}		
+		:javascript
+			var csrf = "#{csrf_token}";
+			$(document).ready(function(){
+			});
+	%body{:id => "pin-entry"}
+		#home{"data-role" => "page"}
+			%div{"data-role" => "header"}
+				%h1= "Enter PIN"
+			%div{"data-role" => "content"}
+				%div{"data-role" => "fieldcontain"}
+					%label{:for => "pin"}
+					%input{:type => "password", :size => 4, :readonly => "readonly", :id => "pin", :placeholder => "Enter PIN"}
+				%div{"data-role" => "fieldcontain"}
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 9} = "9"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 8} = "8"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 7} = "7"
+				%div{"data-role" => "fieldcontain"}
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 6} = "6"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 5} = "5"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 4} = "4"
+				%div{"data-role" => "fieldcontain"}
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 1} = "3"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 2} = "2"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 3} = "1"
+				%div{"data-role" => "fieldcontain"}
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 0} = "0"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => "C"} = "Clear"

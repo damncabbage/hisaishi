@@ -88,10 +88,13 @@ class Song
       end
     end
     
+    len = HisaishiQueue.all.length
+    
     new_q = HisaishiQueue.new({
-      :requester => requester,
-      :song_id => self.id,
-      :time => time
+      :requester 	=> requester,
+      :song_id 		=> self.id,
+      :time 		=> time,
+      :queue_order 	=> len
     })
     new_q.save
     new_q

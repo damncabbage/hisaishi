@@ -1,0 +1,22 @@
+!!! 5
+%html
+	%head
+		%title= "Karaoke Search"
+		%link{:rel => "stylesheet", :type => "text/css", :href => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.css"}
+		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
+	%body{:id => "hisaishi-song-list"}
+		#home{"data-role" => "page", "data-add-back-btn" => "true"}
+			%div{"data-role" => "header"}
+				%h1= "Karaoke Search"
+			%div{"data-role" => "content"}
+				%ul{"data-role" => "listview", :data_inset => "true", "data-filter" => "true"}
+					- songs.each do |s|
+						%li{:data_theme => "c"}
+							%a{:href => "/add/#{s.id}", "data-transition" => "slide"}
+								%h3= s.title
+								%p
+									%em
+										%span= s.artist
+										%span= s.album
+										%span= s.origin_title
