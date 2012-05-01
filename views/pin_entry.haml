@@ -1,36 +1,81 @@
 !!! 5
 %html
 	%head
-		%title= "Karaoke Queue"
+		%title= "Enter PIN"
 		%link{:rel => "stylesheet", :type => "text/css", :href => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
 		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
 		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}		
 		:javascript
 			var csrf = "#{csrf_token}";
+			
+			var clear = function() {
+				$('#pin').val('');
+				$('#lock-screen').effect('shake', { times:3 }, 50);
+			};
+			
 			$(document).ready(function(){
+				$('.pin-entry').click(function(){
+					var num = $(this).attr('data-pinentry'),
+					oldval = $('#pin').val();
+					
+					if (num == 'C') {
+						$('#pin').val('');
+					}
+					else {
+						if (oldval.length < $('#pin').attr('size')) {
+							$('#pin').val(oldval + num);
+						}
+					}
+				});
+				
+				$('.pin-entry-submit').click(function(e){
+					var val = $('#pin').val();
+					if (val.length == $('#pin').attr('size')) {
+						$.post('/unlock-screen', {
+							pin: val,
+							_csrf: csrf
+						}, function(data){
+							if (!!data.authed) {
+								window.location.href = '/' + $('#return').val();
+							}
+							else {
+								clear();
+							}
+						}, 'json');
+					}
+					else {
+						clear();
+					}
+				});
 			});
 	%body{:id => "pin-entry"}
-		#home{"data-role" => "page"}
+		#home{"data-role" => "lock-screen"}
 			%div{"data-role" => "header"}
-				%h1= "Enter PIN"
+				%h1= "Screen Locked"
 			%div{"data-role" => "content"}
+				%input{ :type => "hidden", :id => "return", :value => return_path }
 				%div{"data-role" => "fieldcontain"}
 					%label{:for => "pin"}
 					%input{:type => "password", :size => 4, :readonly => "readonly", :id => "pin", :placeholder => "Enter PIN"}
+				%div{"data-role" => "fieldcontain", "data-center-contain" => "true"}
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 9}= "9"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 8}= "8"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 7}= "7"
+				%div{"data-role" => "fieldcontain", "data-center-contain" => "true"}
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 6}= "6"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 5}= "5"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 4}= "4"
+				%div{"data-role" => "fieldcontain", "data-center-contain" => "true"}
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 3}= "3"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 2}= "2"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 1}= "1"
+				%div{"data-role" => "fieldcontain", "data-center-contain" => "true"}
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 0}= "0"
+					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => "C"}= "Clear"
 				%div{"data-role" => "fieldcontain"}
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 9} = "9"
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 8} = "8"
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 7} = "7"
+					%button{:class => "pin-entry-submit", "data-role" => "button", "data-pinentry" => "C"}= "Submit"
 				%div{"data-role" => "fieldcontain"}
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 6} = "6"
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 5} = "5"
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 4} = "4"
-				%div{"data-role" => "fieldcontain"}
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 1} = "3"
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 2} = "2"
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 3} = "1"
-				%div{"data-role" => "fieldcontain"}
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => 0} = "0"
-					%button{:class => "pin-entry", "data-role" => "button", "data-inline" => "true", "data-pinentry" => "C"} = "Clear"
+					%a{"data-role" => "button", "data-transition" => "slide", :href => "/search"}= "Add song"					

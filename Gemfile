@@ -14,6 +14,7 @@ gem 'activeresource', '3.0.10'
 gem 'haml'
 
 gem 'rake'
+gem 'natural_time'
 
 gem 'sinatra-jsonp', :require => 'sinatra/jsonp'
 gem 'ruby-mp3info'

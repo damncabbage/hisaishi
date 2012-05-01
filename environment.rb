@@ -15,6 +15,7 @@ configure do
   set :admin_pin, 		ENV['ADMIN_PIN']
   set :files,        ENV['HISAISHI_FILES'] || "http://localhost:4567/music/"
   set :database_url, ENV['DATABASE_URL']   || "sqlite3://#{File.expand_path('data/hisaishi.sqlite', File.dirname(__FILE__))}"
+  set :defaults_to_queue, ENV['DEFAULTS_TO_QUEUE'] == 1 || false
   use Rack::Session::Cookie, :secret => ENV['RACK_COOKIE'] || "aaaaaaaaaaaaaaaboop"
   use Rack::Csrf, :raise => true
 end

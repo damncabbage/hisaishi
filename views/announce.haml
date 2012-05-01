@@ -1,7 +1,7 @@
 !!! 5
 %html
 	%head
-		%title= "Karaoke Queue"
+		%title= "Karaoke Announcements"
 		%link{:rel => "stylesheet", :type => "text/css", :href => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.css"}
 		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
@@ -12,8 +12,6 @@
 			var csrf = "#{csrf_token}";
 			var list = null;
 			
-			// @TODO: hide deletion list on page return.
-			
 			var toggleListNow = function(toggle) {
 				if (!!toggle) {
 					if (!!list) {
@@ -21,7 +19,7 @@
 					}
 					$('#edit-toggle').find('.ui-btn-text').text('Edit');
 					$('.toggle-delete').hide();
-					$('#queue-listview').removeClass('editing-list').listview('refresh');
+					$('#announce-listview').removeClass('editing-list').listview('refresh');
 				}
 				else {
 					if (!!list) {
@@ -29,12 +27,12 @@
 					}
 					$('#edit-toggle').find('.ui-btn-text').text('Done');
 					$('.toggle-delete').show();
-					$('#queue-listview').addClass('editing-list').listview('refresh');						
+					$('#announce-listview').addClass('editing-list').listview('refresh');						
 				}
 			},
 			
 			toggleListNatural = function() {
-				if ($('#queue-listview').hasClass('editing-list')) {
+				if ($('#announce-listview').hasClass('editing-list')) {
 					toggleListNow(true);
 				}
 				else {
@@ -42,18 +40,18 @@
 				}
 			};
 			
-			$( document ).delegate("#queue-page", "pageshow", function() {
+			$( document ).delegate("#announce-page", "pageshow", function() {
 				var oldOrder = null;
 				
 				var sendOrder = function() {
 					var newOrder = $(this).sortable('serialize');
 					if (oldOrder != null && newOrder != oldOrder) {
-						$.post('/queue-reorder', newOrder + '&_csrf=' + csrf);
+						$.post('/announce-reorder', newOrder + '&_csrf=' + csrf);
 						oldOrder = newOrder;
 					}
 				};
 				
-				list = new SortableList('#queue-listview', {
+				list = new SortableList('#announce-listview', {
 					onInit: function(){
 						oldOrder = $(this).sortable('serialize');
 					},
@@ -66,23 +64,23 @@
 				});
 				toggleListNow(true);
 			});
-	%body{:id => "hisaishi-queue-list"}
-		#queue-page{"data-role" => "page"}
+	%body{:id => "hisaishi-announce-list"}
+		#announce-page{"data-role" => "page"}
 			%div{"data-role" => "header"}
 				%a{:class => "ui-btn-left", "data-icon" => "gear", :href => "#", :id => "edit-toggle"}= "Edit"
-				%h1= "Queue"
+				%h1= "Announcements"
 				= haml :lock_button
 			%div{"data-role" => "content"}
 				%div{"data-role" => "fieldcontain"}
-					%a{"data-role" => "button", "data-transition" => "slide", :href => "/search"}= "Add song"
+					%a{"data-role" => "button", "data-rel" => "dialog", "data-transition" => "slideup", :href => "/announce-add"}= "Make announcement"
+					%p= "Tap an announcement to make it display immediately."
 					%br
-				%ul{"data-role" => "listview", "data_inset" => "true", :id => "queue-listview"}
-					- queue.each do |q|
-						%li{"data_theme" => "c", :id => "queue_#{q.id}", :class => q.play_state}
-							%a{"data-rel" => "dialog", "data-transition" => "slideup", :href => "/queue-info/#{q.id}"}
-								%h3= q.requester
+				%ul{"data-role" => "listview", "data_inset" => "true", :id => "announce-listview"}
+					- announce.each do |a|
+						%li{"data_theme" => "c", :id => "announce_#{a.id}", :class => a.displayed ? "finished" : "queued"}
+							%a{"data-transition" => "slide", :href => "/announce-show-now/#{a.id}", "data-ajax" => "false"}
+								%h3= a.text
 								%p{:class => "separated-descriptions"}
-									%em= songs[q.song_id].artist
-									%em= songs[q.song_id].title
-							%a{:href => "/queue-delete/#{q.id}", "data-rel" => "dialog", "data-transition" => "slideup", 'data-icon' => 'minus', 'class' => 'toggle-delete'}= "Delete"
+									%em= a.displayed ? "" : "Pending"
+							%a{:href => "/announce-delete/#{a.id}", "data-rel" => "dialog", "data-transition" => "slideup", 'data-icon' => 'minus', :class => 'toggle-delete'}= "Delete"
 			= haml :menubar

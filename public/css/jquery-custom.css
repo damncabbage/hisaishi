@@ -1,0 +1,99 @@
+[data-center-contain="true"] {
+	text-align: center;
+}
+
+.ui-icon-hisaishi-lock {
+	background-image: url("../img/lock.png");
+}
+
+.ui-icon-hisaishi-unlock {
+	background-image: url("../img/unlock.png");
+}
+
+.ui-icon-glyphish-queue {
+	background-size: 26px 18px;
+	background-image: url("../img/icons/160-voicemail-2.png");
+	
+	border-radius: 0;
+	width: 26px;
+	height: 18px;
+	border: 0px none;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+.ui-icon-glyphish-search {
+	background-size: 24px 24px;
+	background-image: url("../img/icons/06-magnify.png");
+	
+	border-radius: 0;
+	width: 24px;
+	height: 24px;
+	border: 0px none;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+.ui-icon-glyphish-announce {
+	background-size: 24px 22px;
+	background-image: url("../img/icons/09-chat-2.png");
+	
+	border-radius: 0;
+	width: 24px;
+	height: 22px;
+	border: 0px none;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+.ui-icon-glyphish-diagnostic {
+	background-size: 24px 24px;
+	background-image: url("../img/icons/55-network.png");
+	
+	border-radius: 0;
+	width: 24px;
+	height: 24px;
+	border: 0px none;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+
+#queue-page li h3:before,
+#announce-page li h3:before {
+	content: "";
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	background-image: url("../img/queue-icons.png");
+	background-repeat: no-repeat;
+	margin: 0 5px 0 0;
+}
+
+#queue-page li.queued h3:before, 
+#announce-page li.queued h3:before {
+	background-position: 0px 0px;
+}
+
+#queue-page li.ready h3:before, 
+#queue-page li.playing h3:before {
+	background-position: 0px -18px;
+}
+
+#queue-page li.finished h3:before, 
+#announce-page li.finished h3:before {
+	background-position: 0px -36px;
+}
+
+#queue-page li.paused h3:before {
+	background-position: 0px -54px;
+}
+
+.separated-descriptions em:before {
+	content: " – ";
+}
+
+.separated-descriptions em:first-child:before {
+	content: "";
+}

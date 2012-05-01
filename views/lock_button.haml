@@ -1,0 +1,4 @@
+- if has_admin_pin
+	%a{:class => "ui-btn-right", "data-icon" => "hisaishi-lock", :href => "/lock-screen?return_path=#{request.path_info.sub!(/^\//, '')}", :id => "edit-toggle", "data-ajax" => "false"}= "Lock"
+- else
+	%a{:class => "ui-btn-right", "data-icon" => "hisaishi-unlock", :href => "/lock-screen?return_path=#{request.path_info.sub!(/^\//, '')}", :id => "edit-toggle", "data-ajax" => "false"}= "Unlock"

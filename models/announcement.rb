@@ -17,12 +17,15 @@ class Announcement
   end 
   
   def show_now
-    displayed = false
-    ann_order = Announcement.all.length
-  	self.save!
+  	self.update(
+    	:displayed => false, 
+    	:ann_order => -1
+  	)
   end
   
   def shown
-    displayed = true
+	self.update(
+    	:displayed => true
+  	)
   end
 end

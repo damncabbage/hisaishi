@@ -3,6 +3,7 @@
 	%head
 		%title= "Could not add song to Karaoke Queue"
 		%link{:rel => "stylesheet", :type => "text/css", :href => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
 	%body{:id => "hisaishi-song-list"}
@@ -14,8 +15,9 @@
 					%em= song.title
 					= " could not be added to the karaoke queue."
 				%p= "The reason is that there is a five-minute limit between submissions."
-				%p= "Your nickname, "
+				%p
+					= "Your nickname, "
 					%em= requester
-					= " last submitted a song #{diff} ago."
+					= ", last submitted a song #{diff} ago."
 				%p= "If this is incorrect, ask the people at the help desk to add your song."
 				%a{ :href=> "/search", "data-role" => "button" }= "Return to Search"

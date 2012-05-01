@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/jsonp'
+require 'natural_time'
+require 'socket'
 
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
@@ -14,12 +16,16 @@ apply_csrf_protection
 get '/' do
   authenticate
   
-  song = rand_song
-
-  if song
-    haml :song, :locals => { :song_json => song.json, :user => session[:username] }
-  else
-    haml :no_song
+  if settings.defaults_to_queue
+  	redirect '/lock-screen'
+  else  
+	  song = rand_song
+	
+	  if song
+		haml :song, :locals => { :song_json => song.json, :user => session[:username] }
+	  else
+		haml :no_song
+	  end
   end
 end
 
@@ -98,27 +104,93 @@ end
 # Queue
 
 get '/queue' do
-  authenticate!
-  haml :queue, :locals => queue_songs
+  pin_auth
+  q = queue_songs
+  q[:authed] = has_admin_pin
+  haml :queue, :locals => q
+end
+
+get '/queue-info/:q_id' do
+  pin_auth!
+  q = HisaishiQueue.get(params[:q_id])
+  song = Song.get(q.song_id)
+  haml :queue_info, :locals => {
+  	:song => song,
+  	:q => q
+  }
+end
+
+post '/queue-info-process' do
+  pin_auth!
+  q = HisaishiQueue.get(params[:q_id])
+  puts params[:action]
+  
+  case params[:action]
+  when "now"
+  	q.play_now
+  when "next"
+  	q.play_next
+  when "last"
+  	q.play_last
+  when "stop"
+  	q.stop
+  when "prep"
+  	q.prep
+  when "play_next"
+  	q.play_next_now
+  when "pause"
+  	q.pause
+  when "unpause"
+  	q.unpause
+  end
+  
+  redirect '/queue'
 end
 
 get '/queue.jsonp' do
-  authenticate!
+  pin_auth!
   out = queue_songs
   JSONP out
 end
 
+get '/queue-delete/:q_id' do
+  pin_auth!
+  q = HisaishiQueue.get(params[:q_id])
+  song = Song.get(q.song_id)
+  haml :queue_delete_confirm, :locals => {
+  	:song => song,
+  	:q => q
+  }
+end
+
+post '/queue-delete-process' do
+  pin_auth!
+  q = HisaishiQueue.get(params[:q_id])
+  q.destroy
+  redirect '/queue'
+end
+
+post '/queue-reorder' do
+  pin_auth!
+  unless params[:queue].nil?
+    reorder_queue(params[:queue])
+  end
+end
+
+# Search, add song to queue functions
+
 get '/search' do
   haml :search, :locals => {
   	:songs => Song.all,
-  	:authed => is_logged_in
+  	:authed => has_admin_pin
   }
 end
 
 get '/add/:song_id' do
   song = Song.get(params[:song_id])
   haml :queue_song, :locals => {
-  	:song => song
+  	:song => song,
+  	:authed => has_admin_pin
   }
 end
 
@@ -131,11 +203,12 @@ post '/add-submit' do
     diff = Time.now - last_q.created_at
   end
   
-  if !is_logged_in and !last_q.nil? and diff.round <= 300 then
+  if !has_admin_pin and !last_q.nil? and diff.round <= 300 then
     haml :queue_song_fail_limit, :locals => {
       :requester => params[:requester],
   	  :song => song,
-  	  :diff => diff.distance_of_time_in_words
+  	  :diff => NaturalTime.new(diff).to_sentence,
+  	  :authed => has_admin_pin
     }
   else
     new_queue = song.enqueue(params[:requester])
@@ -143,7 +216,7 @@ post '/add-submit' do
     haml :queue_song_ok, :locals => {
   	  :song => song, 
   	  :new_queue => new_queue,
-      :authed => is_logged_in
+  	  :authed => has_admin_pin
     }
   end
 end
@@ -169,11 +242,12 @@ end
 # Announcements
 
 get '/announce' do
-	pin_auth!
+	pin_auth
 	
 	anns = Announcement.all(:order => [ :ann_order.asc ])
-	haml :announcements, :locals => {
-		:anns => anns
+	haml :announce, :locals => {
+		:announce => anns,
+  		:authed => has_admin_pin
 	}
 end
 
@@ -187,16 +261,99 @@ end
 post '/announce' do
 	text = params[:text]
 	new_ann = Announcement.create(
-      :text => text,
-      :ann_order => Announcement.all.length
+      	:text => text,
+      	:ann_order => Announcement.all.length,
+  		:authed => has_admin_pin
     )
     redirect '/announce'
+end
+
+get '/announce-add' do
+  pin_auth!
+  haml :announce_add
+end
+
+post '/announce-add-process' do
+  pin_auth!
+  
+  a = Announcement.create(
+    :text   		=> params[:text],
+    :ann_order 		=> Announcement.all.length,
+    :displayed		=> params[:show_now] != '1'
+  )
+  
+  normalise_announcement_order
+  
+  redirect '/announce'
+end
+
+get '/announce-delete/:a_id' do
+  pin_auth!
+  a = Announcement.get(params[:a_id])
+  haml :announce_delete_confirm, :locals => {
+  	:ann => a
+  }
+end
+
+post '/announce-delete-process' do
+  pin_auth!
+  a = Announcement.get(params[:a_id])
+  a.destroy
+  normalise_announcement_order
+  redirect '/announce'
+end
+
+post '/announce-reorder' do
+  pin_auth!
+  unless params[:announce].nil?
+    reorder_announcements(params[:announce])
+  end
+end
+
+get '/announce-show-now/:a_id' do
+  pin_auth!
+  a = Announcement.get(params[:a_id])
+  a.show_now
+  normalise_announcement_order
+  redirect '/announce'
+end
+
+get '/announce-hide-now/:a_id' do
+  pin_auth!
+  a = Announcement.get(params[:a_id])
+  a.shown
+  normalise_announcement_order
+  redirect '/announce'
+end
+
+# Diagnostics
+
+get '/diagnostic' do
+  pin_auth
+  puts request.env.inspect
+  haml :diagnostic, :locals => {
+	:scheme => request.env["rack.url_scheme"],
+  	:host => request.env["HTTP_HOST"],
+  	:ip => IPSocket.getaddress(Socket.gethostname)
+  }
 end
 
 # PIN auth screen
 
 get '/lock-screen' do
-  haml :lock_screen
+  session.clear
+  return_path = params[:return_path].nil? ? 'queue' : params[:return_path]
+  haml :pin_entry, :locals => {
+    :return_path => return_path
+  }
+end
+
+post '/unlock-screen' do
+  session[:admin_pin] = params[:pin]
+  state = {
+    :authed => has_admin_pin
+  }
+  JSONP state
 end
 
 # ##### HELPER FUNCTIONS
@@ -234,10 +391,12 @@ def has_admin_pin
   unless settings.admin_pin
     return false
   end
-  session[:admin_pin] == settings.admin_pin
+  return session[:admin_pin] == settings.admin_pin
 end
 
 # DB Helper
+
+# Queueing
 
 def queue_songs
 	song_list = {}
@@ -248,9 +407,39 @@ def queue_songs
 	
 	{
 		:songs => song_list,
-		:queue => HisaishiQueue.all
+		:queue => HisaishiQueue.all(:order => [:queue_order.asc])
 	}
 end
+
+def reorder_queue(queue_ids)
+	i = 0
+	queue_ids.each do |q_id|
+		q = HisaishiQueue.get(q_id);
+		q.update(:queue_order => i)
+		i += 1
+	end
+end
+
+# Announcements
+
+def normalise_announcement_order
+	ids = []
+	Announcement.all(:order => [:ann_order.asc]).each do |a|
+		ids << a.id
+	end
+	reorder_announcements(ids)
+end
+
+def reorder_announcements(announce_ids)
+	i = 0
+	announce_ids.each do |a_id|
+		a = Announcement.get(a_id);
+		a.update(:ann_order => i)
+		i += 1
+	end
+end
+
+# Song addition
 
 def last_song_by_requester(requester)
 	HisaishiQueue.first(
@@ -258,6 +447,8 @@ def last_song_by_requester(requester)
 	  :order => [ :created_at.desc ]
 	)
 end
+
+# Song search
 
 def rand_song
   songs = Song.find_by_sql([
@@ -278,3 +469,5 @@ def rand_song
     return false
   end
 end
+
+

@@ -29,7 +29,8 @@ var SortableList = function(selector, params) {
 				axis: 'y',
 				containment: settings.containment,
 				opacity: settings.opacity,
-				update: settings.onUpdate
+				update: settings.onUpdate,
+				placeholder: "ui-state-highlight"
 			});
 			settings.onInit($(sel));
 		},

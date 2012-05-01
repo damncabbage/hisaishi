@@ -3,12 +3,14 @@
 	%head
 		%title= "Karaoke Queue"
 		%link{:rel => "stylesheet", :type => "text/css", :href => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
 	%body{:id => "hisaishi-song-list"}
 		#home{"data-role" => "page", "data-add-back-btn" => "true"}
 			%div{"data-role" => "header"}
 				%h1= "Add to Queue?"
+				= haml :lock_button
 			%div{"data-role" => "content"}
 				%form{:action => "/add-submit", :method => "POST"}
 					= csrf_tag

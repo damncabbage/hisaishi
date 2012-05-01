@@ -1,0 +1,24 @@
+!!! 5
+%html
+	%head
+		%title= "Delete song?"
+		%link{:rel => "stylesheet", :type => "text/css", :href => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}
+	%body{:id => "hisaishi-queue-delete"}
+		#home{"data-role" => "page"}
+			%div{"data-role" => "header", "data-theme" => "e"}
+				%h1= "Delete from queue?"
+			%div{"data-role" => "content", "data-theme" => "d"}
+				%form{:action => "/queue-delete-process", :method => "post", "data-ajax" => "false"}
+					= csrf_tag
+					%input{:type => "hidden", :name => "q_id", :id => "q_id", :value => q.id}
+					%p
+						= "Would you like to delete "
+						%em= song.title
+						= " from the queue?"
+					%button{:type => "submit", "data-role" => "button", "data-theme" => "b"}= "Delete"
+					%a{:href => "/queue", "data-role" => "button", "data-rel" => "back"}= "Cancel and return to queue"
