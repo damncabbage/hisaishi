@@ -22,6 +22,14 @@ class Song
   property :no,      Integer,   :default => 0
   property :unknown,      Integer,   :default => 0  
   
+  def self.search(str)
+  	str = '%' + str.downcase + '%'
+    Song.all(:conditions => ['LOWER(title) LIKE ?', str]) + 
+    Song.all(:conditions => ['LOWER(artist) LIKE ?', str]) + 
+    Song.all(:conditions => ['LOWER(album) LIKE ?', str]) + 
+    Song.all(:conditions => ['LOWER(origin_title) LIKE ?', str])
+  end
+  
   def path_base
     return settings.files + source_dir
   end

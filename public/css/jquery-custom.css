@@ -59,6 +59,15 @@
 }
 
 
+.ui-hide-label input.ui-input-text, .ui-hide-label textarea.ui-input-text, .ui-hide-label .ui-input-search {
+	padding: .4em .4em .4em 1em;
+}
+
+.search-intro {
+	padding-bottom: .4em;
+}
+
+
 #queue-page li h3:before,
 #announce-page li h3:before {
 	content: "";

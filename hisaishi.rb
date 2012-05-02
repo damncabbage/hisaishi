@@ -7,6 +7,8 @@ require 'socket'
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
 
+require File.expand_path('HisaishiAdminSearch.rb', File.dirname(__FILE__))
+
 # Base hisaishi functionality
 
 use Rack::Session::Cookie
@@ -177,14 +179,7 @@ post '/queue-reorder' do
   end
 end
 
-# Search, add song to queue functions
-
-get '/search' do
-  haml :search, :locals => {
-  	:songs => Song.all,
-  	:authed => has_admin_pin
-  }
-end
+# Add song
 
 get '/add/:song_id' do
   song = Song.get(params[:song_id])
