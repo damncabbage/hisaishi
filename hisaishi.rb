@@ -8,6 +8,7 @@ require 'socket'
 require File.expand_path('environment.rb', File.dirname(__FILE__))
 
 require File.expand_path('HisaishiAdminSearch.rb', File.dirname(__FILE__))
+require File.expand_path('HisaishiQueuePlayer.rb', File.dirname(__FILE__))
 
 # Base hisaishi functionality
 

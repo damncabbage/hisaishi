@@ -603,11 +603,13 @@ var HisaishiEngine = function(params) {
 /* Hisaishi List */
 
 var HisaishiList = function(params) {
+	
 	var that = {
 		params: {
 			tracks: {},
 			hsParams: {},
-			containers: {}
+			containers: {},
+			source: null
 		},
 		state: {
 			track: null
@@ -757,7 +759,7 @@ var HisaishiList = function(params) {
 	
 	$.extend(true, that, {params: params});
 	
-	that.init = function() {
+	that.parseTracks = function() {
 		for (var i in this.params.tracks) {
 			if (this.params.tracks.hasOwnProperty(i)) {
 				if (this.state.track == null) {
@@ -781,6 +783,28 @@ var HisaishiList = function(params) {
 			}
 		}
 		this.setup();
+	};
+	
+	that.fetchSource = function() {
+		var obj = this;
+		$.getJSON(
+			this.params.source,
+			{},
+			function(data){
+				obj.tracks = data;
+				obj.parseTracks();
+			}
+		);
+	};
+	
+	that.init = function() {
+		if (!!this.tracks && this.tracks.length > 0) {
+			this.parseTracks();
+		}
+		
+		if (!!this.params.source) {
+			this.fetchSource();
+		}
 	};
 	
 	that.init();

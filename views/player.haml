@@ -1,0 +1,38 @@
+!!! 5
+%html
+  %head
+    %title= "Karaoke"
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+    %script{:type => "text/javascript",:src  => "/jquery-1.6.2.min.js"}
+    %script{:type => "text/javascript",:src  => "/mediaelement-and-player.min.js"}
+    %script{:type => "text/javascript",:src  => "/HisaishiEngine.js"}
+    %script{:type => "text/javascript",:src  => "/scripts/HisaishiPlayer.js"}
+    %script{:type => "text/javascript",:src  => "/effects.js"}
+    %script{:type => "text/javascript",:src  => "/html5slider.js"}
+    :javascript
+      var csrf = "#{csrf_token}";
+      var trax = {};
+      var hl = null;
+      $(document).ready(function(){
+        hl = new HisaishiPlayer({
+          source: '/queue.jsonp',
+          hsParams: {
+            preroll: {
+              line: 1000,
+              word: 200
+            }
+          },
+          containers: {
+            display: '#hisaishi-display',
+            list:  '#hisaishi-list'
+          }
+        });
+        hideCursor();
+        setTimeout(function() {
+          $('.play-button').trigger('mousedown');
+        }, 2000);
+      });   
+  %body
+    #hisaishi-display
+    #hisaishi-announcements
+    %ol{:id => "hisaishi-list"}
