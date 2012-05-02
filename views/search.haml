@@ -34,7 +34,7 @@
 				}
 			};
 			
-			$( document ).delegate("#search-page", "pageshow", function() {
+			$( document ).delegate("#search-page", "pageinit", function() {
 			
 				$('#query').keyup(function(q){
 					if (!!timeout) {
