@@ -22,6 +22,14 @@ class Song
   property :no,      Integer,   :default => 0
   property :unknown,      Integer,   :default => 0  
   
+  def self.search(str)
+  	str = '%' + str + '%'
+    Song.all(:title.like => str) + 
+    Song.all(:artist.like => str) + 
+    Song.all(:album.like => str) + 
+    Song.all(:origin_title.like => str)
+  end
+  
   def path_base
     return settings.files + source_dir
   end

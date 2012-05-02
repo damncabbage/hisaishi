@@ -7,22 +7,56 @@
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
 		%script{:type => "text/javascript", :src  => "/lib/jquery.ui.touch-punch.min.js"}
+		:javascript
+			var csrf = "#{csrf_token}";
+			
+			var timeout = null,
+			timer = 750;
+			
+			var refresh = function() {
+				$('#song-list-root').listview('refresh');
+			},
+			
+			searchData = function(){
+				var val = $('#query').val();
+				if (val.length > 0) {
+					$.post('/search', {
+						_csrf: csrf,
+						q: val
+					}, function(data){
+						$('#song-list-root').html(data);
+						refresh();
+					});
+				}
+				else {
+					$('#song-list-root').children().remove();
+					refresh();
+				}
+			};
+			
+			$( document ).delegate("#search-page", "pageshow", function() {
+			
+				$('#query').keyup(function(q){
+					if (!!timeout) {
+						clearTimeout(timeout);
+					}
+					timeout = setTimeout(searchData, timer);
+				})
+				.change(function(){
+					searchData();
+				});
+			
+			});
+			
 	%body{:id => "hisaishi-song-list"}
-		#home{"data-role" => "page", "data-add-back-btn" => "true"}
+		#search-page{"data-role" => "page", "data-add-back-btn" => "true"}
 			%div{"data-role" => "header"}
 				%h1= "Song Search"
 				= haml :lock_button
 			%div{"data-role" => "content"}
-				%ul{"data-role" => "listview", :data_inset => "true", "data-filter" => "true"}
-					- songs.each do |s|
-						%li{:data_theme => "c"}
-							%a{:href => "/add/#{s.id}", "data-transition" => "slide"}
-								%h3= s.title
-								%p{:class => "separated-descriptions"}
-									- if !s.artist.nil?
-										%em= s.artist
-									- if !s.album.nil?
-										%em= s.album
-									- if !s.origin_title.nil?
-										%em= s.origin_title
+				%form
+					%div{"data-role" => "fieldcontain", :class => "ui-hide-label search-intro"}
+						%input{:type => "search", :id => "query", :placeholder => "Keyword search", "data-mini" => "true"}
+						%p= "Enter part of a song title, artist, series or album."
+				%ul{:id => "song-list-root", "data-role" => "listview", :data_inset => "true"}
 			= haml :menubar
