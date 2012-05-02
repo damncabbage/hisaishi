@@ -45,6 +45,11 @@
 				.change(function(){
 					searchData();
 				});
+				
+				$('#search-form').submit(function(e){
+					e.preventDefault();
+					searchData();
+				});
 			
 			});
 			
@@ -54,7 +59,7 @@
 				%h1= "Song Search"
 				= haml :lock_button
 			%div{"data-role" => "content"}
-				%form
+				%form{:id => "search-form", "data-ajax" => "false"}
 					%div{"data-role" => "fieldcontain", :class => "ui-hide-label search-intro"}
 						%input{:type => "search", :id => "query", :placeholder => "Keyword search", "data-mini" => "true"}
 						%p= "Enter part of a song title, artist, series or album."
