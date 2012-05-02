@@ -14,7 +14,7 @@ require File.expand_path('HisaishiQueuePlayer.rb', File.dirname(__FILE__))
 
 use Rack::Session::Cookie
 
-apply_csrf_protection
+apply_csrf_protection unless settings.environment == :test
 
 get '/' do
   authenticate
@@ -357,7 +357,7 @@ end
 # Login helper functions
 
 def authenticate
-  session[:intended_url] = request.url  
+  session[:intended_url] = request.url
   redirect '/login' unless is_logged_in
 end
 
@@ -367,7 +367,7 @@ end
 
 def is_logged_in
   unless settings.basecamp_domain
-    return (session[:username] = 'guest')
+    session[:username] = 'guest'
   end
   session[:username] # Nil if not set, otherwise truthy.
 end
