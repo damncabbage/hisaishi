@@ -31,5 +31,6 @@ DataMapper.finalize
 # Load plugins (and step around /vendor/bundler).
 load("#{File.dirname(__FILE__)}/vendor/sinatra_rack.rb")
 Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
+DataMapper::Logger.new(STDOUT, :debug)
 DataMapper.setup(:default, settings.database_url)
 
