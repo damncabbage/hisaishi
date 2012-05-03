@@ -43,9 +43,8 @@ end
 post '/song/:song_id/vote' do
   authenticate!
 
-  puts song = Song.get(params[:song_id])
-  puts song.vote(params[:vote], params[:reasons], session)
-  puts params.inspect
+  song = Song.get(params[:song_id])
+  song.vote(params[:vote], params[:reasons], session)
   
   halt 200
 end
