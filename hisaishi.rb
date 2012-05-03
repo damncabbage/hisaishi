@@ -46,7 +46,10 @@ post '/song/:song_id/vote' do
   puts "after vote auth"
 
   song = Song.get(params[:song_id])
+  puts "got song #{params[:song_id]} -> #{song}"
+
   song.vote(params[:vote], params[:reasons], session)
+  puts "voted with #{params.inspect}"
   
   halt 200
 end
