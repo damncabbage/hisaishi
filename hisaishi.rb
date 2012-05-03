@@ -41,17 +41,13 @@ get '/song/:song_id' do
 end
 
 post '/song/:song_id/vote' do
-  puts "before vote auth"
   authenticate!
-  puts "after vote auth"
 
-  puts "params: #{params.inspect}"
+  puts "#1: #{params[:song_id]}"
+  puts "#2: #{params["song_id"]}"
   song = Song.get(params[:song_id])
-  puts "got song #{params[:song_id]} -> #{song}"
-
   song.vote(params[:vote], params[:reasons], session)
-  puts "voted with #{params.inspect}"
-  
+
   halt 200
 end
 
