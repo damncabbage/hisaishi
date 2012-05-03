@@ -45,6 +45,7 @@ post '/song/:song_id/vote' do
   authenticate!
   puts "after vote auth"
 
+  puts "params: #{params.inspect}"
   song = Song.get(params[:song_id])
   puts "got song #{params[:song_id]} -> #{song}"
 
