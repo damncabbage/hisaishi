@@ -43,8 +43,6 @@ end
 post '/song/:song_id/vote' do
   authenticate!
 
-  puts "#1: #{params[:song_id]}"
-  puts "#2: #{params["song_id"]}"
   song = Song.get(params[:song_id])
   song.vote(params[:vote], params[:reasons], session)
 
