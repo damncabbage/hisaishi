@@ -13,6 +13,7 @@ use Rack::Session::Cookie
 # HACK: Disable CSRF, add shim.
 #apply_csrf_protection
 def csrf_tag(*); end
+def csrf_token(*); end
 
 
 get '/' do
