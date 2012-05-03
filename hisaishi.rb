@@ -46,7 +46,7 @@ post '/song/:song_id/vote' do
   song = Song.get(params[:song_id])
   song.vote(params[:vote], params[:reasons], session)
   
-  return true
+  halt 200
 end
 
 get '/songs/list' do
