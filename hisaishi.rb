@@ -10,7 +10,10 @@ require File.expand_path('environment.rb', File.dirname(__FILE__))
 
 use Rack::Session::Cookie
 
-apply_csrf_protection
+# HACK: Disable CSRF, add shim.
+#apply_csrf_protection
+def csrf_tag(*); end
+
 
 get '/' do
   authenticate

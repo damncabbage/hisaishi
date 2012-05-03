@@ -15,7 +15,7 @@ configure do
   set :files,        ENV['HISAISHI_FILES'] || "http://localhost:4567/music/"
   set :database_url, ENV['DATABASE_URL']   || "sqlite3://#{File.expand_path('data/hisaishi.sqlite', File.dirname(__FILE__))}"
   use Rack::Session::Cookie, :secret => ENV['RACK_COOKIE'] || "aaaaaaaaaaaaaaaboop"
-  use Rack::Csrf, :raise => true
+#  use Rack::Csrf, :raise => true
 end
 
 # Per-environment configs; use 'rake hisaishi:install' to create this with defaults.
