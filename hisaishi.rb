@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/jsonp'
+require 'cgi'
 
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
@@ -65,9 +66,19 @@ end
 post '/login' do
   host = settings.basecamp_domain + '.basecamphq.com'
   begin
-    Basecamp.establish_connection! host, params[:username], params[:password], true
-    token = Basecamp.get_token
-    session[:username] = params[:username] unless token.nil?
+    # HACK: Manually-created accounts, formatted as "user=
+    accounts = {}
+    accounts = CGI.parse(ENV['MANUAL_ACCOUNTS']) if ENV['MANUAL_ACCOUNTS']
+    if accounts[params[:username]] && accounts[params[:username]] == [params[:password]]
+      session[:username] = params[:username]
+    else
+
+      # Basecamp
+      Basecamp.establish_connection! host, params[:username], params[:password], true
+      token = Basecamp.get_token
+      session[:username] = params[:username] unless token.nil?
+
+    end
   rescue ArgumentError
   end
   
