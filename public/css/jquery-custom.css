@@ -106,3 +106,10 @@
 .separated-descriptions em:first-child:before {
 	content: "";
 }
+
+
+/* Lock Screen */
+#pin-entry .ui-btn, #pin-entry .ui-input-text {
+  padding: 10px;
+}
+
