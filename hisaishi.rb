@@ -2,7 +2,7 @@ require 'rubygems'
 require 'sinatra'
 require 'sinatra/jsonp'
 require 'natural_time'
-require 'socket'
+require 'sinatra-websocket'
 
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
@@ -15,6 +15,38 @@ require File.expand_path('HisaishiQueuePlayer.rb', File.dirname(__FILE__))
 use Rack::Session::Cookie
 
 apply_csrf_protection unless settings.environment == :test
+
+
+# ##### WEBSOCKET ROUTES
+
+set :server, 'thin'
+set :sockets, []
+
+get '/socket' do
+  if !request.websocket?
+    redirect '/'
+  else
+    request.websocket do |ws|
+      ws.onopen do
+        ws.send("Connected")
+        settings.sockets << ws
+      end
+      ws.onmessage do |msg|
+        EM.next_tick do
+          # Spam the message back out to all connected clients, player and controller alike.
+          settings.sockets.each { |s| s.send(msg) }
+        end
+      end
+      ws.onclose do
+        ws.send("Disconnected")
+        settings.sockets.delete(ws)
+      end
+    end
+  end
+end
+
+
+# ##### PLAYER ROUTES
 
 get '/' do
   authenticate
