@@ -7,12 +7,8 @@ require 'socket'
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
 
-require File.expand_path('HisaishiAdminSearch.rb', File.dirname(__FILE__))
-
 # Base hisaishi functionality
-
 use Rack::Session::Cookie
-
 apply_csrf_protection unless settings.environment == :test
 
 get '/' do
@@ -97,10 +93,28 @@ get '/proxy' do
   open(URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')).read
 end
 
+
+# ##### CONTROLLER ROUTES
+
 # Browser
 
 get '/browse' do
   haml :browser
+end
+
+# Search
+
+get '/search' do
+  haml :search, :locals => {
+    :authed => has_admin_pin
+  }
+end
+
+post '/search' do
+  songs = Song.search(params[:q])
+  haml :search_result, :locals => {
+    :songs => songs
+  }
 end
 
 # Queue
@@ -350,6 +364,7 @@ post '/unlock-screen' do
   }
   JSONP state
 end
+
 
 # ##### HELPER FUNCTIONS
 
