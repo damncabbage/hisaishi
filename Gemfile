@@ -27,6 +27,8 @@ gem 'natural_time'
 gem 'ruby-mp3info'
 gem 'activesupport'
 
+gem 'sinatra-websocket'
+
 group :development, :test do
   gem 'rspec'
   gem 'capybara'
