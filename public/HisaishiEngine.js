@@ -45,7 +45,8 @@ var HisaishiEngine = function(params) {
 				lyrics:		null,
 				audio:		null,
 				controls: 	null
-			}
+			},
+			onComplete: function(){}
 		},
 		loaded: {
 			lyrics: false,
@@ -415,18 +416,14 @@ var HisaishiEngine = function(params) {
 					that.setTimerControl();
 				}, true);
 				
-		    that.loaded.audio = true;
-				$(that).trigger('checkload');
+				mediaElement.addEventListener('ended', function(){
+					that.params.onComplete();
+				}, true);
 				
-				// We put this here because otherwise Firefox doesn't work.				
-//			  $('.play-button').trigger('mousedown');
+		    	that.loaded.audio = true;
+				$(that).trigger('checkload');
 			}
 		});
-		
-		// If Firefox worked properly, this would be all I needed.
-//    document.addEventListener('loadeddata', function() {
-//      $('.play-button').trigger('mousedown');
-//    }, true);
 	}; 
 	
 	/* Playback */

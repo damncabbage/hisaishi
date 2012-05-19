@@ -13,6 +13,7 @@ var HisaishiPlayer = function(params) {
 		hsParams: {},
 		containers: {},
 		source: null,
+		socket_url: null,
 		playing: null
 	};
 	
@@ -20,8 +21,11 @@ var HisaishiPlayer = function(params) {
 		tracks: {},
 		queue: [],
 		
+		current_queue: null,
 		track: null,
 		playstate: null,
+		
+		socket: null,
 		
 		hs: {},
 		hr: {}
@@ -59,13 +63,12 @@ var HisaishiPlayer = function(params) {
 			id: 'controls-container-' + ident,
 			'class': 'controls-container'
 		}),
-		rating = $('<div />', {
-			id: 'rating-container-' + ident,
-			'class': 'rating-container'
+		queue = $('<div />', {
+			id: 'queue-container-' + ident,
+			'class': 'queue-container'
 		});
 		controlbar
-		  .append(controls)
-		  .append(rating);
+		  .append(controls);
 		
 		display
 			.append(cover)
@@ -76,7 +79,9 @@ var HisaishiPlayer = function(params) {
 		if (settings.containers.display) {
 			$(settings.containers.display).append(display);
 		}
-		
+	};
+	
+	priv.scaffoldQueue = function(ident) {
 		var fields = ['title', 'artist', 'album', 'karaoke'],
 		listitem = $('<li />', {
 			id:   'select-track-' + ident
@@ -85,10 +90,9 @@ var HisaishiPlayer = function(params) {
 		for (var i in fields) {
 			if (fields.hasOwnProperty(i) && i != 'length') {
 		    if (fields[i] == 'karaoke') {
-		      var karaoke_setting;
+		      var karaoke_setting = 'Warning: Karaoke setting not set';
 		      if (track[fields[i]] == 'true') karaoke_setting = 'Karaoke version';
 		      else if (track[fields[i]] == 'false') karaoke_setting = 'Vocal version';
-		      else if (track[fields[i]] == 'unknown') karaoke_setting = 'Warning: Karaoke setting not set';
 		      
 			    var part = $('<div />', {
 				    text: karaoke_setting, 
@@ -114,10 +118,20 @@ var HisaishiPlayer = function(params) {
 		}
 	};
 	
-	priv.switchHS = function(id) {
+	priv.nextHS = function() {
+		// switch HS to next song
+		// pop warning
+		// wait for 30 seconds
+	};
+	
+	priv.switchHS = function(id, play) {
 		state.hs[state.track].stopSong();
 		state.track = id;
 		this.setup();
+		
+		if (!!play) {
+			state.hs[state.track].playSong();
+		}
 	};
 	
 	priv.setup = function() {
@@ -141,7 +155,8 @@ var HisaishiPlayer = function(params) {
 					line: 	500,
 					word: 	200
 				},
-				offset: (!!track.offset ? track.offset: 0)
+				offset: (!!track.offset ? track.offset: 0),
+				onComplete: priv.nextHS
 			};
 			$.extend(true, hsParams, settings.hsParams);
 			
@@ -169,10 +184,6 @@ var HisaishiPlayer = function(params) {
 	priv.parseTracks = function() {
 		for (var i in state.tracks) {
 			if (state.tracks.hasOwnProperty(i)) {
-				if (state.track == null) {
-					state.track = i;
-				}
-				
 				if (!!state.tracks[i].loaded) continue;
 				
 				var folder = state.tracks[i].folder,
@@ -192,20 +203,75 @@ var HisaishiPlayer = function(params) {
 		this.setup();
 	};
 	
+	priv.importData = function(data) {
+		state.tracks = data.songs;
+		state.queue = data.queue;
+		priv.parseTracks();
+	};
+	
 	priv.fetchSource = function() {
-		var obj = this;
-		$.getJSON(
-			settings.source,
-			{},
-			function(data){
-				state.tracks = data.songs;
-				state.queue = data.queue;
-				obj.parseTracks();
-			}
-		);
+		$.getJSON(settings.source, {}, priv.importData);
 	};
 	
 	pub.init = function() {
+		if (!!settings.socket) {
+			state.socket = $.websocket(settings.socket, {
+				open: function() {
+				},
+		        close: function() {
+		        },
+		        events: {
+		        	x: function(e) {
+		        		// e.data.foo
+		        	},
+		        	
+		        	// called whenever the queue gets reordered
+		        	reorder: function(e) {
+		        		// e.data.queue
+		        		// e.data.songs
+		        		priv.importData(e.data);
+		        	},
+		        	
+		        	// called whenever *any* track gets played
+		        	play: function(e) {
+		        		// e.data.queue_id
+		        		var oldQueueID = state.current_queue,
+		        		newQueueID = e.data.queue_id,
+		        		
+		        		oldTrackID = state.track,
+		        		newTrackID = state.track;
+		        		
+		        		if (oldQueueID != newTrackID) {
+		        			state.current_queue = newQueueID;
+		        			foreach (var i in state.queue) {
+		        				if (state.queue.hasOwnProperty(i)) {
+		        					var q_item = state.queue[i];
+									if (q_item.id == newQueueID) {
+										newTrackID = q_item.song_id;
+										break;
+									}
+		        				}
+		        			}
+		        		}
+		        		
+		        		if (newTrackID != oldTrackID) {
+			        		priv.switchHS(newTrackID, true);
+		        		}
+		        	},
+		        	
+		        	// called whenever the playing track is paused
+		        	pause: function(e) {
+		        		state.hs[state.track].pauseSong();
+		        	},
+
+		        	// called whenever the playing track is stopped		        	
+		        	stop: function(e) {
+		        		state.hs[state.track].stopSong();
+		        	}
+		        }
+			});
+		}
+		
 		if (!!settings.source) {
 			priv.fetchSource();
 		}
