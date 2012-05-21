@@ -1,6 +1,7 @@
 # Bundler config and Bundler-installed gems
 .bundle
 vendor/bundler
+pqxx-dev
 
 # Seeding files
 data/seeds.csv
