@@ -8,6 +8,7 @@
     %script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
     %script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
     %script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}    
+    %script{:type => "text/javascript", :src  => "/reconnecting-websocket.js"}    
     :javascript
       $(document).ready(function(){
         var $pin = $('#pin');
@@ -49,7 +50,28 @@
             clear();
           }
         });
+
+        // TODO: Remove, this is just a test.
+        var wsConnect = function(){
+          return new ReconnectingWebSocket('ws://' + window.location.host + '/socket');
+        };
+        var ws = wsConnect();
+        ws.onopen  = function() { console.log('Socket opened.'); }
+        ws.onclose = function() { console.log('Socket closed.'); }
+        ws.onmessage = function(m) { console.log('Message received: ' + m.data); }
+        $('.pin-entry').click(function(e){
+          var num = $(this).attr('data-pinentry');
+          ws.send('Pushed button "' + num + '"');
+        });
+
+        // Make sure we clean up correctly. Socket connections aren't closed until the browser is
+        // closed, or we clean up manually first.
+        window.onbeforeunload = function(){
+          ws.close();
+        };
+
       });
+
   %body{:id => "pin-entry"}
     #home{"data-role" => "lock-screen"}
       %div{"data-role" => "header"}

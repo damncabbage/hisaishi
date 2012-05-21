@@ -62,11 +62,8 @@ var HisaishiPlayer = function(params) {
 		controls = $('<div />', {
 			id: 'controls-container-' + ident,
 			'class': 'controls-container'
-		}),
-		queue = $('<div />', {
-			id: 'queue-container-' + ident,
-			'class': 'queue-container'
 		});
+		
 		controlbar
 		  .append(controls);
 		
@@ -122,6 +119,21 @@ var HisaishiPlayer = function(params) {
 		// switch HS to next song
 		// pop warning
 		// wait for 30 seconds
+		
+		var currentTrackIndex = null,
+		nextTrackIndex = null;
+		
+		if (!!nextTrackIndex) {
+			var text = [
+				'<p>Next song:</p>',
+				'<h2></h2>',
+				'<h1></h1>',
+				'<p>sung by</p>',
+				'<h2></h2>'
+			];
+			
+			
+		}
 	};
 	
 	priv.switchHS = function(id, play) {
@@ -181,6 +193,15 @@ var HisaishiPlayer = function(params) {
 	
 	$.extend(settings, params);
 	
+	priv.setupArea = function() {
+		if ($('.hisaishi-player-alert', settings.containers).length == 0) {
+			var alert = $('<div />', {
+				'class': 'hisaishi-player-alert'
+			});
+			$(settings.containers).append(alert);
+		}
+	};
+	
 	priv.parseTracks = function() {
 		for (var i in state.tracks) {
 			if (state.tracks.hasOwnProperty(i)) {
@@ -227,9 +248,7 @@ var HisaishiPlayer = function(params) {
 		        	
 		        	// called whenever the queue gets reordered
 		        	reorder: function(e) {
-		        		// e.data.queue
-		        		// e.data.songs
-		        		priv.importData(e.data);
+		        		priv.fetchSource();
 		        	},
 		        	
 		        	// called whenever *any* track gets played
