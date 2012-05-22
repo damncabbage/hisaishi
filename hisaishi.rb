@@ -279,6 +279,7 @@ post '/add-submit' do
   end
 end
 
+# DEPRECATED
 post '/queue-submit' do
   authenticate!
 
