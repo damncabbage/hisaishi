@@ -1,6 +1,6 @@
 /* Hisaishi List */
 
-if (!HisaishiEngine) {
+if (HisaishiEngine === undefined) {
 	throw {
 		type: 'NoHisaishiEngineException',
 		message: 'No Hisaishi engine script found.'
@@ -250,7 +250,7 @@ var HisaishiPlayer = function(params) {
 		        		
 		        		if (oldQueueID != newTrackID) {
 		        			state.current_queue = newQueueID;
-		        			foreach (var i in state.queue) {
+		        			for (var i in state.queue) {
 		        				if (state.queue.hasOwnProperty(i)) {
 		        					var q_item = state.queue[i];
 									if (q_item.id == newQueueID) {
