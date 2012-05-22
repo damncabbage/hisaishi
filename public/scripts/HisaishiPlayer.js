@@ -229,12 +229,14 @@ var HisaishiPlayer = function(params) {
 		        	reorder: function(e) {
 		        		// e.data.queue
 		        		// e.data.songs
-		        		priv.importData(e.data);
+		        		console.log("reorder");
+		        		priv.fetchSource();
 		        	},
 		        	
 		        	// called whenever *any* track gets played
 		        	play: function(e) {
 		        		// e.data.queue_id
+		        		console.log("play " + e.data.queue_id);
 		        		var oldQueueID = state.current_queue,
 		        		newQueueID = e.data.queue_id,
 		        		
@@ -261,11 +263,13 @@ var HisaishiPlayer = function(params) {
 		        	
 		        	// called whenever the playing track is paused
 		        	pause: function(e) {
+		        		console.log("pause");
 		        		state.hs[state.track].pauseSong();
 		        	},
 
 		        	// called whenever the playing track is stopped		        	
 		        	stop: function(e) {
+		        		console.log("stop");
 		        		state.hs[state.track].stopSong();
 		        	}
 		        }
