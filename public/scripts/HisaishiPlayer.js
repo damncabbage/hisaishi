@@ -233,6 +233,11 @@ var HisaishiPlayer = function(params) {
 		        		priv.fetchSource();
 		        	},
 		        	
+		        	queue_update: function(e) {
+		        		console.log("queue update");
+		        		priv.fetchSource();
+		        	},
+		        	
 		        	// called whenever *any* track gets played
 		        	play: function(e) {
 		        		// e.data.queue_id
