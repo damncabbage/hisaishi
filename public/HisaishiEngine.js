@@ -83,6 +83,13 @@ var HisaishiEngine = function(params) {
 		}
 	};
 	
+	/* Visual Feedback */
+	
+	that.triggerBroken = function() {
+		$(this.params.containers.lyrics).parent().addClass('broken');
+		alert('NG :(');
+	};
+	
 	/* Lyrics */
 	
 	that.parseLyricsFormat = function(raw, callback) {
@@ -424,7 +431,7 @@ var HisaishiEngine = function(params) {
 				$(that).trigger('checkload');
 			}
 		});
-	}; 
+	};
 	
 	/* Playback */
 	
@@ -457,15 +464,25 @@ var HisaishiEngine = function(params) {
 	that.playSong 	= function() {
 		if (!this.state.playing) {
 			that.state.playing = true;
-			this.state.audio.play();
-			that.runLoop(10);
+			if (!!this.state.audio) {
+				this.state.audio.play();
+				that.runLoop(10);
+			}
+			else {
+				that.triggerBroken();
+			}
 		}
 	};
 	
 	that.pauseSong 	= function() {
 		if (this.state.playing) {
 			this.state.playing = false;
-			this.state.audio.pause();
+			if (!!this.state.audio) {
+				this.state.audio.pause();
+			}
+			else {
+				that.triggerBroken();
+			}
 			clearTimeout(this.timer);
 		}
 		else {
@@ -477,8 +494,13 @@ var HisaishiEngine = function(params) {
 		if (this.state.playing) {
 			this.pauseSong();
 		}
-		this.state.audio.setCurrentTime(0);
-		this.state.audio.pause();
+		if (!!this.state.audio) {
+			this.state.audio.setCurrentTime(0);
+			this.state.audio.pause();
+		}
+		else {
+			that.triggerBroken();
+		}
 		this.state.time 				= 0;
 		this.state.timecodeKey 			= 0;
 		
@@ -505,21 +527,26 @@ var HisaishiEngine = function(params) {
 
 	that.setTimerControl = function() {
 		
-		var length = this.state.audio.media.duration;
-		if (length == NaN) {
-			length = 0;
+		if (!!this.state.audio) {		
+			var length = this.state.audio.media.duration;
+			if (length == NaN) {
+				length = 0;
+			}
+			
+			var secs 		= this.state.audio.getCurrentTime(),
+				progress 	= (secs / length) * 100,
+				roundSecs 	= Math.floor(secs),
+				timeParts	= [Math.floor(roundSecs / 60), Math.floor(roundSecs % 60)];
+			
+			$('.song-range', this.params.containers.controls)
+				.attr('value', progress);
+			
+			$('.timer', this.params.containers.controls)
+				.text(timeParts.join('m ') + 's');
 		}
-		
-		var secs 		= this.state.audio.getCurrentTime(),
-			progress 	= (secs / length) * 100,
-			roundSecs 	= Math.floor(secs),
-			timeParts	= [Math.floor(roundSecs / 60), Math.floor(roundSecs % 60)];
-		
-		$('.song-range', this.params.containers.controls)
-			.attr('value', progress);
-		
-		$('.timer', this.params.containers.controls)
-			.text(timeParts.join('m ') + 's');
+		else {
+			this.triggerBroken();
+		}
 	};
 	
 	that.renderControls = function() {
@@ -569,8 +596,14 @@ var HisaishiEngine = function(params) {
 	/* Load Everything */
 	
 	that.loadSong = function() {
-		this.loadLyrics();
-		this.loadAudio();
+		try {
+			this.loadLyrics();
+			this.loadAudio();
+		}
+		catch(ex) {
+			this.triggerBroken();
+			console.log(ex.message);
+		}
 	};
 	
 	/* Render Everything */

@@ -123,6 +123,10 @@ div.details {
 	height: 100%;
 }
 
+.hisaishi-scaffold.broken {
+	background: url(/img/broken.svg) no-repeat center center;
+}
+
 .hisaishi-scaffold img.track-image {
 	position: absolute;
 	width: 100%;

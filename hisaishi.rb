@@ -46,6 +46,9 @@ def send_to_sockets(type, data={})
   end
 end
 
+# ##### PULLS IN INCLUDED ROUTES
+
+require File.expand_path('HisaishiQueuePlayer.rb', File.dirname(__FILE__))
 
 # ##### PLAYER ROUTES
 

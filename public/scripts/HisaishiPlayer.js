@@ -84,6 +84,8 @@ var HisaishiPlayer = function(params) {
 			id:   'select-track-' + ident
 		});
 		
+		var track = state.tracks[ident];
+		
 		for (var i in fields) {
 			if (fields.hasOwnProperty(i) && i != 'length') {
 		    if (fields[i] == 'karaoke') {
@@ -137,7 +139,10 @@ var HisaishiPlayer = function(params) {
 	};
 	
 	priv.switchHS = function(id, play) {
-		state.hs[state.track].stopSong();
+		if (!!state.track) {
+			state.hs[state.track].stopSong();
+		}
+		
 		state.track = id;
 		this.setup();
 		
@@ -148,35 +153,37 @@ var HisaishiPlayer = function(params) {
 	
 	priv.setup = function() {
 		var currentTrack = state.track;
-		$('.hisaishi-scaffold').not('#scaffold-' + currentTrack).hide();
-		if (!state.hs[currentTrack]) {
-			var track = state.tracks[currentTrack];
-			
-			var hsParams = {
-				src: {
-					lyrics: track.compiledLyrics,
-					audio: 	track.compiledAudio
-				},
-				containers: {
-					lyrics:		'#lyrics-container-' 	+ currentTrack,
-					audio:		'#audio-container-' 	+ currentTrack,
-					controls: 	'#controls-container-' 	+ currentTrack
-				},
-				preroll: {
-					queue: 	5000,
-					line: 	500,
-					word: 	200
-				},
-				offset: (!!track.offset ? track.offset: 0),
-				onComplete: priv.nextHS
-			};
-			$.extend(true, hsParams, settings.hsParams);
-			
-			state.hs[currentTrack] = new HisaishiEngine(hsParams);
-			
-			// Not using HisaishiRate in the Player
+		if (!!currentTrack) {
+			$('.hisaishi-scaffold').not('#scaffold-' + currentTrack).hide();
+			if (!state.hs[currentTrack]) {
+				var track = state.tracks[currentTrack];
+				
+				var hsParams = {
+					src: {
+						lyrics: track.compiledLyrics,
+						audio: 	track.compiledAudio
+					},
+					containers: {
+						lyrics:		'#lyrics-container-' 	+ currentTrack,
+						audio:		'#audio-container-' 	+ currentTrack,
+						controls: 	'#controls-container-' 	+ currentTrack
+					},
+					preroll: {
+						queue: 	5000,
+						line: 	500,
+						word: 	200
+					},
+					offset: (!!track.offset ? track.offset: 0),
+					onComplete: priv.nextHS
+				};
+				$.extend(true, hsParams, settings.hsParams);
+				
+				state.hs[currentTrack] = new HisaishiEngine(hsParams);
+				
+				// Not using HisaishiRate in the Player
+			}
+			$('#scaffold-' + currentTrack).show();
 		}
-		$('#scaffold-' + currentTrack).show();
 	};
 	
 	priv.append = function(newSong) {
@@ -219,9 +226,10 @@ var HisaishiPlayer = function(params) {
 				this.scaffold(i);
 				
 				state.tracks[i].loaded = true;
+				priv.scaffoldQueue(i);
 			}
 		}
-		this.setup();
+		priv.setup();
 	};
 	
 	priv.importData = function(data) {
@@ -266,10 +274,10 @@ var HisaishiPlayer = function(params) {
 		        		var oldQueueID = state.current_queue,
 		        		newQueueID = e.data.queue_id,
 		        		
-		        		oldTrackID = state.track,
-		        		newTrackID = state.track;
+		        		oldTrackID = state.track || null,
+		        		newTrackID = state.track || null;
 		        		
-		        		if (oldQueueID != newTrackID) {
+		        		if (!!newQueueID && oldQueueID != newQueueID) {
 		        			state.current_queue = newQueueID;
 		        			for (var i in state.queue) {
 		        				if (state.queue.hasOwnProperty(i)) {
@@ -282,7 +290,7 @@ var HisaishiPlayer = function(params) {
 		        			}
 		        		}
 		        		
-		        		if (newTrackID != oldTrackID) {
+		        		if (!!newTrackID && newTrackID != oldTrackID) {
 			        		priv.switchHS(newTrackID, true);
 		        		}
 		        	},
@@ -290,13 +298,17 @@ var HisaishiPlayer = function(params) {
 		        	// called whenever the playing track is paused
 		        	pause: function(e) {
 		        		console.log("pause");
-		        		state.hs[state.track].pauseSong();
+		        		if (!!state.track) {
+		        			state.hs[state.track].pauseSong();
+		        		}
 		        	},
 
 		        	// called whenever the playing track is stopped		        	
 		        	stop: function(e) {
 		        		console.log("stop");
-		        		state.hs[state.track].stopSong();
+		        		if (!!state.track) {
+		        			state.hs[state.track].stopSong();
+		        		}
 		        	}
 		        }
 			});
