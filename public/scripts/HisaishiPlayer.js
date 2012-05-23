@@ -254,6 +254,13 @@ var HisaishiPlayer = function(params) {
 		        		// e.data.foo
 		        	},
 		        	
+		        	hi: function(e) {
+		        		alert('hello :3');
+		        	},
+		        	bye: function(e) {
+		        		alert('see you later :3');
+		        	},
+		        	
 		        	// called whenever the queue gets reordered
 		        	reorder: function(e) {
 		        		// e.data.queue

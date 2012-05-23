@@ -23,7 +23,7 @@ get '/socket' do
   else
     request.websocket do |ws|
       ws.onopen do
-        ws.send("Connected")
+        ws.send({type: 'hi'}.to_json)
         settings.sockets << ws
       end
       ws.onmessage do |msg|
@@ -33,7 +33,7 @@ get '/socket' do
         end
       end
       ws.onclose do
-        ws.send("Disconnected")
+        ws.send({type: 'bye'}.to_json)
         settings.sockets.delete(ws)
       end
     end
