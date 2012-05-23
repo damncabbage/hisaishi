@@ -29,7 +29,9 @@ get '/socket' do
       ws.onmessage do |msg|
         EM.next_tick do
           # Spam the message back out to all connected clients, player and controller alike.
-          settings.sockets.each { |s| s.send(msg) }
+          settings.sockets.each do |s|
+            s.send(msg)
+          end
         end
       end
       ws.onclose do
@@ -478,7 +480,7 @@ def queue_songs
   song_list = {}
   HisaishiQueue.all.each do |q|
     s = Song.get(q.song_id)
-    song_list[s.id] = s
+    song_list[s.id] = s.player_data
   end
 
   {

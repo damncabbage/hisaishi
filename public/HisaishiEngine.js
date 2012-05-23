@@ -87,7 +87,6 @@ var HisaishiEngine = function(params) {
 	
 	that.triggerBroken = function() {
 		$(this.params.containers.lyrics).parent().addClass('broken');
-		alert('NG :(');
 	};
 	
 	/* Lyrics */
@@ -261,6 +260,9 @@ var HisaishiEngine = function(params) {
 					that.loaded.lyrics = true;
 					$(that).trigger('checkload');
 				});
+			},
+			error: function(){
+				that.triggerBroken();
 			}
 		});
 	};

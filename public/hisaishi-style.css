@@ -68,6 +68,7 @@ ol#hisaishi-list {
 }
 
 #hisaishi-list li {
+	display: block;
 	padding: 10px;
 	margin: 0;
 }
@@ -76,8 +77,10 @@ ol#hisaishi-list {
 	background: #666;
 }
 
-#hisaishi-list li:hover, #hisaishi-list li.selected:hover {
+#hisaishi-list li:hover, 
+#hisaishi-list li.selected:hover {
 	background: #888;
+	cursor: pointer;
 }
 
 #hisaishi-list li div {

@@ -78,13 +78,13 @@ var HisaishiPlayer = function(params) {
 		}
 	};
 	
-	priv.scaffoldQueue = function(ident) {
+	priv.scaffoldQueue = function(queueIdent, trackIdent) {
 		var fields = ['title', 'artist', 'album', 'karaoke'],
 		listitem = $('<li />', {
-			id:   'select-track-' + ident
+			id:   'select-track-' + trackIdent
 		});
 		
-		var track = state.tracks[ident];
+		var track = state.tracks[trackIdent];
 		
 		for (var i in fields) {
 			if (fields.hasOwnProperty(i) && i != 'length') {
@@ -209,7 +209,11 @@ var HisaishiPlayer = function(params) {
 		}
 	};
 	
-	priv.parseTracks = function() {
+	priv.parseQueue = function() {
+		if (settings.containers.list) {
+			$(settings.containers.list).children().remove();
+		}
+		
 		for (var i in state.tracks) {
 			if (state.tracks.hasOwnProperty(i)) {
 				if (!!state.tracks[i].loaded) continue;
@@ -226,16 +230,34 @@ var HisaishiPlayer = function(params) {
 				this.scaffold(i);
 				
 				state.tracks[i].loaded = true;
-				priv.scaffoldQueue(i);
 			}
 		}
+		
+		for (var i in state.queue) {
+			if (state.queue.hasOwnProperty(i)) {
+				var queue_id = state.queue[i].id,
+					requester = state.queue[i].requester,
+					song_id = state.queue[i].song_id;
+				
+				priv.scaffoldQueue(queue_id, song_id);
+			}
+		}
+		
 		priv.setup();
 	};
 	
 	priv.importData = function(data) {
+		for (var i in data.songs) {
+			if (data.songs.hasOwnProperty(i)) {
+				if (!!state.tracks[i] && !!state.tracks[i].loaded) {
+					data.songs[i].loaded = state.tracks[i].loaded;
+				}
+			}
+		}
+		
 		state.tracks = data.songs;
 		state.queue = data.queue;
-		priv.parseTracks();
+		priv.parseQueue();
 	};
 	
 	priv.fetchSource = function() {

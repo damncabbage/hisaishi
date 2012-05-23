@@ -38,9 +38,8 @@ class Song
     return self.path_base + audio_file
   end
   
-  def json
-    song_data = []
-    song_data << {
+  def player_data
+    {
       :id    => id,
       :title   => title,
       :artist  => artist,
@@ -56,6 +55,11 @@ class Song
       :lyrics  => lyrics_file,
       :cover   => image_file
     }
+  end
+  
+  def json
+    song_data = []
+    song_data << self.player_data
     return song_data.to_json
   end
   
