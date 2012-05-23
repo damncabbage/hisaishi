@@ -11,7 +11,10 @@ var HisaishiPlayer = function(params) {
 	
 	var settings = {
 		hsParams: {},
-		containers: {},
+		containers: {
+			display: null,
+			list: null
+		},
 		source: null,
 		socket_url: null,
 		playing: null
@@ -26,6 +29,10 @@ var HisaishiPlayer = function(params) {
 		playstate: null,
 		
 		socket: null,
+		
+		countdowns: {
+			next: null
+		},
 		
 		hs: {},
 		hr: {}
@@ -122,19 +129,117 @@ var HisaishiPlayer = function(params) {
 		// pop warning
 		// wait for 30 seconds
 		
-		var currentTrackIndex = null,
-		nextTrackIndex = null;
+		console.log('completed!');
 		
-		if (!!nextTrackIndex) {
-			var text = [
-				'<p>Next song:</p>',
-				'<h2></h2>',
-				'<h1></h1>',
-				'<p>sung by</p>',
-				'<h2></h2>'
-			];
-			
-			
+		var currentQueueIndex = null,
+		nextQueueIndex = 0;
+		
+		for (var i in state.queue) {
+			if (state.queue.hasOwnProperty(i)) {
+				var q_item = state.queue[i];
+				if (q_item.id == state.current_queue) {
+					currentQueueIndex = i;
+					nextQueueIndex = +(currentQueueIndex) + 1;
+					break;
+				}
+			}
+		}
+		
+		if (nextQueueIndex >= state.queue.length) {
+			return;
+		}
+		
+		if ($('.next-container', settings.containers.display)) {
+			var nextContainer = $('<div />', {
+				'class': 'next-container'
+			});
+			nextContainerInner = $('<div />', {
+				'class': 'next-container-inner'
+			});
+			nextContainer.css({
+				position: 'absolute',
+				top: '0px',
+				left: '0px',
+				width: '100%',
+				height: '100%'
+			});
+			nextContainer.append(nextContainerInner);
+			$(settings.containers.display).append(nextContainer);
+		}
+		
+		if (nextQueueIndex >= 0) {
+			var q = state.queue[nextQueueIndex];
+			if (!!q) {
+				var song = state.tracks[q.song_id];
+				
+				var currentQueue = state.queue[nextQueueIndex];
+				state.current_queue = currentQueue.id;
+				
+				// @TODO: WE NEED TO UPDATE THE SOURCE OF TRUTH NOW.
+				priv.switchHS(currentQueue.song_id, false);
+				
+				var upcoming = [];
+				for (var j = 1; j <= 3; j++) {
+					if (j + nextQueueIndex >= state.queue.length) {
+						break;
+					}
+					
+					var upq = state.queue[nextQueueIndex + j];
+					
+					upcoming.push([
+						'<li>',
+						upq.requester,
+						' – ',
+						state.tracks[upq.song_id].title,
+						'</li>'
+					].join(''));
+				}
+				
+				var text = [
+					'<p>Next song:</p>',
+					'<h2>', song.artist, '</h2>',
+					'<h1>', song.title, '</h1>',
+					'<p>sung by</p>',
+					'<h1>', q.requester, '</h1>',
+					'<p>You are up in <span class="secs">30 seconds</span>.</p>'
+				];
+				
+				if (upcoming.length > 0) {
+					upcoming.unshift('<ul>');
+					upcoming.push('</ul>');
+					text = text.concat(upcoming);
+				}
+				
+				$('.next-container-inner', settings.containers.display).html(text.join(''));
+				$('.next-container', settings.containers.display).fadeIn();
+				
+				var mil = 1000,
+				timer = 30,
+				secs = timer,
+				updateSecs = function() {
+					$('.next-container-inner .secs', settings.containers.display)
+						.text(secs + (secs == 1 ? ' second' : ' seconds'));
+				};
+				
+				state.countdowns.seconds = setInterval(function(){
+					secs -= 1;
+					updateSecs();
+					if (secs == 5) {
+						$('.next-container', settings.containers.display).fadeOut(
+						5 * mil, 
+						function(){
+							$('.next-container', settings.containers.display).html('');
+						});
+					}
+					if (secs == 0) {
+						clearInterval(state.countdowns.seconds);
+					}
+				}, mil);
+				
+				state.countdowns.next = setTimeout(function(){
+					priv.switchHS(currentQueue.song_id, true);
+				}, timer * mil);
+			}
 		}
 	};
 	
@@ -277,10 +382,10 @@ var HisaishiPlayer = function(params) {
 		        	},
 		        	
 		        	hi: function(e) {
-		        		// alert('hello :3');
+		        		console.log('hello :3');
 		        	},
 		        	bye: function(e) {
-		        		// alert('see you later :3');
+		        		console.log('see you later :3');
 		        	},
 		        	
 		        	// called whenever the queue gets reordered
@@ -300,6 +405,9 @@ var HisaishiPlayer = function(params) {
 		        	play: function(e) {
 		        		// e.data.queue_id
 		        		console.log("play " + e.data.queue_id);
+		        		
+		        		$('.next-container', settings.containers.display).hide();
+		        		
 		        		var oldQueueID = state.current_queue,
 		        		newQueueID = e.data.queue_id,
 		        		

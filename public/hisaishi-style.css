@@ -366,3 +366,15 @@ table#hisaishi-all-songs .song-yes {
 table#hisaishi-all-songs .song-no {
 	color: #f66;
 }
+
+.next-container {
+	background: rgba(0,0,0,0.8);
+	padding: 0;
+	z-index: 1000;
+}
+
+.next-container .next-container-inner {
+	padding: 2em;
+	font-size: 1.5em;
+	text-align: center;
+}

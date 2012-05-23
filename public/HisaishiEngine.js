@@ -426,7 +426,9 @@ var HisaishiEngine = function(params) {
 				}, true);
 				
 				mediaElement.addEventListener('ended', function(){
-					that.params.onComplete();
+					if (!!that.params.onComplete && $.isFunction(that.params.onComplete)) {
+						that.params.onComplete();
+					}
 				}, true);
 				
 		    	that.loaded.audio = true;

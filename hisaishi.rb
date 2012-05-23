@@ -27,9 +27,6 @@ get '/socket' do
         settings.sockets << ws
       end
       ws.onmessage do |msg|
-        
-        puts msg
-        
         EM.next_tick do
           # Spam the message back out to all connected clients, player and controller alike.
           settings.sockets.each do |s|
