@@ -27,6 +27,9 @@ get '/socket' do
         settings.sockets << ws
       end
       ws.onmessage do |msg|
+        
+        puts msg
+        
         EM.next_tick do
           # Spam the message back out to all connected clients, player and controller alike.
           settings.sockets.each do |s|
@@ -184,27 +187,33 @@ post '/queue-info-process' do
   q = HisaishiQueue.get(params[:q_id])
   puts params[:action]
 
+  trigger_action = "queue_update"
   case params[:action]
   when "now"
     q.play_now
+    trigger_action = "play"
   when "next"
     q.play_next
   when "last"
     q.play_last
   when "stop"
     q.stop
+    trigger_action = "stop"
   when "prep"
     q.prep
   when "play_next"
     q.play_next_now
+    trigger_action = "play"
   when "pause"
     q.pause
+    trigger_action = "pause"
   when "unpause"
     q.unpause
+    trigger_action = "play"
   end
 
   # Tell the player we moved its cheese.
-  send_to_sockets("queue_update", {
+  send_to_sockets(trigger_action, {
     :for => "player",
     :queue_id => params[:q_id],
     :action => params[:action]
@@ -233,11 +242,13 @@ post '/queue-delete-process' do
   pin_auth!
   q = HisaishiQueue.get(params[:q_id])
   q.destroy
+  
   send_to_sockets("queue_update", {
     :for => "player",
     :action => "delete",
     :queue_id => params[:q_id]
   })
+  
   redirect '/queue'
 end
 
@@ -251,6 +262,7 @@ post '/queue-reorder' do
       :action => "reorder",
       :queue => params[:queue]
     })
+    
   end
 end
 
