@@ -124,6 +124,13 @@ var HisaishiPlayer = function(params) {
 		}
 	};
 	
+	priv.stopNextScreen = function() {
+		clearInterval(state.countdowns.seconds);
+		clearTimeout(state.countdowns.next);
+		$('.next-container', settings.containers.display).hide();
+		$('.next-container-inner', settings.containers.display).html('');
+	};
+	
 	priv.nextHS = function() {
 		// switch HS to next song
 		// pop warning
@@ -228,7 +235,7 @@ var HisaishiPlayer = function(params) {
 						$('.next-container', settings.containers.display).fadeOut(
 						5 * mil, 
 						function(){
-							$('.next-container', settings.containers.display).html('');
+							$('.next-container-inner', settings.containers.display).html('');
 						});
 					}
 					if (secs == 0) {
@@ -406,7 +413,7 @@ var HisaishiPlayer = function(params) {
 		        		// e.data.queue_id
 		        		console.log("play " + e.data.queue_id);
 		        		
-		        		$('.next-container', settings.containers.display).hide();
+		        		priv.stopNextScreen();
 		        		
 		        		var oldQueueID = state.current_queue,
 		        		newQueueID = e.data.queue_id,
@@ -440,6 +447,7 @@ var HisaishiPlayer = function(params) {
 		        	// called whenever the playing track is paused
 		        	pause: function(e) {
 		        		console.log("pause");
+		        		priv.stopNextScreen();
 		        		if (!!state.track) {
 		        			state.hs[state.track].pauseSong();
 		        		}
@@ -448,6 +456,7 @@ var HisaishiPlayer = function(params) {
 		        	// called whenever the playing track is unpaused
 		        	unpause: function(e) {
 		        		console.log("unpause");
+		        		priv.stopNextScreen();
 		        		if (!!state.track) {
 		        			state.hs[state.track].pauseSong();
 		        		}
@@ -456,6 +465,7 @@ var HisaishiPlayer = function(params) {
 		        	// called whenever the playing track is stopped		        	
 		        	stop: function(e) {
 		        		console.log("stop");
+		        		priv.stopNextScreen();
 		        		if (!!state.track) {
 		        			state.hs[state.track].stopSong();
 		        		}
