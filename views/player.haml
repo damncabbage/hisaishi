@@ -17,6 +17,7 @@
       $(document).ready(function(){
         hl = new HisaishiPlayer({
           source: '/queue.jsonp',
+          socket: 'ws://localhost:4567/socket',
           hsParams: {
             preroll: {
               line: 1000,
