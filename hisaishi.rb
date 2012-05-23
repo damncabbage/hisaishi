@@ -40,6 +40,12 @@ get '/socket' do
   end
 end
 
+def send_to_sockets(type, data={})
+  settings.sockets.each do |ws|
+    ws.send({:type => type, :data => data}.to_json)
+  end
+end
+
 
 # ##### PLAYER ROUTES
 
@@ -192,6 +198,13 @@ post '/queue-info-process' do
     q.unpause
   end
 
+  # Tell the player we moved its cheese.
+  send_to_sockets("queue_update", {
+    :for => "player",
+    :queue_id => params[:q_id],
+    :action => params[:action]
+  })
+
   redirect '/queue'
 end
 
@@ -215,6 +228,11 @@ post '/queue-delete-process' do
   pin_auth!
   q = HisaishiQueue.get(params[:q_id])
   q.destroy
+  send_to_sockets("queue_update", {
+    :for => "player",
+    :action => "delete",
+    :queue_id => params[:q_id]
+  })
   redirect '/queue'
 end
 
@@ -222,6 +240,12 @@ post '/queue-reorder' do
   pin_auth!
   unless params[:queue].nil?
     reorder_queue(params[:queue])
+
+    send_to_sockets("queue_update", {
+      :for => "player",
+      :action => "reorder",
+      :queue => params[:queue]
+    })
   end
 end
 
@@ -254,6 +278,12 @@ post '/add-submit' do
   else
     new_queue = song.enqueue(params[:requester])
   
+    send_to_sockets("queue_update", {
+      :for => "player",
+      :action => "add",
+      :song_id => params[:song_id]
+    })
+
     haml :queue_song_ok, :locals => {
       :song => song,
       :new_queue => new_queue,
@@ -262,6 +292,7 @@ post '/add-submit' do
   end
 end
 
+# DEPRECATED
 post '/queue-submit' do
   authenticate!
 
@@ -302,11 +333,11 @@ end
 post '/announce' do
   text = params[:text]
   new_ann = Announcement.create(
-        :text => text,
-        :ann_order => Announcement.all.length,
-      :authed => has_admin_pin
-    )
-    redirect '/announce'
+    :text => text,
+    :ann_order => Announcement.all.length,
+    :authed => has_admin_pin
+  )
+  redirect '/announce'
 end
 
 get '/announce-add' do

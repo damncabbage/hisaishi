@@ -1,6 +1,6 @@
 /* Hisaishi List */
 
-if (!HisaishiEngine) {
+if (HisaishiEngine === undefined) {
 	throw {
 		type: 'NoHisaishiEngineException',
 		message: 'No Hisaishi engine script found.'
@@ -248,12 +248,21 @@ var HisaishiPlayer = function(params) {
 		        	
 		        	// called whenever the queue gets reordered
 		        	reorder: function(e) {
+		        		// e.data.queue
+		        		// e.data.songs
+		        		console.log("reorder");
+		        		priv.fetchSource();
+		        	},
+		        	
+		        	queue_update: function(e) {
+		        		console.log("queue update");
 		        		priv.fetchSource();
 		        	},
 		        	
 		        	// called whenever *any* track gets played
 		        	play: function(e) {
 		        		// e.data.queue_id
+		        		console.log("play " + e.data.queue_id);
 		        		var oldQueueID = state.current_queue,
 		        		newQueueID = e.data.queue_id,
 		        		
@@ -262,7 +271,7 @@ var HisaishiPlayer = function(params) {
 		        		
 		        		if (oldQueueID != newTrackID) {
 		        			state.current_queue = newQueueID;
-		        			foreach (var i in state.queue) {
+		        			for (var i in state.queue) {
 		        				if (state.queue.hasOwnProperty(i)) {
 		        					var q_item = state.queue[i];
 									if (q_item.id == newQueueID) {
@@ -280,11 +289,13 @@ var HisaishiPlayer = function(params) {
 		        	
 		        	// called whenever the playing track is paused
 		        	pause: function(e) {
+		        		console.log("pause");
 		        		state.hs[state.track].pauseSong();
 		        	},
 
 		        	// called whenever the playing track is stopped		        	
 		        	stop: function(e) {
+		        		console.log("stop");
 		        		state.hs[state.track].stopSong();
 		        	}
 		        }
