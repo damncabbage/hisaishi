@@ -277,10 +277,10 @@ var HisaishiPlayer = function(params) {
 		        	},
 		        	
 		        	hi: function(e) {
-		        		alert('hello :3');
+		        		// alert('hello :3');
 		        	},
 		        	bye: function(e) {
-		        		alert('see you later :3');
+		        		// alert('see you later :3');
 		        	},
 		        	
 		        	// called whenever the queue gets reordered
@@ -321,6 +321,10 @@ var HisaishiPlayer = function(params) {
 		        		
 		        		if (!!newTrackID && newTrackID != oldTrackID) {
 			        		priv.switchHS(newTrackID, true);
+		        		}
+		        		else {
+		        			state.track = newTrackID;
+		        			state.hs[state.track].playSong();
 		        		}
 		        	},
 		        	
