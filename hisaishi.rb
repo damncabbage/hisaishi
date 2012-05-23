@@ -209,7 +209,7 @@ post '/queue-info-process' do
     trigger_action = "pause"
   when "unpause"
     q.unpause
-    trigger_action = "play"
+    trigger_action = "unpause"
   end
 
   # Tell the player we moved its cheese.

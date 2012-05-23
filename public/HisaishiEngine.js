@@ -497,8 +497,13 @@ var HisaishiEngine = function(params) {
 			this.pauseSong();
 		}
 		if (!!this.state.audio) {
-			this.state.audio.setCurrentTime(0);
-			this.state.audio.pause();
+			try {
+				this.state.audio.setCurrentTime(0);
+				this.state.audio.pause();
+			}
+			catch(ex) {
+				that.triggerBroken();
+			}
 		}
 		else {
 			that.triggerBroken();

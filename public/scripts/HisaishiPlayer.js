@@ -331,6 +331,14 @@ var HisaishiPlayer = function(params) {
 		        			state.hs[state.track].pauseSong();
 		        		}
 		        	},
+		        	
+		        	// called whenever the playing track is unpaused
+		        	unpause: function(e) {
+		        		console.log("unpause");
+		        		if (!!state.track) {
+		        			state.hs[state.track].pauseSong();
+		        		}
+		        	},
 
 		        	// called whenever the playing track is stopped		        	
 		        	stop: function(e) {
