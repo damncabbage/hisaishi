@@ -492,7 +492,7 @@ var HisaishiEngine = function(params) {
 		}
 	};
 	
-	that.stopSong 	= function() {
+	that.stopSong = function() {
 		if (this.state.playing) {
 			this.pauseSong();
 		}
