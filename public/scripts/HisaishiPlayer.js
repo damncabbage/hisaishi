@@ -139,7 +139,7 @@ var HisaishiPlayer = function(params) {
 	};
 	
 	priv.switchHS = function(id, play) {
-		if (!!state.track) {
+		if (state.track != null) {
 			state.hs[state.track].stopSong();
 		}
 		
@@ -312,6 +312,7 @@ var HisaishiPlayer = function(params) {
 		        				if (state.queue.hasOwnProperty(i)) {
 		        					var q_item = state.queue[i];
 									if (q_item.id == newQueueID) {
+										state.current_queue = newQueueID;
 										newTrackID = q_item.song_id;
 										break;
 									}
