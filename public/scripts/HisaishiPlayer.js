@@ -131,12 +131,21 @@ var HisaishiPlayer = function(params) {
 		$('.next-container-inner', settings.containers.display).html('');
 	};
 	
+	priv.queueStat = function(q_id, state) {
+		$.post('/queue-info-update', {
+			_csrf: csrf,
+			queue_id: q_id,
+			state: state
+		});
+	};
+	
 	priv.nextHS = function() {
 		// switch HS to next song
 		// pop warning
 		// wait for 30 seconds
 		
 		console.log('completed!');
+		priv.queueStat(state.current_queue, 'finished');
 		
 		var currentQueueIndex = null,
 		nextQueueIndex = 0;
@@ -185,12 +194,7 @@ var HisaishiPlayer = function(params) {
 				// @TODO: WE NEED TO UPDATE THE SOURCE OF TRUTH NOW.
 				priv.switchHS(currentQueue.song_id, false);
 				
-				if (!!state.socket) {
-					state.socket.send('player_update', {
-						queue_id: q.id,
-						state: 'pending'
-					});
-				}
+				priv.queueStat(q.id, 'ready');
 				
 				var upcoming = [];
 				for (var j = 1; j <= 3; j++) {
@@ -448,6 +452,7 @@ var HisaishiPlayer = function(params) {
 		        		else {
 		        			state.track = newTrackID;
 		        			state.hs[state.track].playSong();
+		        			priv.queueStat(state.current_queue, 'playing');
 		        		}
 		        	},
 		        	
@@ -457,6 +462,7 @@ var HisaishiPlayer = function(params) {
 		        		priv.stopNextScreen();
 		        		if (!!state.track) {
 		        			state.hs[state.track].pauseSong();
+		        			priv.queueStat(state.current_queue, 'paused');
 		        		}
 		        	},
 		        	
@@ -466,6 +472,7 @@ var HisaishiPlayer = function(params) {
 		        		priv.stopNextScreen();
 		        		if (!!state.track) {
 		        			state.hs[state.track].pauseSong();
+		        			priv.queueStat(state.current_queue, 'playing');
 		        		}
 		        	},
 
@@ -475,6 +482,7 @@ var HisaishiPlayer = function(params) {
 		        		priv.stopNextScreen();
 		        		if (!!state.track) {
 		        			state.hs[state.track].stopSong();
+		        			priv.queueStat(state.current_queue, 'finished');
 		        		}
 		        	}
 		        }

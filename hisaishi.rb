@@ -25,25 +25,11 @@ get '/socket' do
         ws.send({type: 'hi'}.to_json)
         settings.sockets << ws
       end
-      ws.onmessage do |msg|
-        puts "msg " + msg
-        
-        jsontest = nil
-        begin
-          jsontest = JSON.parse(msg)
-          put "parsed json msg"
-        rescue
-          puts "msg is not json"
-        end
-        
-        if !jsontest.nil? && jsontest[:type] == "player_update" then
-          puts jsontest[:data]
-        else      
-          EM.next_tick do
-            # Spam the message back out to all connected clients, player and controller alike.
-            settings.sockets.each do |s|
-              s.send(msg)
-            end
+      ws.onmessage do |msg| 
+        EM.next_tick do
+          # Spam the message back out to all connected clients, player and controller alike.
+          settings.sockets.each do |s|
+            s.send(msg)
           end
         end
       end
@@ -274,6 +260,24 @@ post '/queue-reorder' do
     })
     
   end
+end
+
+post '/queue-info-update' do
+  result = false
+  unless params[:queue_id].nil? && params[:state].nil?
+    q = HisaishiQueue.get(params[:queue_id])
+    q.update(:play_state => params[:state])
+
+    send_to_sockets("admin_update", {
+      :for => "admin",
+      :action => "state_update",
+      :queue_id => params[:queue_id],
+      :state => params[:state]
+    })
+    
+    result = true
+  end
+  {:result => result}.to_json
 end
 
 # Add song

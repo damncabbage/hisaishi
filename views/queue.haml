@@ -7,11 +7,14 @@
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/jquery-1.7.2.min.js"}
 		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
 		%script{:type => "text/javascript", :src  => "//code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript",:src  => "/lib/jquery.json-2.3.js"}
+		%script{:type => "text/javascript",:src  => "/lib/jquery.websocket-0.0.1.js"}
 		%script{:type => "text/javascript", :src  => "/lib/jquery.ui.touch-punch.min.js"}
 		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}		
 		:javascript
 			var csrf = "#{csrf_token}";
 			var list = null;
+			var ws = null;
 			
 			// @TODO: hide deletion list on page return.
 			
@@ -30,7 +33,7 @@
 					}
 					$('#edit-toggle').find('.ui-btn-text').text('Done');
 					$('.toggle-delete').show();
-					$('#queue-listview').addClass('editing-list').listview('refresh');						
+					$('#queue-listview').addClass('editing-list').listview('refresh');
 				}
 			},
 			
@@ -66,6 +69,25 @@
 					toggleListNatural();
 				});
 				toggleListNow(true);
+				
+				ws = $.websocket('ws://localhost:4567/socket', {
+					open: function() {
+					},
+					close: function() {
+					},
+					events: {
+						admin_update: function(e) {
+							console.log('admin_update');
+							console.log(e.data.queue_id);
+							console.log(e.data.state);
+							
+							$('#queue-listview #queue_' + e.data.queue_id)
+								.removeAttr('class')
+								.addClass(e.data.state);
+							$('#queue-listview').listview('refresh');
+						}
+					}
+				});
 			});
 	%body{:id => "hisaishi-queue-list"}
 		#queue-page{"data-role" => "page"}
@@ -79,11 +101,12 @@
 					%br
 				%ul{"data-role" => "listview", "data_inset" => "true", :id => "queue-listview"}
 					- queue.each do |q|
+						- song = songs[q.song_id]
 						%li{"data_theme" => "c", :id => "queue_#{q.id}", :class => q.play_state}
 							%a{"data-rel" => "dialog", "data-transition" => "slideup", :href => "/queue-info/#{q.id}"}
 								%h3= q.requester
 								%p{:class => "separated-descriptions"}
-									%em= songs[q.song_id].artist
-									%em= songs[q.song_id].title
+									%em= "#{song[:artist]}"
+									%em= "#{song[:title]}"
 							%a{:href => "/queue-delete/#{q.id}", "data-rel" => "dialog", "data-transition" => "slideup", 'data-icon' => 'minus', 'class' => 'toggle-delete'}= "Delete"
 			= haml :menubar
