@@ -185,6 +185,13 @@ var HisaishiPlayer = function(params) {
 				// @TODO: WE NEED TO UPDATE THE SOURCE OF TRUTH NOW.
 				priv.switchHS(currentQueue.song_id, false);
 				
+				if (!!state.socket) {
+					state.socket.send('player_update', {
+						queue_id: q.id,
+						state: 'pending'
+					});
+				}
+				
 				var upcoming = [];
 				for (var j = 1; j <= 3; j++) {
 					if (j + nextQueueIndex >= state.queue.length) {

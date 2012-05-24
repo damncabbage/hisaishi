@@ -11,7 +11,6 @@ require File.expand_path('environment.rb', File.dirname(__FILE__))
 use Rack::Session::Cookie
 apply_csrf_protection unless settings.environment == :test
 
-
 # ##### WEBSOCKET ROUTES
 
 set :server, 'thin'
@@ -27,10 +26,24 @@ get '/socket' do
         settings.sockets << ws
       end
       ws.onmessage do |msg|
-        EM.next_tick do
-          # Spam the message back out to all connected clients, player and controller alike.
-          settings.sockets.each do |s|
-            s.send(msg)
+        puts "msg " + msg
+        
+        jsontest = nil
+        begin
+          jsontest = JSON.parse(msg)
+          put "parsed json msg"
+        rescue
+          puts "msg is not json"
+        end
+        
+        if !jsontest.nil? && jsontest[:type] == "player_update" then
+          puts jsontest[:data]
+        else      
+          EM.next_tick do
+            # Spam the message back out to all connected clients, player and controller alike.
+            settings.sockets.each do |s|
+              s.send(msg)
+            end
           end
         end
       end
