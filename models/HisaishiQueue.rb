@@ -97,6 +97,7 @@ class HisaishiQueue
   
   # Play the next song
   def play_next_now
-  	HisaishiQueue.first(:queue_order.gt => queue_order).play_now
+  	q = HisaishiQueue.first(:queue_order.gt => queue_order, :order => [:queue_order.asc, :play_state.asc])
+  	q.play_now
   end
 end
