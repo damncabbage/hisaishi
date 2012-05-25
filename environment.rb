@@ -19,6 +19,9 @@ end
 # Per-environment config
 require File.expand_path('config/environments.rb', File.dirname(__FILE__))
 
+# Stop haml being a dick.
+Haml::Template.options[:attr_wrapper] = '"'
+
 # Load models.
 $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/models")
 Dir.glob("#{File.dirname(__FILE__)}/models/*.rb") { |models| require File.basename(models, '.*') }
