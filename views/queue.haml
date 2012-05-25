@@ -104,10 +104,10 @@
 					- queue.each do |q|
 						- song = songs[q.song_id]
 						%li{"data_theme" => "c", :id => "queue_#{q.id}", :class => q.play_state}
-							%a{"data-rel" => "dialog", "data-transition" => "slideup", :href => "/queue-info/#{q.id}"}
+							%a{"data-rel" => "dialog", "data-transition" => "none", :href => "/queue-info/#{q.id}"}
 								%h3= q.requester
 								%p{:class => "separated-descriptions"}
 									%em= "#{song[:artist]}"
 									%em= "#{song[:title]}"
-							%a{:href => "/queue-delete/#{q.id}", "data-rel" => "dialog", "data-transition" => "slideup", 'data-icon' => 'minus', 'class' => 'toggle-delete'}= "Delete"
+							%a{:href => "/queue-delete/#{q.id}", "data-rel" => "dialog", "data-transition" => "none", 'data-icon' => 'minus', 'class' => 'toggle-delete'}= "Delete"
 			= haml :menubar
