@@ -54,44 +54,15 @@ require File.expand_path('HisaishiQueuePlayer.rb', File.dirname(__FILE__))
 # ##### PLAYER ROUTES
 
 get '/' do
-  authenticate
-
   if settings.defaults_to_queue
     redirect '/lock-screen'
   else
-    song = rand_song
-
-    if song
-      haml :song, :locals => { :song_json => song.json, :user => session[:username] }
-    else
-      haml :no_song
-    end
+    redirect '/player'
   end
-end
-
-get '/song/:song_id' do
-  authenticate
-
-  song = Song.get(params[:song_id])
-
-  if song
-    haml :song, :locals => { :song_json => song.json, :user => session[:username] }
-  else
-    haml :no_song
-  end
-end
-
-post '/song/:song_id/vote' do
-  authenticate!
-
-  song = Song.get(params[:song_id])
-  song.vote(params[:vote], params[:reasons], session)
-
-  return true
 end
 
 get '/songs/list' do
-  authenticate
+  pin_auth
 
   songs = Song.all
   haml :song_list, :locals => {:songs => songs}
@@ -100,33 +71,6 @@ end
 get '/songs/list.jsonp' do
   songs = Song.all
   JSONP songs
-end
-
-get '/login' do
-  redirect '/' if is_logged_in
-
-  haml :login
-end
-
-post '/login' do
-  host = settings.basecamp_domain + '.basecamphq.com'
-  begin
-    Basecamp.establish_connection! host, params[:username], params[:password], true
-    token = Basecamp.get_token
-    session[:username] = params[:username] unless token.nil?
-  rescue ArgumentError
-  end
-
-  if is_logged_in
-    redirect session.delete(:intended_url)
-  else
-    redirect '/login'
-  end
-end
-
-get '/logout' do
-  session.clear
-  redirect '/login'
 end
 
 get '/proxy' do
@@ -323,18 +267,8 @@ post '/add-submit' do
   end
 end
 
-# DEPRECATED
-post '/queue-submit' do
-  authenticate!
-
-  song = Song.get(params[:song_id])
-  new_queue = song.enqueue(params[:requester])
-
-  haml :enqueue_ok, :locals => { :song_title => song.title, :requester => new_queue.requester }
-end
-
 get '/songinfo/:song_id' do
-  authenticate!
+  pin_auth!
 
   song = Song.get(params[:song_id])
   data = song.get_data!
@@ -461,24 +395,6 @@ end
 
 
 # ##### HELPER FUNCTIONS
-
-# Login helper functions
-
-def authenticate
-  session[:intended_url] = request.url
-  redirect '/login' unless is_logged_in
-end
-
-def authenticate!
-  halt(403, 'You are not logged in.') unless is_logged_in
-end
-
-def is_logged_in
-  unless settings.basecamp_domain
-    session[:username] = 'guest'
-  end
-  session[:username] # Nil if not set, otherwise truthy.
-end
 
 # PIN auth helper functions
 
