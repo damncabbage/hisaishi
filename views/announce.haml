@@ -76,7 +76,7 @@
 				= haml :_lock_button
 			%div{"data-role" => "content"}
 				%div{"data-role" => "fieldcontain"}
-					%a{"data-role" => "button", "data-rel" => "dialog", "data-transition" => "slideup", :href => "/announce-add"}= "Make announcement"
+					%a{"data-role" => "button", "data-rel" => "dialog", "data-transition" => "none", :href => "/announce-add"}= "Make announcement"
 					%p= "Tap an announcement to make it display immediately."
 					%br
 				%ul{"data-role" => "listview", "data_inset" => "true", :id => "announce-listview"}
@@ -86,5 +86,5 @@
 								%h3= a.text
 								%p{:class => "separated-descriptions"}
 									%em= a.displayed ? "" : "Pending"
-							%a{:href => "/announce-delete/#{a.id}", "data-rel" => "dialog", "data-transition" => "slideup", 'data-icon' => 'minus', :class => 'toggle-delete'}= "Delete"
+							%a{:href => "/announce-delete/#{a.id}", "data-rel" => "dialog", "data-transition" => "none", 'data-icon' => 'minus', :class => 'toggle-delete'}= "Delete"
 			= haml :menubar
