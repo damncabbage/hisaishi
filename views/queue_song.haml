@@ -13,7 +13,7 @@
 		#home{"data-role" => "page", "data-add-back-btn" => "true"}
 			%div{"data-role" => "header"}
 				%h1= "Add to Queue?"
-				= haml :lock_button
+				= haml :_lock_button
 			%div{"data-role" => "content"}
 				%form{:action => "/add-submit", :method => "POST"}
 					= csrf_tag
