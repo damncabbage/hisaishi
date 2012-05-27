@@ -75,7 +75,7 @@
 	float: left;
 	width: 18px;
 	height: 18px;
-	background-image: url("../img/queue-icons.png");
+	background-image: url("../img/queue-icons.svg");
 	background-repeat: no-repeat;
 	margin: 0 5px 0 0;
 }
@@ -85,18 +85,21 @@
 	background-position: 0px 0px;
 }
 
-#queue-page li.ready h3:before, 
-#queue-page li.playing h3:before {
+#queue-page li.ready h3:before {
 	background-position: 0px -18px;
+}
+ 
+#queue-page li.playing h3:before {
+	background-position: 0px -36px;
 }
 
 #queue-page li.finished h3:before, 
 #announce-page li.finished h3:before {
-	background-position: 0px -36px;
+	background-position: 0px -54px;
 }
 
 #queue-page li.paused h3:before {
-	background-position: 0px -54px;
+	background-position: 0px -72px;
 }
 
 .separated-descriptions em:before {

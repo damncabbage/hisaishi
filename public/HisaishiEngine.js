@@ -46,7 +46,8 @@ var HisaishiEngine = function(params) {
 				audio:		null,
 				controls: 	null
 			},
-			onComplete: function(){}
+			onComplete: function(){},
+			onError: function(){}
 		},
 		loaded: {
 			lyrics: false,
@@ -87,6 +88,7 @@ var HisaishiEngine = function(params) {
 	
 	that.triggerBroken = function() {
 		$(this.params.containers.lyrics).parent().addClass('broken');
+		that.params.onError();
 	};
 	
 	/* Lyrics */

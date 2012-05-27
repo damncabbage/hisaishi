@@ -261,9 +261,14 @@ var HisaishiPlayer = function(params) {
 		}
 	};
 	
+	priv.playerError = function() {
+		priv.queueStat(state.current_queue, 'finished');
+	};
+	
 	priv.switchHS = function(id, play) {
 		if (state.track != null) {
 			state.hs[state.track].stopSong();
+			priv.queueStat(state.current_queue, 'finished');
 		}
 		
 		state.track = id;
@@ -271,6 +276,7 @@ var HisaishiPlayer = function(params) {
 		
 		if (!!play) {
 			state.hs[state.track].playSong();
+			priv.queueStat(state.current_queue, 'playing');
 		}
 	};
 	
@@ -297,7 +303,8 @@ var HisaishiPlayer = function(params) {
 						word: 	200
 					},
 					offset: (!!track.offset ? track.offset: 0),
-					onComplete: priv.nextHS
+					onComplete: priv.nextHS,
+					onError: priv.playerError
 				};
 				$.extend(true, hsParams, settings.hsParams);
 				
