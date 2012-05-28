@@ -17,20 +17,22 @@ $.extend({
 		events: {}
 	},
 	websocket: function(url, s) {
-		var ws = WebSocket ? new WebSocket( url ) : {
+		/*var ws = ReconnectingWebSocket ? new ReconnectingWebSocket( url ) : {
 			send: function(m){ return false },
 			close: function(){}
-		};
-		$(ws)
-			.bind('open', $.websocketSettings.open)
-			.bind('close', $.websocketSettings.close)
-			.bind('message', $.websocketSettings.message)
-			.bind('message', function(e){
-				var m = $.parseJSON(e.originalEvent.data);
-				var h = $.websocketSettings.events[m.type];
-				if (h) h.call(this, m);
-			});
+		};*/
+		var ws = new ReconnectingWebSocket(url);
 		ws._settings = $.extend($.websocketSettings, s);
+
+		ws.onopen = $.proxy($.websocketSettings.open, this);
+		ws.onclose = $.proxy($.websocketSettings.close, this);
+		ws.onmessage = $.proxy(function(e) {
+			$.websocketSettings.message(e)
+			var m = $.parseJSON(e.data);
+			var h = $.websocketSettings.events[m.type];
+			if (h) h.call(this, m);
+		}, this);
+
 		ws._send = ws.send;
 		ws.send = function(type, data) {
 			var m = {type: type};
