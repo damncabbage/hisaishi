@@ -366,14 +366,41 @@ table#hisaishi-all-songs .song-no {
 	color: #f66;
 }
 
-.next-container {
+/* Player */
+
+#hisaishi-queue-player #hisaishi-display {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: black;
+}
+
+#hisaishi-queue-player #hisaishi-list {
+	display: none;
+}
+
+#hisaishi-queue-player .next-container {
 	background: rgba(0,0,0,0.8);
 	padding: 0;
 	z-index: 1000;
 }
 
-.next-container .next-container-inner {
+#hisaishi-queue-player .next-container .next-container-inner {
 	padding: 2em;
 	font-size: 1.5em;
 	text-align: center;
+}
+
+#hisaishi-queue-player .next-container .next-container-inner ul, 
+#hisaishi-queue-player .next-container .next-container-inner ul li {
+	margin: 0 0 1em 0;
+	padding: 0;
+	list-style: none;
+}
+
+#hisaishi-queue-player .controls-container a {
+	display: none;
 }

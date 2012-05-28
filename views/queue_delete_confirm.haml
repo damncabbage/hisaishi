@@ -15,7 +15,6 @@
 				%h1= "Delete from queue?"
 			%div{"data-role" => "content", "data-theme" => "d"}
 				%form{:action => "/queue-delete-process", :method => "post", "data-ajax" => "false"}
-					= csrf_tag
 					%input{:type => "hidden", :name => "q_id", :id => "q_id", :value => q.id}
 					%p
 						= "Would you like to delete "

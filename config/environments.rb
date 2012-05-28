@@ -10,7 +10,7 @@ configure :development do
   set :database_url, "sqlite3://#{File.expand_path('../db/development.sqlite3', File.dirname(__FILE__))}"
   set :admin_pin, '1234'
   use Rack::Session::Cookie, :secret => "aaaaaaaaaaaaaaaboop"
-  use Rack::Csrf, :raise => true
+  #use Rack::Csrf, :raise => true
 end
 
 # Local Testing
@@ -29,7 +29,7 @@ configure :room do
   set :database_url, "sqlite3://#{File.expand_path('../db/room.sqlite3', File.dirname(__FILE__))}"
   set :admin_pin, ENV['ADMIN_PIN']
   use Rack::Session::Cookie, :secret => ENV['RACK_COOKIE']
-  use Rack::Csrf, :raise => true
+  #use Rack::Csrf, :raise => true
 end
 
 # Heroku
@@ -38,5 +38,5 @@ configure :production do
   set :database_url, ENV['DATABASE_URL']
   set :admin_pin, ENV['ADMIN_PIN']
   use Rack::Session::Cookie, :secret => ENV['RACK_COOKIE']
-  use Rack::Csrf, :raise => true
+  #use Rack::Csrf, :raise => true
 end

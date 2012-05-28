@@ -9,12 +9,15 @@ require File.expand_path('environment.rb', File.dirname(__FILE__))
 
 # Base hisaishi functionality
 use Rack::Session::Cookie
-apply_csrf_protection unless settings.environment == :test
+# apply_csrf_protection unless settings.environment == :test
 
 # ##### WEBSOCKET ROUTES
 
 set :server, 'thin'
 set :sockets, []
+
+hi_json = {type: 'hi'}.to_json
+bye_json = {type: 'bye'}.to_json
 
 get '/socket' do
   if !request.websocket?
@@ -22,7 +25,7 @@ get '/socket' do
   else
     request.websocket do |ws|
       ws.onopen do
-        ws.send({type: 'hi'}.to_json)
+        ws.send(hi_json)
         settings.sockets << ws
       end
       ws.onmessage do |msg| 
@@ -34,7 +37,7 @@ get '/socket' do
         end
       end
       ws.onclose do
-        ws.send({type: 'bye'}.to_json)
+        ws.send(bye_json)
         settings.sockets.delete(ws)
       end
     end
@@ -75,8 +78,14 @@ end
 
 get '/proxy' do
   url = params[:url]
-  puts 'The URL was: ' + url
-  open(URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')).read
+  #puts 'The URL was: ' + url
+  begin
+    open(URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')).read
+  rescue OpenURI::HTTPError => bang
+    puts "HTTP Error: #{bang} (#{url})"
+  rescue StandardError => bang
+    puts "Error: #{bang} (#{url})"
+  end
 end
 
 
@@ -210,16 +219,18 @@ post '/queue-info-update' do
   result = false
   unless params[:queue_id].nil? && params[:state].nil?
     q = HisaishiQueue.get(params[:queue_id])
-    q.update(:play_state => params[:state])
-
-    send_to_sockets("admin_update", {
-      :for => "admin",
-      :action => "state_update",
-      :queue_id => params[:queue_id],
-      :state => params[:state]
-    })
-    
-    result = true
+    unless q.nil? then
+      q.update(:play_state => params[:state])
+      
+      send_to_sockets("admin_update", {
+        :for => "admin",
+        :action => "state_update",
+        :queue_id => params[:queue_id],
+        :state => params[:state]
+      })
+      
+      result = true
+    end
   end
   {:result => result}.to_json
 end

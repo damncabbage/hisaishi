@@ -8,7 +8,8 @@ var HisaishiEngine = function(params) {
 			timer:		null,
 			time:		0,
 			audio:		null,
-			timecodeKey:0
+			timecodeKey:0,
+			errorState: false
 		},
 		lyrics: {
 			numlines: 		0,
@@ -88,6 +89,7 @@ var HisaishiEngine = function(params) {
 	
 	that.triggerBroken = function() {
 		$(this.params.containers.lyrics).parent().addClass('broken');
+		that.state.errorState = true;
 		that.params.onError();
 	};
 	
@@ -241,7 +243,6 @@ var HisaishiEngine = function(params) {
 	};
 	
 	that.loadLyrics = function() {
-		
 		if (!this.params.src.lyrics) {
 			throw {
 				type: 		'HisaishiEngineNoLyricsSrcException',
@@ -258,6 +259,7 @@ var HisaishiEngine = function(params) {
 			},
 			async: true,
 			success: function(data){
+				console.log(that.params.src.lyrics);
 				that.parseLyricsFormat(data, function(){
 					that.loaded.lyrics = true;
 					$(that).trigger('checkload');
@@ -270,6 +272,7 @@ var HisaishiEngine = function(params) {
 	};
 	
 	that.renderLyrics = function() {
+		console.log('renderLyrics');
 		var line, 
 			lineData, 
 			wordkey, 
@@ -468,6 +471,7 @@ var HisaishiEngine = function(params) {
 	};
 	
 	that.playSong 	= function() {
+		if (!!this.state.errorState) return;
 		if (!this.state.playing) {
 			that.state.playing = true;
 			if (!!this.state.audio) {
@@ -481,6 +485,7 @@ var HisaishiEngine = function(params) {
 	};
 	
 	that.pauseSong 	= function() {
+		if (!!this.state.errorState) return;
 		if (this.state.playing) {
 			this.state.playing = false;
 			if (!!this.state.audio) {
@@ -497,6 +502,7 @@ var HisaishiEngine = function(params) {
 	};
 	
 	that.stopSong = function() {
+		if (!!this.state.errorState) return;
 		if (this.state.playing) {
 			this.pauseSong();
 		}
@@ -562,6 +568,9 @@ var HisaishiEngine = function(params) {
 	
 	that.renderControls = function() {
 		var that = this;
+		
+		if ($(this.params.containers.controls).children().length > 0) return;
+		
 		$('<a />', {
 		  html: '<img src="/play.png" />',
 			title: 'Play',
@@ -620,8 +629,10 @@ var HisaishiEngine = function(params) {
 	/* Render Everything */
 	
 	that.renderAll = function() {
-		if (this.loaded.lyrics && this.loaded.audio) {
+		if (this.loaded.lyrics) {
 			this.renderLyrics();
+		}
+		if (this.loaded.audio) {
 			this.renderControls();
 		}
 	};

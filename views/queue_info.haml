@@ -15,7 +15,6 @@
 				%h1= "#{q.requester} - #{song.title}"
 			%div{"data-role" => "content", "data-theme" => "d"}
 				%form{:action => "/queue-info-process", :method => "post", "data-ajax" => "false"}
-					= csrf_tag
 					%input{:type => "hidden", :name => "q_id", :id => "q_id", :value => q.id}
 					- if q.play_state == :queued || q.play_state == :finished
 						%button{:name => "action", :value => "now", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Play now"

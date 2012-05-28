@@ -17,7 +17,6 @@
 				= haml :_lock_button
 			%div{"data-role" => "content"}
 				%form{:action => "/add-submit", :method => "POST"}
-					= csrf_tag
 					%input{:type => "hidden", :name => "song_id", :value => song.id}
 					%p
 						= "Do you want to add "

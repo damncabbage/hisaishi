@@ -5,7 +5,8 @@ require 'data_mapper'
 require 'dm-ar-finders'
 require 'open-uri'
 require 'cgi'
-require "rack/csrf"
+require 'json'
+#require "rack/csrf"
 require "active_support/all"
 
 # Global config

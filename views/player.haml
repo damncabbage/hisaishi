@@ -13,7 +13,7 @@
     %script{:type => "text/javascript",:src  => "/effects.js"}
     %script{:type => "text/javascript",:src  => "/html5slider.js"}
     :javascript
-      var csrf = "#{csrf_token}";
+      var csrf = "";
       var trax = {};
       var hl = null;
       $(document).ready(function(){
@@ -29,11 +29,12 @@
           containers: {
             display: '#hisaishi-display',
             list:  '#hisaishi-list'
-          }
+          },
+          countdown: 30
         });
         // hideCursor();
       });   
-  %body
+  %body#hisaishi-queue-player
     #hisaishi-display
     #hisaishi-announcements
     %ol{:id => "hisaishi-list"}

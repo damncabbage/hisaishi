@@ -17,7 +17,8 @@ var HisaishiPlayer = function(params) {
 		},
 		source: null,
 		socket_url: null,
-		playing: null
+		playing: null,
+		countdown: 30
 	};
 
 	var state = {
@@ -165,7 +166,7 @@ var HisaishiPlayer = function(params) {
 			return;
 		}
 
-		if ($('.next-container', settings.containers.display)) {
+		if ($('.next-container', settings.containers.display).length == 0) {
 			var nextContainer = $('<div />', {
 				'class': 'next-container'
 			});
@@ -181,6 +182,9 @@ var HisaishiPlayer = function(params) {
 			});
 			nextContainer.append(nextContainerInner);
 			$(settings.containers.display).append(nextContainer);
+		}
+		else {
+			$('.next-container-inner', settings.containers.display).html('');
 		}
 
 		if (nextQueueIndex >= 0) {
@@ -212,6 +216,9 @@ var HisaishiPlayer = function(params) {
 						'</li>'
 					].join(''));
 				}
+				
+				var mil = 1000,
+				timer = settings.countdown;
 
 				var text = [
 					'<p>Next song:</p>',
@@ -219,7 +226,7 @@ var HisaishiPlayer = function(params) {
 					'<h1>', song.title, '</h1>',
 					'<p>sung by</p>',
 					'<h1>', q.requester, '</h1>',
-					'<p>You are up in <span class="secs">30 seconds</span>.</p>'
+					'<p>You are up in <span class="secs">', timer, ' seconds</span>.</p>'
 				];
 
 				if (upcoming.length > 0) {
@@ -231,9 +238,7 @@ var HisaishiPlayer = function(params) {
 				$('.next-container-inner', settings.containers.display).html(text.join(''));
 				$('.next-container', settings.containers.display).fadeIn();
 
-				var mil = 1000,
-				timer = 30,
-				secs = timer,
+				var secs = timer,
 				updateSecs = function() {
 					$('.next-container-inner .secs', settings.containers.display)
 						.text(secs + (secs == 1 ? ' second' : ' seconds'));
@@ -242,9 +247,9 @@ var HisaishiPlayer = function(params) {
 				state.countdowns.seconds = setInterval(function(){
 					secs -= 1;
 					updateSecs();
-					if (secs == 5) {
+					if (secs <= 5) {
 						$('.next-container', settings.containers.display).fadeOut(
-						5 * mil,
+						secs * mil,
 						function(){
 							$('.next-container-inner', settings.containers.display).html('');
 						});
@@ -255,6 +260,7 @@ var HisaishiPlayer = function(params) {
 				}, mil);
 
 				state.countdowns.next = setTimeout(function(){
+					$('.next-container', settings.containers.display).hide();
 					priv.switchHS(currentQueue.song_id, true);
 				}, timer * mil);
 			}
@@ -262,7 +268,7 @@ var HisaishiPlayer = function(params) {
 	};
 
 	priv.playerError = function() {
-		priv.queueStat(state.current_queue, 'finished');
+		priv.queueStat(state.current_queue, 'error');
 	};
 
 	priv.switchHS = function(id, play) {
@@ -279,39 +285,42 @@ var HisaishiPlayer = function(params) {
 			priv.queueStat(state.current_queue, 'playing');
 		}
 	};
+	
+	priv.setupTrack = function(trackID) {
+		if (!state.hs[trackID]) {
+			var track = state.tracks[trackID];
+
+			var hsParams = {
+				src: {
+					lyrics: track.compiledLyrics,
+					audio: 	track.compiledAudio
+				},
+				containers: {
+					lyrics:		'#lyrics-container-' 	+ trackID,
+					audio:		'#audio-container-' 	+ trackID,
+					controls: 	'#controls-container-' 	+ trackID
+				},
+				preroll: {
+					queue: 	5000,
+					line: 	500,
+					word: 	200
+				},
+				offset: (!!track.offset ? track.offset: 0),
+				onComplete: priv.nextHS,
+				onError: priv.playerError
+			};
+			$.extend(true, hsParams, settings.hsParams);
+
+			state.hs[trackID] = new HisaishiEngine(hsParams);
+		}
+	};
 
 	priv.setup = function() {
 		var currentTrack = state.track;
 		if (!!currentTrack) {
+			console.log(currentTrack);
 			$('.hisaishi-scaffold').not('#scaffold-' + currentTrack).hide();
-			if (!state.hs[currentTrack]) {
-				var track = state.tracks[currentTrack];
-
-				var hsParams = {
-					src: {
-						lyrics: track.compiledLyrics,
-						audio: 	track.compiledAudio
-					},
-					containers: {
-						lyrics:		'#lyrics-container-' 	+ currentTrack,
-						audio:		'#audio-container-' 	+ currentTrack,
-						controls: 	'#controls-container-' 	+ currentTrack
-					},
-					preroll: {
-						queue: 	5000,
-						line: 	500,
-						word: 	200
-					},
-					offset: (!!track.offset ? track.offset: 0),
-					onComplete: priv.nextHS,
-					onError: priv.playerError
-				};
-				$.extend(true, hsParams, settings.hsParams);
-
-				state.hs[currentTrack] = new HisaishiEngine(hsParams);
-
-				// Not using HisaishiRate in the Player
-			}
+			priv.setupTrack(currentTrack);
 			$('#scaffold-' + currentTrack).show();
 		}
 	};
@@ -358,6 +367,7 @@ var HisaishiPlayer = function(params) {
 				state.tracks[i].compiledCover 	= (cover == null) ? '' : folder + cover;
 
 				this.scaffold(i);
+				priv.setupTrack(i);
 
 				state.tracks[i].loaded = true;
 			}
@@ -460,8 +470,15 @@ var HisaishiPlayer = function(params) {
 						}
 						else {
 							state.track = newTrackID;
-							state.hs[state.track].playSong();
-							priv.queueStat(state.current_queue, 'playing');
+							
+							if (!state.hs[state.track].state.errorState) {
+								state.hs[state.track].stopSong();
+								state.hs[state.track].playSong();
+								priv.queueStat(state.current_queue, 'playing');
+							}
+							else {
+								priv.queueStat(state.current_queue, 'error');
+							}
 						}
 					},
 

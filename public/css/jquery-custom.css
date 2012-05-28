@@ -102,6 +102,10 @@
 	background-position: 0px -72px;
 }
 
+#queue-page li.error h3:before {
+	background-position: 0px -90px;
+}
+
 .separated-descriptions em:before {
 	content: " – ";
 }
