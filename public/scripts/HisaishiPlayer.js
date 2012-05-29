@@ -43,7 +43,7 @@ var HisaishiPlayer = function(params) {
 
 	var pub = {};
 
-	priv.scaffold = function(ident) {
+	priv.scaffold = function(ident, setupTrack) {
 		var track = state.tracks[ident];
 
 		var display = $('<div />', {
@@ -83,6 +83,16 @@ var HisaishiPlayer = function(params) {
 
 		if (settings.containers.display) {
 			$(settings.containers.display).append(display);
+			
+			if (!!setupTrack) {
+				priv.setupTrack(ident);
+			}
+		}
+		else {
+			throw {
+				type: 'HisaishiPlayerNoContainerException',
+				message: 'Display container not found.'
+			};
 		}
 	};
 
@@ -357,7 +367,8 @@ var HisaishiPlayer = function(params) {
 			if (state.tracks.hasOwnProperty(i)) {
 				if (!!state.tracks[i].loaded) continue;
 
-				var folder = state.tracks[i].folder,
+				var id     = state.tracks[i].id,
+					folder = state.tracks[i].folder,
 					lyrics = state.tracks[i].lyrics,
 					audio  = state.tracks[i].audio,
 					cover  = state.tracks[i].cover;
@@ -366,8 +377,7 @@ var HisaishiPlayer = function(params) {
 				state.tracks[i].compiledAudio 	= folder + audio;
 				state.tracks[i].compiledCover 	= (cover == null) ? '' : folder + cover;
 
-				this.scaffold(i);
-				priv.setupTrack(i);
+				priv.scaffold(id, true);
 
 				state.tracks[i].loaded = true;
 			}

@@ -1,5 +1,7 @@
 /* Hisaishi Engine */
 
+var HisaishiAudioBound = false;
+
 var HisaishiEngine = function(params) {
 	
 	var that = {
@@ -389,6 +391,13 @@ var HisaishiEngine = function(params) {
 	};
 	
 	/* Audio */
+	
+	that.audioBind = function() {
+		var audio = $(this)[0];
+		audio.load();
+		audio.play();
+		audio.pause();
+	};
 
 	that.loadAudio = function() {
 		
@@ -399,23 +408,26 @@ var HisaishiEngine = function(params) {
 			};
 		}
 		
-		$('audio').bind('stall', function() {
-			var audio = $(this)[0];
-			audio.load();
-			audio.play();
-			audio.pause();
-		});
+		if (!$(this.params.containers.audio).length > 0) {
+			throw {
+				type: 		'HisaishiEngineNoAudioContainerException',
+				message:	'Container not ready yet.'
+			};
+		}
 		
-		var that = this;
+		var that = this,
+		audioID = 'bgm-' + Math.floor(Math.random() * 9999999)
+		 + '-' + Math.floor(Math.random() * 9999)
+		 + '-' + Math.floor(Math.random() * 9999999);
 		
 		this.state.audio = document.createElement('audio');
-		this.state.audio.id = 'bgm';
+		this.state.audio.id = audioID;
 		this.state.audio.setAttribute('src', this.params.src.audio);
 		
 		// this.state.audio.load();
 		$(this.params.containers.audio).append(this.state.audio);
 		
-		this.state.audio = new MediaElementPlayer('#bgm', {
+		this.state.audio = new MediaElementPlayer('#' + audioID, {
 			// remove or reorder to change plugin priority
 			plugins: ['flash'],
 			// path to Flash and Silverlight plugins
@@ -472,6 +484,9 @@ var HisaishiEngine = function(params) {
 	
 	that.playSong 	= function() {
 		if (!!this.state.errorState) return;
+		
+		that.renderControls();
+		
 		if (!this.state.playing) {
 			that.state.playing = true;
 			if (!!this.state.audio) {
@@ -567,6 +582,7 @@ var HisaishiEngine = function(params) {
 	};
 	
 	that.renderControls = function() {
+		console.log('renderControls');
 		var that = this;
 		
 		if ($(this.params.containers.controls).children().length > 0) return;
@@ -622,7 +638,7 @@ var HisaishiEngine = function(params) {
 		}
 		catch(ex) {
 			this.triggerBroken();
-			console.log(ex.message);
+			console.log(ex.type + ': ' + ex.message);
 		}
 	};
 	
@@ -640,6 +656,11 @@ var HisaishiEngine = function(params) {
 	$.extend(true, that, {params: params});
 	
 	that.init = function() {
+		if (!HisaishiAudioBound) {
+			$('audio').live('stall', that.audioBind);
+			HisaishiAudioBound = true;
+		}
+		
 		$(this).bind('checkload', this.renderAll);
 		
 		if (!!this.params.src.lyrics && !!this.params.src.audio) {
