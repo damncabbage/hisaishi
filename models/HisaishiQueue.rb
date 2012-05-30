@@ -5,7 +5,7 @@ class HisaishiQueue
   property :time,     		Integer
   property :requester,     	Text
   property :queue_order,    Integer
-  property :play_state,  	Enum[ :queued, :ready, :playing, :paused, :finished ], :default => :queued
+  property :play_state,  	Enum[ :queued, :ready, :playing, :paused, :stopped, :finished ], :default => :queued
   property :created_at,		DateTime
   
   def self.normalise_all
@@ -30,27 +30,39 @@ class HisaishiQueue
     return q_data.to_json
   end
   
+  def mass_queue_cleanup(id)
+    current = HisaishiQueue.get(id)
+    (HisaishiQueue.all(:queue_order.lt => self.queue_order) - current).update(:play_state => :finished)
+    (HisaishiQueue.all(:queue_order.gt => self.queue_order) - current).update(:play_state => :queued)
+    HisaishiQueue.normalise_all
+  end
+  
   def stop
-  	self.update(:play_state => :finished)
+  	self.update(:play_state => :stopped)
+  	mass_queue_cleanup(self.id)
   end
   
   def prep
   	self.update(:play_state => :queued)
+  	mass_queue_cleanup(self.id)
   end
   
   def pause
   	self.update(:play_state => :paused)
+  	mass_queue_cleanup(self.id)
   end
   
   def unpause
   	self.update(:play_state => :playing)
+  	mass_queue_cleanup(self.id)
   end
   
   # Forward playback head to this song
   def play_now
     playing = HisaishiQueue.all(:play_state => :ready) + 
     	HisaishiQueue.all(:play_state => :playing) + 
-    	HisaishiQueue.all(:play_state => :paused)
+    	HisaishiQueue.all(:play_state => :paused) + 
+    	HisaishiQueue.all(:play_state => :stopped)
     
     playing.each do |q|
       if q.queue_order < queue_order
@@ -64,6 +76,7 @@ class HisaishiQueue
     end
     
     HisaishiQueue.get(id).update(:play_state => :ready)
+    mass_queue_cleanup(id)
   end
   
   # Move this song before the currently played song
@@ -72,7 +85,8 @@ class HisaishiQueue
     
     q = HisaishiQueue.all(:play_state => :ready) | 
     	HisaishiQueue.all(:play_state => :playing) | 
-    	HisaishiQueue.all(:play_state => :paused)
+    	HisaishiQueue.all(:play_state => :paused) | 
+    	HisaishiQueue.all(:play_state => :stopped)
     
     unless q.length == 0
     	q_ord = q[0].queue_order + 1

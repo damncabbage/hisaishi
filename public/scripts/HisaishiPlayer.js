@@ -205,7 +205,7 @@ var HisaishiPlayer = function(params) {
 				var currentQueue = state.queue[nextQueueIndex];
 				state.current_queue = currentQueue.id;
 
-				// @TODO: WE NEED TO UPDATE THE SOURCE OF TRUTH NOW.
+				priv.queueStat(state.current_queue, 'pending');
 				priv.switchHS(currentQueue.song_id, false);
 
 				priv.queueStat(q.id, 'ready');
@@ -518,7 +518,7 @@ var HisaishiPlayer = function(params) {
 						priv.stopNextScreen();
 						if (!!state.track) {
 							state.hs[state.track].stopSong();
-							priv.queueStat(state.current_queue, 'finished');
+							priv.queueStat(state.current_queue, 'stopped');
 						}
 					}
 				}

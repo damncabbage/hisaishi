@@ -81,6 +81,7 @@
 }
 
 #queue-page li.queued h3:before, 
+#queue-page li.finished h3:before, 
 #announce-page li.queued h3:before {
 	background-position: 0px 0px;
 }
@@ -93,7 +94,7 @@
 	background-position: 0px -36px;
 }
 
-#queue-page li.finished h3:before, 
+#queue-page li.stopped h3:before, 
 #announce-page li.finished h3:before {
 	background-position: 0px -54px;
 }
