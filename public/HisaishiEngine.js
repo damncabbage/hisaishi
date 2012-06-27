@@ -208,11 +208,11 @@ var HisaishiEngine = function(params) {
 		for (var i in this.lyrics.lines) {
 			if (this.lyrics.lines.hasOwnProperty(i)) {
 				var words 		= this.lyrics.lines[i].words,
-					lastWord 	= this.lyrics.words[words[words.length - 1]],
+					lastWord  	= this.lyrics.words[words[words.length - 1]],
 					linePrompt 	= pre.line,
-					index		= parseInt(i,10),
+					index		    = parseInt(i,10),
 					startTime 	= this.lyrics.lines[i].start,
-					endTime		= lastWord.time;
+					endTime		  = (typeof lastWord != "undefined") ? lastWord.time : 0;
 				
 				/* Add three queue points per line */
 				
