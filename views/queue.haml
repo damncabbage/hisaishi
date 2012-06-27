@@ -72,7 +72,7 @@
 				});
 				toggleListNow(true);
 				
-				ws = $.websocket('ws://localhost:4567/socket', {
+				ws = $.websocket('ws://' + document.location.host + '/socket', {
 					open: function() {
 					},
 					close: function() {

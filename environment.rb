@@ -9,6 +9,12 @@ require 'json'
 #require "rack/csrf"
 require "active_support/all"
 
+# Load plugins (and step around /vendor/bundler).
+require "#{File.dirname(__FILE__)}/vendor/sinatra_rack.rb"
+Dir["#{File.dirname(__FILE__)}/lib/**/*.rb"].each { |f| require f }
+Dir["#{File.dirname(__FILE__)}/models/**/*.rb"].each { |f| require f }
+#Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
+
 # Global config
 configure do
   enable :sessions
@@ -23,14 +29,7 @@ require File.expand_path('config/environments.rb', File.dirname(__FILE__))
 # Stop haml being a dick.
 Haml::Template.options[:attr_wrapper] = '"'
 
-# Load models.
-$LOAD_PATH.unshift("#{File.dirname(__FILE__)}/models")
-Dir.glob("#{File.dirname(__FILE__)}/models/*.rb") { |models| require File.basename(models, '.*') }
-
+# Model setup
 DataMapper.finalize
-
-# Load plugins (and step around /vendor/bundler).
-load("#{File.dirname(__FILE__)}/vendor/sinatra_rack.rb")
-#Dir["#{File.dirname(__FILE__)}/vendor/{gems,plugins}/**/*.rb"].each { |f| load(f) }
 DataMapper.setup(:default, settings.database_url)
 
