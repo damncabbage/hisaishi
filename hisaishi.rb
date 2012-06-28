@@ -172,7 +172,6 @@ post '/queue-info-process' do
 end
 
 get '/queue.jsonp' do
-  pin_auth!
   out = queue_songs
   JSONP out
 end
@@ -380,9 +379,10 @@ get '/diagnostic' do
   pin_auth
   puts request.env.inspect
   haml :diagnostic, :locals => {
-  :scheme => request.env["rack.url_scheme"],
+    :scheme => request.env["rack.url_scheme"],
     :host => request.env["HTTP_HOST"],
-    :ip => IPSocket.getaddress(Socket.gethostname)
+    :ip => IPSocket.getaddress(Socket.gethostname),
+    :port => request.env["SERVER_PORT"],
   }
 end
 
