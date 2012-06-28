@@ -50,7 +50,22 @@ when prompted, and you should see the Queue screen!
 
 ## Queue Management
 
+Songs play sequentially top to bottom in the queue.
+
+You can perform various actions on individual songs (playing, stopping, 
+pausing, rewinding, moving to the end of the queue, moving after currently 
+playing song) by touching them.
+
+You can also reorder them by touching the Edit button in the top left corner, 
+and touch-dragging the songs into the order you want.  When done, touch the 
+Done button in the top left corner to commit your changes.
+
 ## Searching for Songs
+
+Start entering a song title, and touch Done or outside the search bar to let 
+songs come up.  Touch one, and it'll let you add one with the nickname of any 
+singer.  If you're logged in with the PIN, you can do so without having to 
+wait for 5 minutes between submissions.
 
 ## Announcements
 
@@ -62,5 +77,7 @@ you'd expect.
 
 Close the Queue tab in Safari, and quit the browser on the computer playing 
 back songs.
+
+Go to the terminal running Hisaishi, and type Ctrl+C to quit.
 
 
