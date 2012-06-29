@@ -57,7 +57,16 @@
 						$.post('/queue-reorder', newOrder + '&_csrf=' + csrf);
 						oldOrder = newOrder;
 					}
-				};
+				},
+				
+				deleteRow = function(e) {
+				  e.preventDefault();
+				  var item = $(this).parents('li');
+				  var info = item.attr('id').split('_');
+				  $.post('/queue-delete-process', {q_id: info[1]}, function(){});
+				  item.remove();
+				  $('#queue-listview').addClass('editing-list').listview('refresh');
+				},
 				
 				list = new SortableList('#queue-listview', {
 					onInit: function(){
@@ -71,6 +80,7 @@
 					toggleListNatural();
 				});
 				toggleListNow(true);
+				$('.toggle-delete').click(deleteRow);
 				
 				ws = $.websocket('ws://' + document.location.host + '/socket', {
 					open: function() {
@@ -110,5 +120,5 @@
 								%p{:class => "separated-descriptions"}
 									%em= "#{song[:artist]}"
 									%em= "#{song[:title]}"
-							%a{:href => "/queue-delete/#{q.id}", "data-rel" => "dialog", "data-transition" => "none", 'data-icon' => 'minus', 'class' => 'toggle-delete'}= "Delete"
+							%a{:href => "#", 'data-icon' => 'minus', 'class' => 'toggle-delete'}= "Delete"
 			= haml :menubar
