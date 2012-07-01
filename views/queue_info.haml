@@ -23,15 +23,11 @@
 					- if q.play_state == :ready || q.play_state == :playing || q.play_state == :paused
 						%button{:name => "action", :value => "stop", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Stop"
 						%button{:name => "action", :value => "now", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Rewind"
-						%button{:name => "action", :value => "play_next", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Next"
 					- if q.play_state == :stopped
 						%button{:name => "action", :value => "now", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Play"
-						%button{:name => "action", :value => "play_next", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Next"
 						%button{:name => "action", :value => "last", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Move to last"
 					- if q.play_state == :ready || q.play_state == :playing
 						%button{:name => "action", :value => "pause", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Pause"
 					- if q.play_state == :paused
 						%button{:name => "action", :value => "unpause", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Unpause"
-					- if q.play_state == :finished
-						%button{:name => "action", :value => "prep", :type => "submit", "data-role" => "button", "data-theme" => "b"}= "Queue for playing"
 					%a{:href => "/queue", "data-role" => "button", "data-rel" => "back"}= "Cancel"
