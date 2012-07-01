@@ -299,8 +299,6 @@ get '/announce' do
 end
 
 get '/announce.jsonp' do
-  pin_auth!
-
   anns = Announcement.all(:order => [ :ann_order.asc ])
   JSONP anns
 end
@@ -312,6 +310,12 @@ post '/announce' do
     :ann_order => Announcement.all.length,
     :authed => has_admin_pin
   )
+  
+  send_to_sockets("announcements", {
+    :for => "announcements",
+    :action => "update"
+  })
+  
   redirect '/announce'
 end
 
@@ -330,6 +334,11 @@ post '/announce-add-process' do
   )
 
   normalise_announcement_order
+  
+  send_to_sockets("announcements", {
+    :for => "announcements",
+    :action => "update"
+  })
 
   redirect '/announce'
 end
@@ -347,6 +356,12 @@ post '/announce-delete-process' do
   a = Announcement.get(params[:a_id])
   a.destroy
   normalise_announcement_order
+  
+  send_to_sockets("announcements", {
+    :for => "announcements",
+    :action => "update"
+  })
+  
   redirect '/announce'
 end
 
@@ -355,6 +370,11 @@ post '/announce-reorder' do
   unless params[:announce].nil?
     reorder_announcements(params[:announce])
   end
+  
+  send_to_sockets("announcements", {
+    :for => "announcements",
+    :action => "update"
+  })
 end
 
 get '/announce-show-now/:a_id' do
@@ -362,6 +382,10 @@ get '/announce-show-now/:a_id' do
   a = Announcement.get(params[:a_id])
   a.show_now
   normalise_announcement_order
+  send_to_sockets("announcements", {
+    :for => "announcements",
+    :action => "update"
+  })
   redirect '/announce'
 end
 
@@ -370,6 +394,10 @@ get '/announce-hide-now/:a_id' do
   a = Announcement.get(params[:a_id])
   a.shown
   normalise_announcement_order
+  send_to_sockets("announcements", {
+    :for => "announcements",
+    :action => "update"
+  })
   redirect '/announce'
 end
 

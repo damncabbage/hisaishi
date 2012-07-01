@@ -10,12 +10,14 @@
     %script{:type => "text/javascript",:src  => "/mediaelement-and-player.min.js"}
     %script{:type => "text/javascript",:src  => "/HisaishiEngine.js"}
     %script{:type => "text/javascript",:src  => "/scripts/HisaishiPlayer.js"}
+    %script{:type => "text/javascript",:src  => "/scripts/HisaishiAnnouncements.js"}
     %script{:type => "text/javascript",:src  => "/effects.js"}
     %script{:type => "text/javascript",:src  => "/html5slider.js"}
     :javascript
       var csrf = "";
       var trax = {};
       var hl = null;
+      var ha = null;
       $(document).ready(function(){
         hl = new HisaishiPlayer({
           source: '/queue.jsonp',
@@ -32,6 +34,15 @@
           },
           countdown: 30
         });
+        
+        ha = new HisaishiAnnouncements({
+          source: '/announce.jsonp',
+          socket: 'ws://' + document.location.host + '/socket',
+          containers: {
+            announcements: '#hisaishi-announcements'
+          }
+        });
+        
         // hideCursor();
       });
   %body#hisaishi-queue-player
