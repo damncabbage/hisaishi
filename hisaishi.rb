@@ -401,6 +401,30 @@ get '/announce-hide-now/:a_id' do
   redirect '/announce'
 end
 
+post '/announce-info-update' do
+  result = false
+  unless params[:announce_id].nil? && params[:state].nil?
+    a = Announcement.get(params[:announce_id])
+    unless a.nil? then
+      state = ""
+      if params[:state] == 'displayed' then
+        a.shown
+        state = "finished"
+      end
+      
+      send_to_sockets("admin_update_ann", {
+        :for => "admin",
+        :action => "admin_update_ann",
+        :announce_id => params[:announce_id],
+        :state => state
+      })
+      
+      result = true
+    end
+  end
+  {:result => result}.to_json
+end
+
 # Diagnostics
 
 get '/diagnostic' do

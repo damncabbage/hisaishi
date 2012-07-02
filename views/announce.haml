@@ -16,6 +16,7 @@
 		:javascript
 			var csrf = "";
 			var list = null;
+			var ws = null;
 			
 			var toggleListNow = function(toggle) {
 				if (!!toggle) {
@@ -68,6 +69,27 @@
 					toggleListNatural();
 				});
 				toggleListNow(true);
+				
+				ws = $.websocket('ws://' + document.location.host + '/socket', {
+					open: function() {
+					  console.log('hi');
+					},
+					close: function() {
+					  console.log('bye');
+					},
+					events: {
+						admin_update_ann: function(e) {
+							console.log('admin_update_ann');
+							console.log(e.data.announce_id);
+							console.log(e.data.state);
+							
+							$('#announce-listview #announce_' + e.data.announce_id)
+								.removeAttr('queued')
+								.addClass(e.data.state);
+							$('#announce-listview').listview('refresh');
+						}
+					}
+				});
 			});
 	%body{:id => "hisaishi-announce-list"}
 		#announce-page{"data-role" => "page"}

@@ -404,3 +404,20 @@ table#hisaishi-all-songs .song-no {
 #hisaishi-queue-player .controls-container a {
 	display: none;
 }
+
+/* Announcements */
+
+#hisaishi-announcements {
+  position: absolute;
+  z-index: 9999;
+  bottom: 2em;
+  left: 0;
+  width: 100%;
+  height: 2em;
+  color: white;
+  font-size: 2em;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}

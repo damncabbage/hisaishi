@@ -5,7 +5,9 @@ var HisaishiAnnouncement = function(params) {
 		text: null,
 		displayed: true,
 		ann_order: null,
-		container: null
+		container: null,
+		
+		next: function(id){}
 	};
 	
 	$.extend(settings, params);
@@ -19,22 +21,29 @@ var HisaishiAnnouncement = function(params) {
 	
 	pub.play = function() {
 	  if (!settings.displayed) {
+	    var w = $(window).width();
+	    var l = 5000 + (200 * settings.text.length);
 	    var elem = $('<span />', {
 	      text: settings.text
 	    });
 	    elem.css({
 	      position: 'absolute',
 	      top: '0',
-	      left: '100%'
+	      left: w + 'px'
 	    });
 	    $(settings.container).append(elem);
 	    elem.animate({
 	      left: (-1 * elem.width()) + 'px'
-	    }, 2000, function(){
+	    }, l, function(){
 	      settings.displayed = true;
 	      $(this).remove();
+	      settings.next(settings.id);
 	    });
 	  }
+	};
+	
+	pub.displayed = function() {
+	  return settings.displayed;
 	};
 	
 	pub.init = function() {
@@ -79,10 +88,10 @@ var HisaishiAnnouncements = function(params) {
 	priv.scaffoldQueue = function(queueIdent, trackIdent) {
 	};
 	
-	priv.queueStat = function(q_id, state) {
-		$.post('/announcements-info-update', {
+	priv.queueStat = function(a_id, state) {
+		$.post('/announce-info-update', {
 			_csrf: csrf,
-			queue_id: q_id,
+			announce_id: a_id,
 			state: state
 		});
 	};
@@ -102,6 +111,24 @@ var HisaishiAnnouncements = function(params) {
 		priv.setup();
 	};
 	
+	priv.getNext = function() {
+	  var next = null;
+	  for (var i = 0; i < state.queue.length; i++) {
+	    if (!state.queue[i].displayed()) {
+	      next = i;
+	      break;
+	    }
+	  }
+	  return next;
+	};
+	
+	priv.playNext = function() {
+	  var next = priv.getNext();
+	  if (next !== null) {
+	    state.queue[next].play();
+	  }
+	};
+	
 	priv.importData = function(data) {
 		for (var i in data) {
 			if (data.hasOwnProperty(i)) {
@@ -111,12 +138,17 @@ var HisaishiAnnouncements = function(params) {
 					  text: data[i].text,
 					  displayed: data[i].displayed,
 					  ann_order: data[i].ann_order,
-					  container: settings.containers.announcements
+					  container: settings.containers.announcements,
+					  
+					  next: function(id) {
+					    priv.queueStat(id, "displayed");
+					    priv.playNext();
+					  }
 					});
-					state.queue[i].play();
 				}
 			}
 		}
+		priv.playNext();
 	};
 	
 	priv.fetchSource = function() {
