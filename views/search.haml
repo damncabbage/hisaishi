@@ -1,69 +1,61 @@
 !!! 5
 %html
-	%head
-		%title= "Karaoke Search"
-		= haml :_ios_meta
-		%link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
-		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
-		%script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
-		%script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
-		%script{:type => "text/javascript", :src  => "/lib/jquery.ui.touch-punch.min.js"}
-		:javascript
-			var csrf = "";
-			
-			var timeout = null,
-			timer = 750;
-			
-			var refresh = function() {
-				$('#song-list-root').listview('refresh');
-			},
-			
-			searchData = function(){
-				var val = $('#query').val();
-				if (val.length > 0) {
-					$.post('/search', {
-						_csrf: csrf,
-						q: val
-					}, function(data){
-						$('#song-list-root').html(data);
-						refresh();
-					});
-				}
-				else {
-					$('#song-list-root').children().remove();
-					refresh();
-				}
-			};
-			
-			$( document ).delegate("#search-page", "pageinit", function() {
-			
-				$('#query').keyup(function(q){
-					if (!!timeout) {
-						clearTimeout(timeout);
-					}
-					timeout = setTimeout(searchData, timer);
-				})
-				.change(function(){
-					searchData();
-				});
-				
-				$('#search-form').submit(function(e){
-					e.preventDefault();
-					$(window).blur();
-					searchData();
-				});
-			
-			});
-			
-	%body{:id => "hisaishi-song-list"}
-		#search-page{"data-role" => "page", "data-add-back-btn" => "true"}
-			%div{"data-role" => "header"}
-				%h1= "Song Search"
-				= haml :_lock_button
-			%div{"data-role" => "content"}
-				%form{:id => "search-form", "data-ajax" => "false"}
-					%div{"data-role" => "fieldcontain", :class => "ui-hide-label search-intro"}
-						%input{:type => "search", :id => "query", :placeholder => "Keyword search", "data-mini" => "true"}
-						%p= "Enter part of a song title, artist, series or album."
-				%ul{:id => "song-list-root", "data-role" => "listview", :data_inset => "true"}
-			= haml :menubar
+  %head
+    %title= "Karaoke Search"
+    = haml :_ios_meta
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+    %script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+    %script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+    %script{:type => "text/javascript", :src  => "/lib/jquery.ui.touch-punch.min.js"}
+    :javascript
+      var csrf = "";
+      
+      var timeout = null,
+      timer = 750;
+      
+      var refresh = function() {
+        $('#song-list-root').listview('refresh');
+      },
+      
+      searchData = function(){
+        var val = $('#query').val();
+        if (val.length > 0) {
+          $.post('/search', {
+            _csrf: csrf,
+            q: val
+          }, function(data){
+            $('#song-list-root').html(data);
+            refresh();
+          });
+        }
+        else {
+          $('#song-list-root').children().remove();
+          refresh();
+        }
+      };
+      
+      var searchEvent = function(e){
+        e.preventDefault();
+        $(window).blur();
+        searchData();
+      };
+      
+      $(document).delegate("#search-page", "pageinit", function() {
+        $('#query-submit').click(searchEvent);
+        $('#search-form').submit(searchEvent);      
+      });
+      
+  %body{:id => "hisaishi-song-list"}
+    #search-page{"data-role" => "page", "data-add-back-btn" => "true"}
+      %div{"data-role" => "header"}
+        %h1= "Song Search"
+        = haml :_lock_button
+      %div{"data-role" => "content"}
+        %form{:id => "search-form", "data-ajax" => "false"}
+          %div{"data-role" => "fieldcontain", :class => "ui-hide-label search-intro"}
+            %input{:type => "search", :id => "query", :placeholder => "Keyword search", "data-mini" => "true"}
+            %a{:href => "#", "data-role" => "button", "data-inline" => "true", :id => "query-submit"}= "Search"
+            %p= "Tap the Keyword Search bar, and enter part of a song title, artist, series or album. Then tap Search."
+        %ul{:id => "song-list-root", "data-role" => "listview", :data_inset => "true"}
+      = haml :menubar

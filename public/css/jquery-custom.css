@@ -125,3 +125,13 @@
   padding: 10px;
 }
 
+/* Inline search */
+
+.ui-hide-label .ui-input-search {
+  width: 70%;
+}
+
+.ui-hide-label .ui-input-search + .ui-btn {
+  width: 20%;
+}
+
