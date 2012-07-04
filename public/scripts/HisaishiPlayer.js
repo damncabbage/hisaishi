@@ -413,8 +413,99 @@ var HisaishiPlayer = function(params) {
 	priv.fetchSource = function() {
 		$.getJSON(settings.source, {}, priv.importData);
 	};
+	
+	pub.getSocketEvents = function() {
+	  return {
+      reorder: function(e) {
+        // e.data.queue
+        // e.data.songs
+        console.log("Command: reorder");
+        priv.fetchSource();
+      },
+
+      queue_update: function(e) {
+        console.log("Command: queue update");
+        priv.fetchSource();
+      },
+
+      // called whenever *any* track gets played
+      play: function(e) {
+        // e.data.queue_id
+        console.log("Command: play " + e.data.queue_id);
+
+        priv.stopNextScreen();
+
+        var oldQueueID = state.current_queue,
+        newQueueID = e.data.queue_id,
+
+        oldTrackID = state.track || null,
+        newTrackID = state.track || null;
+
+        if (!!newQueueID && oldQueueID != newQueueID) {
+          state.current_queue = newQueueID;
+          for (var i in state.queue) {
+            if (state.queue.hasOwnProperty(i)) {
+              var q_item = state.queue[i];
+              if (q_item.id == newQueueID) {
+                state.current_queue = newQueueID;
+                newTrackID = q_item.song_id;
+                break;
+              }
+            }
+          }
+        }
+
+        if (!!newTrackID && newTrackID != oldTrackID) {
+          priv.switchHS(newTrackID, true);
+        }
+        else {
+          state.track = newTrackID;
+          
+          if (!state.hs[state.track].state.errorState) {
+            state.hs[state.track].stopSong();
+            state.hs[state.track].playSong();
+            priv.queueStat(state.current_queue, 'playing');
+          }
+          else {
+            priv.queueStat(state.current_queue, 'error');
+          }
+        }
+      },
+
+      // called whenever the playing track is paused
+      pause: function(e) {
+        console.log("Command: pause");
+        priv.stopNextScreen();
+        if (!!state.track) {
+          state.hs[state.track].pauseSong();
+          priv.queueStat(state.current_queue, 'paused');
+        }
+      },
+
+      // called whenever the playing track is unpaused
+      unpause: function(e) {
+        console.log("Command: unpause");
+        priv.stopNextScreen();
+        if (!!state.track) {
+          state.hs[state.track].pauseSong();
+          priv.queueStat(state.current_queue, 'playing');
+        }
+      },
+
+      // called whenever the playing track is stopped
+      stop: function(e) {
+        console.log("Command: stop");
+        priv.stopNextScreen();
+        if (!!state.track) {
+          state.hs[state.track].stopSong();
+          priv.queueStat(state.current_queue, 'stopped');
+        }
+      }
+    };
+	};
 
 	pub.init = function() {
+	  /*
 		if (!!settings.socket) {
 			state.socket = $.websocket(settings.socket, {
 				open: function() {
@@ -523,7 +614,7 @@ var HisaishiPlayer = function(params) {
 					}
 				}
 			});
-		}
+		} */
 
 		if (!!settings.source) {
 			priv.fetchSource();

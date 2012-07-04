@@ -223,7 +223,17 @@ var HisaishiAnnouncements = function(params) {
 		$.getJSON(settings.source, {}, priv.importData);
 	};
 	
+	pub.getSocketEvents = function() {
+	  return {
+      announcements: function(e) {
+        console.log("new data");
+        priv.fetchSource();
+      }
+    };
+	};
+	
 	pub.init = function() {
+	  /*
 		if (!!settings.socket) {
 			state.socket = $.websocket(settings.socket, {
 				open: function() {
@@ -248,7 +258,7 @@ var HisaishiAnnouncements = function(params) {
 		        	}
 		        }
 			});
-		}
+		}			*/
 		
 		if (!!settings.source) {
 			priv.fetchSource();

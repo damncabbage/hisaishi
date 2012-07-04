@@ -9,6 +9,7 @@
     %script{:type => "text/javascript",:src  => "/lib/jquery.websocket-0.0.1.js"}
     %script{:type => "text/javascript",:src  => "/mediaelement-and-player.min.js"}
     %script{:type => "text/javascript",:src  => "/HisaishiEngine.js"}
+    %script{:type => "text/javascript",:src  => "/scripts/HisaishiSocketHandler.js"}
     %script{:type => "text/javascript",:src  => "/scripts/HisaishiPlayer.js"}
     %script{:type => "text/javascript",:src  => "/scripts/HisaishiAnnouncements.js"}
     %script{:type => "text/javascript",:src  => "/effects.js"}
@@ -16,10 +17,14 @@
     :javascript
       var csrf = "";
       var trax = {};
-      var hl = null;
-      var ha = null;
+      var sh = null;
+      var hisaishiPlayer   = null;
+      var hisaishiAnnounce = null;
+      
       $(document).ready(function(){
-        hl = new HisaishiPlayer({
+        sh = new HisaishiSocketHandler('ws://' + document.location.host + '/socket');
+        
+        hisaishiPlayer = new HisaishiPlayer({
           source: '/queue.jsonp',
           socket: 'ws://' + document.location.host + '/socket',
           hsParams: {
@@ -34,14 +39,16 @@
           },
           countdown: 30
         });
+        sh.addEvents(hisaishiPlayer.getSocketEvents());
         
-        ha = new HisaishiAnnouncements({
+        hisaishiAnnounce = new HisaishiAnnouncements({
           source: '/announce.jsonp',
           socket: 'ws://' + document.location.host + '/socket',
           containers: {
             announcements: '#hisaishi-announcements'
           }
         });
+        sh.addEvents(hisaishiAnnounce.getSocketEvents());
         
         // hideCursor();
       });
