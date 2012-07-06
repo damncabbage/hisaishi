@@ -11,7 +11,7 @@
           %th= "No"
           %th= "Title"
           %th= "Artist"
-          %th= "Album"
+          %th= "Series"
           %th= "Karaoke?"
           %th= "Lyrics?"
       %tbody
@@ -21,6 +21,6 @@
             %a{:href => "/song/#{song.id}"} #{song.id}
           %td= song.title
           %td= song.artist
-          %td= song.album
-          %td= song.karaoke
-          %td= song.lyrics_exists
+          %td= song.origin_title
+          %td= (song.karaoke == :true ? "Karaoke" : (song.karaoke == :false ? "With Vocals" : "???"))
+          %td= song.lyrics_exists ? "Yes" : "No Lyrics"

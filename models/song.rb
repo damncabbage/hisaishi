@@ -52,7 +52,7 @@ class Song
       puts "Error: #{bang}"
     end
     puts file.length
-    return file.length > 0
+    return file.length > 50 # Anything less isn't a real song. :[
   end
   
   def player_data
