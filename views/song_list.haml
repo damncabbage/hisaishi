@@ -1,26 +1,26 @@
 !!! 5
 %html
-	%head
-		%title= "Karaoke Song List"
-		%link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
-	%body{:id => "hisaishi-song-list"}
-		%h1= "Karaoke Song List"
-		%table{:id => "hisaishi-all-songs"}
-			%thead
-				%tr
-					%th= "No"
-					%th= "Title"
-					%th= "Artist"
-					%th= "Album"
-					%th{:class => "song-yes"}= "Yes"
-					%th{:class => "song-no"}= "No"
-			%tbody
-			- songs.each do |song|
-				%tr
-					%td
-						%a{:href => "/song/#{song.id}"} #{song.id}
-					%td= song.title
-					%td= song.artist
-					%td= song.album
-					%td{:class => "song-yes"}= song.yes
-					%td{:class => "song-no"}= song.no
+  %head
+    %title= "Karaoke Song List"
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+  %body{:id => "hisaishi-song-list"}
+    %h1= "Karaoke Song List"
+    %table{:id => "hisaishi-all-songs"}
+      %thead
+        %tr
+          %th= "No"
+          %th= "Title"
+          %th= "Artist"
+          %th= "Album"
+          %th= "Karaoke?"
+          %th= "Lyrics?"
+      %tbody
+      - songs.each do |song|
+        %tr
+          %td
+            %a{:href => "/song/#{song.id}"} #{song.id}
+          %td= song.title
+          %td= song.artist
+          %td= song.album
+          %td= song.karaoke
+          %td= song.lyrics_exists
