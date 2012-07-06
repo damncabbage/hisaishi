@@ -1,5 +1,6 @@
 require 'mp3info'
 require 'open-uri'
+require 'cgi'
 
 class Song
   include DataMapper::Resource
@@ -36,6 +37,22 @@ class Song
   
   def path
     return self.path_base + audio_file
+  end
+  
+  def lyrics_exists
+    path = URI.escape(self.path_base + lyrics_file).gsub('[', '%5B').gsub(']', '%5D')
+    puts path
+    data = nil
+    file = StringIO.new
+    begin
+      open(path) do |data|  
+        file.write data.read(4096)
+      end
+    rescue StandardError => bang
+      puts "Error: #{bang}"
+    end
+    puts file.length
+    return file.length > 0
   end
   
   def player_data
@@ -115,8 +132,9 @@ class Song
   def get_data!
   	data = nil
     mp3 = StringIO.new
+    path = URI.escape(self.path).gsub('[', '%5B').gsub(']', '%5D')
     begin
-      open(self.path) do |data|  
+      open(path) do |data|  
         mp3.write data.read(4096)
       end
       mp3.rewind

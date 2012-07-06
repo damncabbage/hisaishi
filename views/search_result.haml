@@ -1,11 +1,15 @@
 - songs.each do |s|
-	%li{:data_theme => "c"}
-		%a{:href => "/add/#{s.id}", "data-transition" => "slide"}
-			%h3= s.title
-			%p{:class => "separated-descriptions"}
-				- if !s.artist.nil?
-					%em= s.artist
-				- if !s.album.nil?
-					%em= s.album
-				- if !s.origin_title.nil?
-					%em= s.origin_title
+  %li{:data_theme => "c"}
+    %a{:href => "/add/#{s.id}", "data-transition" => "slide"}
+      %h3= s.title
+      %p{:class => "separated-descriptions"}
+        - if !s.artist.nil?
+          %em= s.artist
+        - if !s.album.nil?
+          %em= s.album
+        - if !s.origin_title.nil?
+          %em= s.origin_title
+        - if s.karaoke == :true
+          %strong= " (Karaoke) "
+        - if s.lyrics_exists
+          %strong= " (Lyrics) "
