@@ -3,6 +3,7 @@ require 'sinatra'
 require 'sinatra/jsonp'
 require 'natural_time'
 require 'sinatra-websocket'
+require 'fileutils'
 
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
@@ -472,23 +473,25 @@ post '/upload' do
   puts lyrics
   puts image
   
-  unless (audio[:valid])
+  unless (audio[:valid] && lyrics[:valid])
     puts 'no'
     redirect '/upload'
   end
   
   dirname = (audio[:name].split('.')[0] + (0...8).map{65.+(rand(25)).chr}.join).gsub(/[\x00\/\\:\*\?\"<>\|]/, '_')
   
-  uploads_dir = File.join(Dir.pwd, "public/uploads")
+  pub_base = "public/music/"
+  
+  uploads_dir = File.join(Dir.pwd, pub_base + "uploads")
   if (!File.exist?(uploads_dir))
     Dir.mkdir(uploads_dir, 0775)
   end
   
-  song_dir = File.join(Dir.pwd, "public/uploads", dirname)
+  song_dir = File.join(Dir.pwd, pub_base + "uploads", dirname)
   if (!File.exist?(song_dir))
     Dir.mkdir(song_dir, 0775)
   end
-  short_song_dir = File.join("uploads", dirname)
+  short_song_dir = File.join("uploads", dirname) + '/'
   
   write_file(song_dir, audio)
   write_file(song_dir, lyrics)
@@ -534,9 +537,10 @@ end
 
 def write_file(song_dir, result)
   if (result[:valid])
-    while blk = result[:tmpfile].read(65536)
-      File.open(File.join(song_dir, result[:name]), "wb") { |f| f.write(result[:tmpfile].read) }
-    end
+    FileUtils.cp(result[:tmpfile].path, File.join(song_dir, result[:name]))
+    #while blk = result[:tmpfile].read(65536)
+    #  File.open(File.join(song_dir, result[:name]), "wb") { |f| f.write(result[:tmpfile].read) }
+    #end
   end
 end
 

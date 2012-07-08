@@ -421,3 +421,22 @@ table#hisaishi-all-songs .song-no {
   overflow: hidden;
   white-space: nowrap;
 }
+
+/* Uploads */
+
+#hisaishi-add-song .field-wrap {
+  margin: 0.5em 0;
+}
+
+#hisaishi-add-song label {
+  display: inline-block;
+  width: 200px;
+  text-align: right;
+  margin-right: 5px;
+}
+
+#hisaishi-add-song input[type="submit"] {
+  margin-left: 210px;
+  font-size: 3em;
+}
+
