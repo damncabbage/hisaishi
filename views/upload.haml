@@ -1,0 +1,49 @@
+!!! 5
+%html
+  %head
+    %title= "Karaoke: Add Song"
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+  %body{:id => "hisaishi-add-song"}
+    %h1= "Add song"
+    %form{:action => "/upload", :method => "post", :enctype=>"multipart/form-data"}
+      %div
+        %label{:for => "title"}= "Song title"
+        %input{:name => "title"}
+      %div
+        %label{:for => "artist"}= "Artist"
+        %input{:name => "artist"}
+      %div
+        %label{:for => "album"}= "Album"
+        %input{:name => "album"}
+      %div
+        %label{:for => "origin_title"}= "Origin Title"
+        %input{:name => "origin_title"}
+      %div
+        %label{:for => "origin_type"}= "Origin Type"
+        %input{:name => "origin_type"}
+      %div
+        %label{:for => "origin_medium"}= "Origin Medium"
+        %input{:name => "origin_medium"}
+      %div
+        %label{:for => "genre"}= "Genre"
+        %input{:name => "genre"}
+      %div
+        %label{:for => "language"}= "Language"
+        %input{:name => "language"}
+      %div
+        %label{:for => "karaoke"}= "Karaoke"
+        %select{:name => "karaoke"}
+          %option{:value => "true"}= "Yes"
+          %option{:value => "false"}= "No"
+          %option{:value => "unknown"}= "Don't know"
+      %div
+        %label{:for => "audio_file"}= "Audio file"
+        %input{:type => "file", :name => "audio_file"}
+      %div
+        %label{:for => "lyrics_file"}= "Lyrics file"
+        %input{:type => "file", :name => "lyrics_file"}
+      %div
+        %label{:for => "image_file"}= "Image file"
+        %input{:type => "file", :name => "image_file"}
+      %div
+        %input{:type => "submit", :value => "Add song"}

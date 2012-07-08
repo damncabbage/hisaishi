@@ -40,6 +40,10 @@ class Song
   end
   
   def lyrics_exists
+    unless (!lyrics_file.nil?)
+      return false
+    end
+    
     path = URI.escape(self.path_base + lyrics_file).gsub('[', '%5B').gsub(']', '%5D')
     puts path
     data = nil

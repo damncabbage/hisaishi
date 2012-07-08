@@ -456,8 +456,89 @@ post '/unlock-screen' do
   JSONP state
 end
 
+# Upload stuff
+
+get '/upload' do
+  pin_auth
+  haml :upload
+end
+
+post '/upload' do
+  audio  = has_file(:audio_file, params)
+  lyrics = has_file(:lyrics_file, params)
+  image  = has_file(:image_file, params)
+  
+  puts audio
+  puts lyrics
+  puts image
+  
+  unless (audio[:valid])
+    puts 'no'
+    redirect '/upload'
+  end
+  
+  dirname = (audio[:name].split('.')[0] + (0...8).map{65.+(rand(25)).chr}.join).gsub(/[\x00\/\\:\*\?\"<>\|]/, '_')
+  
+  uploads_dir = File.join(Dir.pwd, "public/uploads")
+  if (!File.exist?(uploads_dir))
+    Dir.mkdir(uploads_dir, 0775)
+  end
+  
+  song_dir = File.join(Dir.pwd, "public/uploads", dirname)
+  if (!File.exist?(song_dir))
+    Dir.mkdir(song_dir, 0775)
+  end
+  short_song_dir = File.join("uploads", dirname)
+  
+  write_file(song_dir, audio)
+  write_file(song_dir, lyrics)
+  write_file(song_dir, image)
+  
+  s = Song.create(
+    :title => params[:title],
+    :artist => params[:artist],
+    :album => params[:album],
+    :origin_title => params[:origin_title],
+    :origin_type => params[:origin_type],
+    :origin_medium => params[:origin_medium],
+    :genre => params[:genre],
+    :language => params[:language],
+    :karaoke => params[:karaoke],
+    :source_dir => short_song_dir,
+    :audio_file => audio[:name],
+    :lyrics_file => lyrics[:name],
+    :image_file => image[:name],
+  )
+  
+  puts s
+  
+  'success'
+end
 
 # ##### HELPER FUNCTIONS
+
+# Upload
+
+def has_file(index, params)
+  puts params
+  result = {
+    :valid => false,
+    :tmpfile => nil,
+    :name => nil
+  }
+  test = (params[index] && (result[:tmpfile] = params[index][:tempfile]) && (result[:name] = params[index][:filename]))
+  puts test
+  result[:valid] = !test.nil? && (test == params[index][:filename])
+  return result
+end
+
+def write_file(song_dir, result)
+  if (result[:valid])
+    while blk = result[:tmpfile].read(65536)
+      File.open(File.join(song_dir, result[:name]), "wb") { |f| f.write(result[:tmpfile].read) }
+    end
+  end
+end
 
 # PIN auth helper functions
 
