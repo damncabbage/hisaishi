@@ -10,7 +10,37 @@ by the IT guys from SMASH!
 We tested this player a lot in Chrome. If you could use that for the player 
 that would be great, but it should work in a lot of other browsers too.
 
+## Requires
+
+We recommend that you use RVM and a Ruby version of at least 1.9.2.  
+Check out [rvm.io](https://rvm.io/) for info on how to install it.
+
+## Setting up the player to run at startup (Mac OS X)
+
+**NOTE:** this requires a little technical know-how and the administrator password.
+
+We've got a plist that sets up the player to run on startup.  To set it up for your 
+username, open **au.org.smash.hisaishi.playerlaunch.plist** and change the following: 
+
+**UserName**  
+Should be the user that owns the directory you put Hisaishi in.
+
+**WorkingDirectory**  
+The path to the directory you put Hisaishi in.  You can find this out by typing  
+<code>pwd</code>  
+into the command line.
+
+To load the updated plist, type  
+<code>sudo launchctl load au.org.smash.hisaishi.playerlaunch.plist</code>  
+and Hisaishi should run when you start your Mac.
+
+To remove it, type  
+<code>sudo launchctl remove au.org.smash.hisaishi.playerlaunch</code>  
+and it should shut down and no longer launch on startup.
+
 ## Starting the player
+
+**NOTE:** this requires a little technical know-how.
 
 The computer is set up with a particular directory that has all of Hisaishi's 
 stuff in.  Open up Terminal and type  
@@ -69,9 +99,15 @@ wait for 5 minutes between submissions.
 
 ## Announcements
 
-We're still working on this, but it will pretty much work the same way as the 
-queue for songs does.  It'll just display messages instead of play songs.  As 
-you'd expect.
+This works pretty much the same way as the Queue does, but with a couple of 
+exceptions.
+
+Announcements works by scanning a list of announcements and making any that have 
+the status Pending display, one by one.  You can add them using the 
+**Add Announcement** button.
+
+To retrigger an announcement that has been played, or doesn't have Pending 
+status, just tap it.
 
 ## When you're done
 

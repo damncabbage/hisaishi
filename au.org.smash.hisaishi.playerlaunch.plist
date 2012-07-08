@@ -9,11 +9,15 @@
     <string>sh</string>
     <string>-i</string>
     <string>-c</string>
-    <string>$SHELL --login -c "'/Users/geoffrey/Projects/smash/hisaishi/hisaishi-player/hisaishi.sh'"</string>
+    <string>$SHELL --login -c "'./hisaishi.sh'"</string>
   </array>
   <key>KeepAlive</key>
   <true/>
   <key>RunAtLoad</key>
   <true/>
+  <key>UserName</key>
+  <string>hisaishiuser</string>
+  <key>WorkingDirectory</key>
+	<string>/path/to/hisaishi</string>
 </dict>
 </plist>
