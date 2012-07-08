@@ -23,6 +23,13 @@ class Song
   property :no,      Integer,   :default => 0
   property :unknown,      Integer,   :default => 0  
   
+  property :created, DateTime, :default => lambda{ |p,s| DateTime.now}
+  property :updated, DateTime, :default => lambda{ |p,s| DateTime.now}
+  
+  before :save do
+    updated = DateTime.now
+  end
+  
   def self.search(str)
   	str = '%' + str.downcase + '%'
     Song.all(:conditions => ['LOWER(title) LIKE ?', str]) + 
