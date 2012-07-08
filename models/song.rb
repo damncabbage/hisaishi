@@ -23,11 +23,11 @@ class Song
   property :no,      Integer,   :default => 0
   property :unknown,      Integer,   :default => 0  
   
-  property :created, DateTime, :default => lambda{ |p,s| DateTime.now}
-  property :updated, DateTime, :default => lambda{ |p,s| DateTime.now}
+  property :created_at, DateTime, :default => lambda{ |p,s| DateTime.now}
+  property :updated_at, DateTime, :default => lambda{ |p,s| DateTime.now}
   
   before :save do
-    updated = DateTime.now
+    updated_at = DateTime.now
   end
   
   def self.search(str)
