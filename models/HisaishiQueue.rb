@@ -156,6 +156,10 @@ class HisaishiQueue
         # missing song, Annie Lam n Mai Uchino
         {:song_id => 628, :requester => 'Tranh Tran Thein Le n Vi Tuong Nguyen'},
         {:song_id => 629, :requester => 'Derrasanc n Genn'},
+      ],
+      "single_final" => [
+      ],
+      "duet_final" => [
       ]
     }
   end
