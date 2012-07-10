@@ -465,6 +465,8 @@ get '/upload' do
 end
 
 post '/upload' do
+  pin_auth
+  
   audio  = has_file(:audio_file, params)
   lyrics = has_file(:lyrics_file, params)
   image  = has_file(:image_file, params)
@@ -515,7 +517,20 @@ post '/upload' do
   
   puts s
   
-  'success'
+  'Success! <br /> <a href="/upload">upload another song</a>'
+end
+
+# Queue control
+
+get '/queue-control' do
+  pin_auth
+  haml :queue_control
+end
+
+post '/queue-control' do
+  pin_auth
+  HisaishiQueue.overwrite_queue(params[:queue_id])
+  'Success! <br /> <a href="/queue">go to queue</a> <br /> <a href="/queue-control">go to queue control</a>'
 end
 
 # ##### HELPER FUNCTIONS

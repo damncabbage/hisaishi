@@ -1,0 +1,19 @@
+!!! 5
+%html
+  %head
+    %title= "Karaoke: Queue Control"
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+  %body{:id => "hisaishi-queue-control"}
+    %h1= "Queue Control"
+    %p
+      %strong= "WARNING!  "
+      %span= "Submitting the form below will erase the current queue and replace it with a new predefined one!"
+    %form{:action => "/queue-control", :method => "post"}
+      %div{:class => "field-wrap"}
+        %label{:for => "queue_id"}= "Use Queue"
+        %select{:name => "queue_id", :id => "queue_id"}
+          %option{:value => "none"}= "- Empty queue -"
+          %option{:value => "single_heat"}= "Singles Heats"
+          %option{:value => "duet_heat"}= "Duet Heats"
+      %div{:class => "field-wrap"}
+        %input{:type => "submit", :value => "Overwrite queue"}

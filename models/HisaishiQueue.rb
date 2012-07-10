@@ -114,4 +114,62 @@ class HisaishiQueue
   	q = HisaishiQueue.first(:queue_order.gt => queue_order, :order => [:queue_order.asc, :play_state.asc])
   	q.play_now
   end
+  
+  def self.predefined_queues
+    {
+      "single_heat" => [
+        {:song_id => 524, :requester => 'Shanee Conran'}, 
+        {:song_id => 601, :requester => 'Clarissa Lin'}, 
+        {:song_id => 602, :requester => 'Corina Alexe (aka Corinne Procycon)'}, 
+        {:song_id => 603, :requester => 'Susan'}, 
+        {:song_id => 604, :requester => 'Phoebe Sim'}, 
+        {:song_id => 605, :requester => 'Alex Ngai'}, 
+        {:song_id => 606, :requester => 'Chantel Simeoni'}, 
+        {:song_id => 607, :requester => 'Lynneal Santos (nime)'}, 
+        {:song_id => 608, :requester => 'Xena'}, 
+        {:song_id => 609, :requester => 'Vivienne'}, 
+        {:song_id => 610, :requester => 'Mel'}, 
+        {:song_id => 611, :requester => 'Gabriel Seah Hian Ong'}, 
+        {:song_id => 612, :requester => 'Jane Soo'}, 
+        {:song_id => 613, :requester => 'Belinda Yuqi Ding'}, 
+        {:song_id => 614, :requester => 'Jennifer Akitsuki'}, 
+        {:song_id => 383, :requester => 'Aarti Mahajan'}, 
+        {:song_id => 615, :requester => 'Mai Uchino'}, 
+        {:song_id => 134, :requester => 'Nadya Shturman'}, 
+        {:song_id => 524, :requester => 'Karen Algeo'}, 
+        {:song_id => 616, :requester => 'Kaylee Chidgey'}, 
+        {:song_id => 617, :requester => 'Sophia Kim'}, 
+        {:song_id => 618, :requester => 'Crystal Bai'}, 
+        {:song_id => 619, :requester => 'Annie Lam'}, 
+        {:song_id => 620, :requester => 'Ben Pushka'}, 
+      ],
+      "duet_heat" => [
+        {:song_id => 370, :requester => 'Emily Shen'}, 
+        {:song_id => 621, :requester => 'Corina Alexe (aka Corinne Procycon) n Minh Procycon'}, 
+        {:song_id => 622, :requester => 'Andrea n Brenda Lo'}, 
+        {:song_id => 623, :requester => 'Elizabeth n Soo Yeun Melissa Lim'}, 
+        {:song_id => 624, :requester => 'Justine Jiang n Susan Lee'}, 
+        {:song_id => 625, :requester => 'Gabriel n Lisa'},         
+        {:song_id => 626, :requester => 'Emi Stuart n Mari Stuart'}, 
+        {:song_id => 627, :requester => 'Elsa Hon n Amy'}, 
+        # sorairo days, shoko nakagawa, Belinda Yuqi Ding n Michael Chan
+        # missing song, Annie Lam n Mai Uchino
+        {:song_id => 628, :requester => 'Tranh Tran Thein Le n Vi Tuong Nguyen'},
+        {:song_id => 629, :requester => 'Derrasanc n Genn'},
+      ]
+    }
+  end
+  
+  # Nukes the queue and 
+  def self.overwrite_queue(queue_id)
+    HisaishiQueue.all.destroy
+    queue_base = HisaishiQueue.predefined_queues[queue_id]
+    unless queue_base.nil?
+      queue_base.each do |i|
+        song = Song.get(i[:song_id])
+        new_queue = song.enqueue(i[:requester])
+      end
+    end
+  end
+  
 end

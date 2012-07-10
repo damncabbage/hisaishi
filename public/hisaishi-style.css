@@ -424,18 +424,21 @@ table#hisaishi-all-songs .song-no {
 
 /* Uploads */
 
-#hisaishi-add-song .field-wrap {
+#hisaishi-add-song .field-wrap,
+#hisaishi-queue-control .field-wrap {
   margin: 0.5em 0;
 }
 
-#hisaishi-add-song label {
+#hisaishi-add-song label,
+#hisaishi-queue-control label {
   display: inline-block;
   width: 200px;
   text-align: right;
   margin-right: 5px;
 }
 
-#hisaishi-add-song input[type="submit"] {
+#hisaishi-add-song input[type="submit"],
+#hisaishi-queue-control input[type="submit"] {
   margin-left: 210px;
   font-size: 3em;
 }
