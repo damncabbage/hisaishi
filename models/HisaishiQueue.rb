@@ -167,7 +167,9 @@ class HisaishiQueue
     unless queue_base.nil?
       queue_base.each do |i|
         song = Song.get(i[:song_id])
-        new_queue = song.enqueue(i[:requester])
+        unless song.nil?
+          new_queue = song.enqueue(i[:requester])
+        end
       end
     end
   end
