@@ -89,7 +89,10 @@ var HisaishiEngine = function(params) {
 	
 	/* Visual Feedback */
 	
-	that.triggerBroken = function() {
+	that.triggerBroken = function(reason) {
+	  if (!!reason) {
+	    console.log(reason);
+	  }
 		$(this.params.containers.lyrics).parent().addClass('broken');
 		that.state.errorState = true;
 		that.params.onError();
@@ -268,7 +271,7 @@ var HisaishiEngine = function(params) {
 				});
 			},
 			error: function(){
-				that.triggerBroken();
+				that.triggerBroken('could not load lyrics');
 			}
 		});
 	};
@@ -494,7 +497,7 @@ var HisaishiEngine = function(params) {
 				that.runLoop(10);
 			}
 			else {
-				that.triggerBroken();
+				that.triggerBroken('playSong: no audio');
 			}
 		}
 	};
@@ -507,7 +510,7 @@ var HisaishiEngine = function(params) {
 				this.state.audio.pause();
 			}
 			else {
-				that.triggerBroken();
+				that.triggerBroken('pauseSong: no audio');
 			}
 			clearTimeout(this.timer);
 		}
@@ -527,11 +530,11 @@ var HisaishiEngine = function(params) {
 				this.state.audio.pause();
 			}
 			catch(ex) {
-				that.triggerBroken();
+				that.triggerBroken('stopSong: exception caught in setCurrentTime ' + ex.message);
 			}
 		}
 		else {
-			that.triggerBroken();
+			that.triggerBroken('stopSong: no audio');
 		}
 		this.state.time 				= 0;
 		this.state.timecodeKey 			= 0;
@@ -570,14 +573,17 @@ var HisaishiEngine = function(params) {
 				roundSecs 	= Math.floor(secs),
 				timeParts	= [Math.floor(roundSecs / 60), Math.floor(roundSecs % 60)];
 			
-			$('.song-range', this.params.containers.controls)
-				.attr('value', progress);
+			try {
+        $('.song-range', this.params.containers.controls)
+          .attr('value', progress);
+			}
+			catch (ex) {}
 			
 			$('.timer', this.params.containers.controls)
 				.text(timeParts.join('m ') + 's');
 		}
 		else {
-			this.triggerBroken();
+			this.triggerBroken('setTimerControl: no audio');
 		}
 	};
 	
@@ -637,8 +643,7 @@ var HisaishiEngine = function(params) {
 			this.loadAudio();
 		}
 		catch(ex) {
-			this.triggerBroken();
-			console.log(ex.type + ': ' + ex.message);
+			this.triggerBroken('loadSong: ' + ex.message);
 		}
 	};
 	
