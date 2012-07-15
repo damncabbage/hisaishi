@@ -79,16 +79,65 @@ end
 
 get '/proxy' do
   url = params[:url]
-  #puts 'The URL was: ' + url
   begin
-    open(URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')).read
+    path = URI.encode(url).gsub('[', '%5B').gsub(']', '%5D')
+    if path[0] == '/' then
+      path = 'http://localhost:4567' + path
+    end
+    open(path).read
   rescue OpenURI::HTTPError => bang
-    puts "HTTP Error: #{bang} (#{url})"
+    'None'
   rescue StandardError => bang
-    puts "Error: #{bang} (#{url})"
+    'None'
   end
 end
 
+# ##### MEDIA ROUTES
+
+get '/song/:song_id/audio.mp3' do
+  song = Song.get(params[:song_id])
+  if !song.nil? then
+    audio_path = song.local_audio_path
+    if !audio_path.nil? then
+      puts audio_path
+      send_file(audio_path)
+    else
+      redirect song.path
+    end
+  else
+    halt(404, "Song not found.")
+  end
+end
+
+get '/song/:song_id/lyrics.txt' do
+  song = Song.get(params[:song_id])
+  if !song.nil? then
+    lyrics_path = song.local_lyrics_path
+    if !lyrics_path.nil? then
+      puts lyrics_path
+      send_file(lyrics_path)
+    else
+      'None'
+    end
+  else
+    halt(404, "Song not found.")
+  end
+end
+
+get '/song/:song_id/image' do
+  song = Song.get(params[:song_id])
+  if !song.nil? then
+    image_path = song.local_image_path
+    if !image_path.nil? then
+      puts image_path
+      send_file(image_path)
+    else
+      halt(404, "Image not found.")
+    end
+  else
+    halt(404, "Song not found.")
+  end
+end
 
 # ##### CONTROLLER ROUTES
 
@@ -118,6 +167,7 @@ end
 get '/queue' do
   pin_auth
   q = queue_songs
+  puts q
   q[:authed] = has_admin_pin
   haml :queue, :locals => q
 end
@@ -125,6 +175,7 @@ end
 get '/queue-info/:q_id' do
   pin_auth!
   q = HisaishiQueue.get(params[:q_id])
+  puts q
   song = Song.get(q.song_id)
   haml :queue_info, :locals => {
     :song => song,
@@ -283,8 +334,8 @@ get '/songinfo/:song_id' do
 
   song = Song.get(params[:song_id])
   data = song.get_data!
-  puts data
-  puts data.length.ceil
+  #puts data
+  #puts data.length.ceil
 end
 
 # Announcements
@@ -430,7 +481,7 @@ end
 
 get '/diagnostic' do
   pin_auth
-  puts request.env.inspect
+  #puts request.env.inspect
   haml :diagnostic, :locals => {
     :scheme => request.env["rack.url_scheme"],
     :host => request.env["HTTP_HOST"],
@@ -471,9 +522,9 @@ post '/upload' do
   lyrics = has_file(:lyrics_file, params)
   image  = has_file(:image_file, params)
   
-  puts audio
-  puts lyrics
-  puts image
+  #puts audio
+  #puts lyrics
+  #puts image
   
   unless (audio[:valid] && lyrics[:valid])
     puts 'no'
@@ -515,7 +566,7 @@ post '/upload' do
     :image_file => image[:name],
   )
   
-  puts s
+  #puts s
   
   'Success! <br /> <a href="/upload">upload another song</a>'
 end
@@ -538,14 +589,14 @@ end
 # Upload
 
 def has_file(index, params)
-  puts params
+  #puts params
   result = {
     :valid => false,
     :tmpfile => nil,
     :name => nil
   }
   test = (params[index] && (result[:tmpfile] = params[index][:tempfile]) && (result[:name] = params[index][:filename]))
-  puts test
+  #puts test
   result[:valid] = !test.nil? && (test == params[index][:filename])
   return result
 end
@@ -583,14 +634,17 @@ end
 
 def queue_songs
   song_list = {}
-  HisaishiQueue.all.each do |q|
+  queue = HisaishiQueue.all(:order => [:queue_order.asc])
+  queue.each do |q|
     s = Song.get(q.song_id)
-    song_list[s.id] = s.player_data
+    unless song_list.has_key? s.id then
+      song_list[s.id] = s.player_data
+    end
   end
 
   {
     :songs => song_list,
-    :queue => HisaishiQueue.all(:order => [:queue_order.asc])
+    :queue => queue
   }
 end
 
