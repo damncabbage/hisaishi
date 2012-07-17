@@ -7,8 +7,9 @@ by the IT guys from SMASH!
 
 ## Hints
 
-We tested this player a lot in Chrome. If you could use that for the player 
-that would be great, but it should work in a lot of other browsers too.
+USE THIS IN SAFARI NOT CHROME  
+[http://code.google.com/p/chromium/issues/detail?id=109751](http://code.google.com/p/chromium/issues/detail?id=109751) 
+SERIOUSLY WHAT IS THIS  
 
 ## Requires
 

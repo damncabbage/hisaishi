@@ -100,6 +100,21 @@ get '/song/:song_id/audio.mp3' do
     audio_path = song.local_audio_path
     if !audio_path.nil? then
       puts audio_path
+      logger.info "sending audio for " + params[:song_id]
+      
+      #response['Content-Type'] = 'application/octet-stream'
+      #response['Content-Disposition'] = 'inline'
+      #blk_size = 65536
+      #file_size = 0
+      #f = File.open(audio_path)
+      #stream do |out|
+      #  while blk = f.read(blk_size)
+      #    file_size += blk_size
+      #    out << blk
+      #    logger.info file_size
+      #  end
+      #end
+      
       send_file(audio_path)
     else
       redirect song.path
