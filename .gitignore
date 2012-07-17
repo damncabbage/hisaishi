@@ -1,6 +1,7 @@
 # Bundler config and Bundler-installed gems
 .bundle
 vendor/bundler
+pqxx-dev
 
 # Seeding files
 data/seeds.csv
@@ -8,8 +9,11 @@ data/seeds.csv
 # Music files
 public/music
 
-# Generated configs
-config/environments.rb
+# Local Databases
+db/*.sqlite3
+
+# Ctags
+tags
 
 # The usual suspects
 Thumbs.db

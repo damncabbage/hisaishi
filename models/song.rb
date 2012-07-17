@@ -1,5 +1,6 @@
 require 'mp3info'
 require 'open-uri'
+require 'cgi'
 
 class Song
   include DataMapper::Resource
@@ -22,17 +23,79 @@ class Song
   property :no,      Integer,   :default => 0
   property :unknown,      Integer,   :default => 0  
   
+  property :created_at, DateTime, :default => lambda{ |p,s| DateTime.now}
+  property :updated_at, DateTime, :default => lambda{ |p,s| DateTime.now}
+  
+  before :save do
+    updated_at = DateTime.now
+  end
+  
+  def self.search(str)
+  	str = '%' + str.downcase + '%'
+    Song.all(:conditions => ['LOWER(title) LIKE ?', str]) + 
+    Song.all(:conditions => ['LOWER(artist) LIKE ?', str]) + 
+    Song.all(:conditions => ['LOWER(album) LIKE ?', str]) + 
+    Song.all(:conditions => ['LOWER(origin_title) LIKE ?', str])
+  end
+  
+  def self.clean_string(str)
+    unless str.nil? then
+      str.gsub('[', '%5B').gsub(']', '%5D').gsub('+', '%2B')
+    end
+  end
+  
   def path_base
     return settings.files + source_dir
   end
   
-  def path
-    return self.path_base + audio_file
+  def audio_path
+    if !audio_file.nil? then
+      return self.path_base + audio_file
+    else
+      return nil
+    end
   end
   
-  def json
-    song_data = []
-    song_data << {
+  alias_method :path, :audio_path
+  
+  def lyrics_path
+    if !lyrics_file.nil? then
+      return self.path_base + lyrics_file
+    else
+      return nil
+    end
+  end
+  
+  def image_path
+    if !image_file.nil? then
+      return self.path_base + image_file
+    else
+      return nil
+    end
+  end
+  
+  def lyrics_exists
+    unless (!lyrics_file.nil?)
+      return false
+    end
+    
+    path = URI.escape(self.path_base + lyrics_file).gsub('[', '%5B').gsub(']', '%5D').gsub('+', '%2B')
+    puts path
+    data = nil
+    file = StringIO.new
+    begin
+      open(path) do |data|  
+        file.write data.read(4096)
+      end
+    rescue StandardError => bang
+      puts "Error: #{bang}"
+    end
+    puts file.length
+    return file.length > 50 # Anything less isn't a real song. :[
+  end
+  
+  def player_data
+    {
       :id    => id,
       :title   => title,
       :artist  => artist,
@@ -43,11 +106,21 @@ class Song
       :genre => genre,
       :language => language,
       :karaoke => karaoke,
-      :folder  => self.path_base,
-      :audio   => audio_file,
-      :lyrics  => lyrics_file,
-      :cover   => image_file
+      #:folder  => Song.clean_string(self.path_base),
+      #:audio   => Song.clean_string(audio_file),
+      #:lyrics  => Song.clean_string(lyrics_file),
+      #:cover   => Song.clean_string(image_file)
+      
+      :folder  => '/song/' + id.to_s,
+      :audio   => '/audio.mp3',
+      :lyrics  => '/lyrics.txt',
+      :cover   => '/image',
     }
+  end
+  
+  def json
+    song_data = []
+    song_data << self.player_data
     return song_data.to_json
   end
   
@@ -88,10 +161,13 @@ class Song
       end
     end
     
+    len = HisaishiQueue.all.length
+    
     new_q = HisaishiQueue.new({
-      :requester => requester,
-      :song_id => self.id,
-      :time => time
+      :requester 	=> requester,
+      :song_id 		=> self.id,
+      :time 		=> time,
+      :queue_order 	=> len
     })
     new_q.save
     new_q
@@ -100,8 +176,9 @@ class Song
   def get_data!
   	data = nil
     mp3 = StringIO.new
+    path = Song.clean_string(URI.escape(self.path))
     begin
-      open(self.path) do |data|  
+      open(path) do |data|  
         mp3.write data.read(4096)
       end
       mp3.rewind
@@ -113,4 +190,29 @@ class Song
     end
     return data
   end
+  
+  def local_audio_path
+    if settings.files_local and !audio_file.nil? then
+      'public/music/' + source_dir + audio_file
+    else
+      nil
+    end
+  end
+  
+  def local_lyrics_path
+    if settings.files_local and !lyrics_file.nil? then
+      'public/music/' + source_dir + lyrics_file
+    else
+      nil
+    end
+  end
+  
+  def local_image_path
+    if settings.files_local and !image_file.nil? then
+      'public/music/' + source_dir + image_file
+    else
+      nil
+    end
+  end
+  
 end

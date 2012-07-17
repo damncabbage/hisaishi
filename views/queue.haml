@@ -1,0 +1,124 @@
+!!! 5
+%html
+	%head
+		%title= "Karaoke Queue"
+		= haml :_ios_meta
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript",:src  => "/lib/jquery.json-2.3.js"}
+		%script{:type => "text/javascript",:src  => "/lib/reconnecting-websocket.js"}
+		%script{:type => "text/javascript",:src  => "/lib/jquery.websocket-0.0.1.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.ui.touch-punch.min.js"}
+		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}		
+		:javascript
+			var csrf = "";
+			var list = null;
+			var ws = null;
+			
+			// @TODO: hide deletion list on page return.
+			
+			var toggleListNow = function(toggle) {
+				if (!!toggle) {
+					if (!!list) {
+						list.destroy();
+					}
+					$('#edit-toggle').find('.ui-btn-text').text('Edit');
+					$('.toggle-delete').hide();
+					$('#queue-listview').removeClass('editing-list').listview('refresh');
+				}
+				else {
+					if (!!list) {
+						list.init();
+					}
+					$('#edit-toggle').find('.ui-btn-text').text('Done');
+					$('.toggle-delete').show();
+					$('#queue-listview').addClass('editing-list').listview('refresh');
+				}
+			},
+			
+			toggleListNatural = function() {
+				if ($('#queue-listview').hasClass('editing-list')) {
+					toggleListNow(true);
+				}
+				else {
+					toggleListNow(false);
+				}
+			};
+			
+			$( document ).delegate("#queue-page", "pageinit", function() {
+				var oldOrder = null;
+				
+				var sendOrder = function() {
+					var newOrder = $(this).sortable('serialize');
+					if (oldOrder != null && newOrder != oldOrder) {
+						$.post('/queue-reorder', newOrder + '&_csrf=' + csrf);
+						oldOrder = newOrder;
+					}
+				},
+				
+				deleteRow = function(e) {
+				  e.preventDefault();
+				  var item = $(this).parents('li');
+				  var info = item.attr('id').split('_');
+				  $.post('/queue-delete-process', {q_id: info[1]}, function(){});
+				  item.remove();
+				  $('#queue-listview').addClass('editing-list').listview('refresh');
+				},
+				
+				list = new SortableList('#queue-listview', {
+					onInit: function(){
+						oldOrder = $(this).sortable('serialize');
+					},
+					onUpdate: sendOrder,
+					onDestroy: sendOrder
+				});
+				
+				$('#edit-toggle').click(function(){
+					toggleListNatural();
+				});
+				toggleListNow(true);
+				$('.toggle-delete').click(deleteRow);
+				
+				ws = $.websocket('ws://' + document.location.host + '/socket', {
+					open: function() {
+					},
+					close: function() {
+					},
+					events: {
+						admin_update: function(e) {
+							console.log('admin_update');
+							console.log(e.data.queue_id);
+							console.log(e.data.state);
+							
+							$('#queue-listview #queue_' + e.data.queue_id)
+								.removeAttr('class')
+								.addClass(e.data.state);
+							$('#queue-listview').listview('refresh');
+						}
+					}
+				});
+			});
+	%body{:id => "hisaishi-queue-list"}
+		#queue-page{"data-role" => "page"}
+			%div{"data-role" => "header"}
+				%a{:class => "ui-btn-left", "data-icon" => "gear", :href => "#", :id => "edit-toggle"}= "Edit"
+				%h1= "Queue"
+				= haml :_lock_button
+			%div{"data-role" => "content"}
+				%div{"data-role" => "fieldcontain"}
+					%a{"data-role" => "button", "data-transition" => "slide", :href => "/search"}= "Add song"
+					%br
+				%ul{"data-role" => "listview", "data_inset" => "true", :id => "queue-listview"}
+					- queue.each do |q|
+						- song = songs[q.song_id]
+						%li{"data_theme" => "c", :id => "queue_#{q.id}", :class => q.play_state}
+							%a{"data-rel" => "dialog", "data-transition" => "none", :href => "/queue-info/#{q.id}"}
+								%h3= q.requester
+								%p{:class => "separated-descriptions"}
+									%em= "#{song[:artist]}"
+									%em= "#{song[:title]}"
+							%a{:href => "#", 'data-icon' => 'minus', 'class' => 'toggle-delete'}= "Delete"
+			= haml :menubar

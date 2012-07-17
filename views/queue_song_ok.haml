@@ -1,0 +1,23 @@
+!!! 5
+%html
+	%head
+		%title= "Added song to Karaoke Queue"
+		= haml :_ios_meta
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+	%body{:id => "hisaishi-song-list"}
+		#home{"data-role" => "page"}
+			%div{"data-role" => "header"}
+				%h1= "Added song to queue"
+			%div{"data-role" => "content"}
+				%p
+					= "You successfully added "
+					%em= song.title
+					= " to the Karaoke Queue."
+				%p= "Thanks for submitting your song."
+				%p= "We will inform you when your song is due."
+				%a{ :href=> "/search", "data-role" => "button", "data-ajax" => "false" }= "Return to Search"
+				- if authed
+					%a{ :href=> "/queue", "data-role" => "button", "data-ajax" => "false" }= "Return to Queue"

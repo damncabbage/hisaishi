@@ -1,0 +1,113 @@
+!!! 5
+%html
+	%head
+		%title= "Karaoke Announcements"
+		= haml :_ios_meta
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript",:src  => "/lib/jquery.json-2.3.js"}
+		%script{:type => "text/javascript",:src  => "/lib/reconnecting-websocket.js"}
+		%script{:type => "text/javascript",:src  => "/lib/jquery.websocket-0.0.1.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.ui.touch-punch.min.js"}
+		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}	
+		:javascript
+			var csrf = "";
+			var list = null;
+			var ws = null;
+			
+			var toggleListNow = function(toggle) {
+				if (!!toggle) {
+					if (!!list) {
+						list.destroy();
+					}
+					$('#edit-toggle').find('.ui-btn-text').text('Edit');
+					$('.toggle-delete').hide();
+					$('#announce-listview').removeClass('editing-list').listview('refresh');
+				}
+				else {
+					if (!!list) {
+						list.init();
+					}
+					$('#edit-toggle').find('.ui-btn-text').text('Done');
+					$('.toggle-delete').show();
+					$('#announce-listview').addClass('editing-list').listview('refresh');						
+				}
+			},
+			
+			toggleListNatural = function() {
+				if ($('#announce-listview').hasClass('editing-list')) {
+					toggleListNow(true);
+				}
+				else {
+					toggleListNow(false);
+				}
+			};
+			
+			$( document ).delegate("#announce-page", "pageinit", function() {
+				var oldOrder = null;
+				
+				var sendOrder = function() {
+					var newOrder = $(this).sortable('serialize');
+					if (oldOrder != null && newOrder != oldOrder) {
+						$.post('/announce-reorder', newOrder + '&_csrf=' + csrf);
+						oldOrder = newOrder;
+					}
+				};
+				
+				list = new SortableList('#announce-listview', {
+					onInit: function(){
+						oldOrder = $(this).sortable('serialize');
+					},
+					onUpdate: sendOrder,
+					onDestroy: sendOrder
+				});
+				
+				$('#edit-toggle').click(function(){
+					toggleListNatural();
+				});
+				toggleListNow(true);
+				
+				ws = $.websocket('ws://' + document.location.host + '/socket', {
+					open: function() {
+					  console.log('hi');
+					},
+					close: function() {
+					  console.log('bye');
+					},
+					events: {
+						admin_update_ann: function(e) {
+							console.log('admin_update_ann');
+							console.log(e.data.announce_id);
+							console.log(e.data.state);
+							
+							$('#announce-listview #announce_' + e.data.announce_id)
+								.removeAttr('queued')
+								.addClass(e.data.state);
+							$('#announce-listview').listview('refresh');
+						}
+					}
+				});
+			});
+	%body{:id => "hisaishi-announce-list"}
+		#announce-page{"data-role" => "page"}
+			%div{"data-role" => "header"}
+				%a{:class => "ui-btn-left", "data-icon" => "gear", :href => "#", :id => "edit-toggle"}= "Edit"
+				%h1= "Announcements"
+				= haml :_lock_button
+			%div{"data-role" => "content"}
+				%div{"data-role" => "fieldcontain"}
+					%a{"data-role" => "button", "data-rel" => "dialog", "data-transition" => "none", :href => "/announce-add"}= "Make announcement"
+					%p= "Tap an announcement to make it display immediately."
+					%br
+				%ul{"data-role" => "listview", "data_inset" => "true", :id => "announce-listview"}
+					- announce.each do |a|
+						%li{"data_theme" => "c", :id => "announce_#{a.id}", :class => a.displayed ? "finished" : "queued"}
+							%a{"data-transition" => "slide", :href => "/announce-show-now/#{a.id}", "data-ajax" => "false"}
+								%h3= a.text
+								%p{:class => "separated-descriptions"}
+									%em= a.displayed ? "" : "Pending"
+							%a{:href => "/announce-delete/#{a.id}", "data-rel" => "dialog", "data-transition" => "none", 'data-icon' => 'minus', :class => 'toggle-delete'}= "Delete"
+			= haml :menubar

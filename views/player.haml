@@ -1,0 +1,58 @@
+!!! 5
+%html
+  %head
+    %title= "Karaoke"
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+    %script{:type => "text/javascript",:src  => "/lib/jquery-1.7.2.min.js"}
+    %script{:type => "text/javascript",:src  => "/lib/jquery.json-2.3.js"}
+    %script{:type => "text/javascript",:src  => "/lib/reconnecting-websocket.js"}
+    %script{:type => "text/javascript",:src  => "/lib/jquery.websocket-0.0.1.js"}
+    %script{:type => "text/javascript",:src  => "/mediaelement-and-player.js"}
+    %script{:type => "text/javascript",:src  => "/HisaishiEngine.js"}
+    %script{:type => "text/javascript",:src  => "/scripts/HisaishiSocketHandler.js"}
+    %script{:type => "text/javascript",:src  => "/scripts/HisaishiPlayer.js"}
+    %script{:type => "text/javascript",:src  => "/scripts/HisaishiAnnouncements.js"}
+    %script{:type => "text/javascript",:src  => "/effects.js"}
+    %script{:type => "text/javascript",:src  => "/html5slider.js"}
+    :javascript
+      var csrf = "";
+      var trax = {};
+      var sh = null;
+      var hisaishiPlayer   = null;
+      var hisaishiAnnounce = null;
+      
+      $(document).ready(function(){
+        sh = new HisaishiSocketHandler('ws://' + document.location.host + '/socket');
+        
+        hisaishiPlayer = new HisaishiPlayer({
+          source: '/queue.jsonp',
+          socket: 'ws://' + document.location.host + '/socket',
+          hsParams: {
+            preroll: {
+              line: 1000,
+              word: 200
+            }
+          },
+          containers: {
+            display: '#hisaishi-display',
+            list:  '#hisaishi-list'
+          },
+          countdown: 30
+        });
+        sh.addEvents(hisaishiPlayer.getSocketEvents());
+        
+        hisaishiAnnounce = new HisaishiAnnouncements({
+          source: '/announce.jsonp',
+          socket: 'ws://' + document.location.host + '/socket',
+          containers: {
+            announcements: '#hisaishi-announcements'
+          }
+        });
+        sh.addEvents(hisaishiAnnounce.getSocketEvents());
+        
+        // hideCursor();
+      });
+  %body#hisaishi-queue-player
+    #hisaishi-display
+    #hisaishi-announcements
+    %ol{:id => "hisaishi-list"}

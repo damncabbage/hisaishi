@@ -1,0 +1,24 @@
+!!! 5
+%html
+	%head
+		%title= "Delete announcement?"
+		= haml :_ios_meta
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}
+	%body{:id => "hisaishi-announce-delete"}
+		#home{"data-role" => "page"}
+			%div{"data-role" => "header", "data-theme" => "e"}
+				%h1= "Delete announcement from queue?"
+			%div{"data-role" => "content", "data-theme" => "d"}
+				%form{:action => "/announce-delete-process", :method => "post", "data-ajax" => "false"}
+					%input{:type => "hidden", :name => "a_id", :id => "a_id", :value => ann.id}
+					%p
+						= "Would you like to delete "
+						%em= ann.text
+						= " from the announcement queue?"
+					%button{:type => "submit", "data-role" => "button", "data-theme" => "b"}= "Delete"
+					%a{:href => "queue", "data-role" => "button", "data-rel" => "back"}= "Cancel and return to announcements"

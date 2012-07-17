@@ -1,0 +1,28 @@
+!!! 5
+%html
+	%head
+		%title= "Karaoke Queue"
+		= haml :_ios_meta
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript",:src  => "/lib/jquery.json-2.3.js"}
+		%script{:type => "text/javascript",:src  => "/lib/reconnecting-websocket.js"}
+		%script{:type => "text/javascript",:src  => "/lib/jquery.websocket-0.0.1.js"}
+	%body{:id => "hisaishi-song-list"}
+		#home{"data-role" => "page", "data-add-back-btn" => "true"}
+			%div{"data-role" => "header"}
+				%h1= "Add to Queue?"
+				= haml :_lock_button
+			%div{"data-role" => "content"}
+				%form{:action => "/add-submit", :method => "POST"}
+					%input{:type => "hidden", :name => "song_id", :value => song.id}
+					%p
+						= "Do you want to add "
+						%em= song.title
+						= " to the end of the queue?"
+					%div{"data-role" => "fieldcontain" }
+						%label{:for => "requester"}= "Nickname of singer:"
+						%input{:name => "requester", :id => "requester"}
+					%button{:type => "submit"}= "Add to Queue"

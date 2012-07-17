@@ -68,6 +68,7 @@ ol#hisaishi-list {
 }
 
 #hisaishi-list li {
+	display: block;
 	padding: 10px;
 	margin: 0;
 }
@@ -76,8 +77,10 @@ ol#hisaishi-list {
 	background: #666;
 }
 
-#hisaishi-list li:hover, #hisaishi-list li.selected:hover {
+#hisaishi-list li:hover, 
+#hisaishi-list li.selected:hover {
 	background: #888;
+	cursor: pointer;
 }
 
 #hisaishi-list li div {
@@ -114,13 +117,16 @@ div.details {
 
 .track-karaoke {
 	font-size: 0.8em;
-	color: #c7c7c7;
-	padding-top: 10px;
+	color: #a7a7a7;
 }
 
 .hisaishi-scaffold {
 	position: relative;
 	height: 100%;
+}
+
+.hisaishi-scaffold.broken {
+	background: url(/img/broken.svg) no-repeat center center;
 }
 
 .hisaishi-scaffold img.track-image {
@@ -359,3 +365,81 @@ table#hisaishi-all-songs .song-yes {
 table#hisaishi-all-songs .song-no {
 	color: #f66;
 }
+
+/* Player */
+
+#hisaishi-queue-player #hisaishi-display {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: black;
+}
+
+#hisaishi-queue-player #hisaishi-list {
+	display: none;
+}
+
+#hisaishi-queue-player .next-container {
+	background: rgba(0,0,0,0.8);
+	padding: 0;
+	z-index: 1000;
+}
+
+#hisaishi-queue-player .next-container .next-container-inner {
+	padding: 2em;
+	font-size: 1.5em;
+	text-align: center;
+}
+
+#hisaishi-queue-player .next-container .next-container-inner ul, 
+#hisaishi-queue-player .next-container .next-container-inner ul li {
+	margin: 0 0 1em 0;
+	padding: 0;
+	list-style: none;
+}
+
+#hisaishi-queue-player .controls-container a {
+	display: none;
+}
+
+/* Announcements */
+
+#hisaishi-announcements {
+  position: absolute;
+  z-index: 9999;
+  bottom: 2em;
+  left: 0;
+  width: 100%;
+  height: 2em;
+  color: white;
+  font-size: 2em;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Uploads */
+
+#hisaishi-add-song .field-wrap,
+#hisaishi-queue-control .field-wrap {
+  margin: 0.5em 0;
+}
+
+#hisaishi-add-song label,
+#hisaishi-queue-control label {
+  display: inline-block;
+  width: 200px;
+  text-align: right;
+  margin-right: 5px;
+}
+
+#hisaishi-add-song input[type="submit"],
+#hisaishi-queue-control input[type="submit"] {
+  margin-left: 210px;
+  font-size: 3em;
+}
+

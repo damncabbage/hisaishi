@@ -1,0 +1,27 @@
+!!! 5
+%html
+	%head
+		%title= "Add annnouncement?"
+		= haml :_ios_meta
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript", :src  => "/scripts/sortableList.js"}
+	%body{:id => "hisaishi-announce-add"}
+		#home{"data-role" => "page"}
+			%div{"data-role" => "header", "data-theme" => "e"}
+				%h1= "Add announcement?"
+			%div{"data-role" => "content", "data-theme" => "d"}
+				%form{:action => "/announce-add-process", :method => "post", "data-ajax" => "false"}
+					%div{"data-role" => "fieldcontain" }
+						%label{:for => "text"}= "Text:"
+						%input{:name => "text", :id => "text"}
+					%div{"data-role" => "fieldcontain" }
+						%label{:for => "show_now"}= "Display immediately?"
+						%select{:name => "show_now", :id => "show_now", "data-role" => "slider"}
+							%option{:value => "0"}= "No"
+							%option{:value => "1"}= "Yes"
+					%button{:type => "submit", "data-role" => "button", "data-theme" => "b"}= "Add announcement"
+					%a{:href => "queue", "data-role" => "button", "data-rel" => "back"}= "Cancel"

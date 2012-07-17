@@ -1,0 +1,137 @@
+[data-center-contain="true"] {
+	text-align: center;
+}
+
+.ui-icon-hisaishi-lock {
+	background-image: url("../img/lock.png");
+}
+
+.ui-icon-hisaishi-unlock {
+	background-image: url("../img/unlock.png");
+}
+
+.ui-icon-glyphish-queue {
+	background-size: 26px 18px;
+	background-image: url("../img/icons/160-voicemail-2.png");
+	
+	border-radius: 0;
+	width: 26px;
+	height: 18px;
+	border: 0px none;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+.ui-icon-glyphish-search {
+	background-size: 24px 24px;
+	background-image: url("../img/icons/06-magnify.png");
+	
+	border-radius: 0;
+	width: 24px;
+	height: 24px;
+	border: 0px none;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+.ui-icon-glyphish-announce {
+	background-size: 24px 22px;
+	background-image: url("../img/icons/09-chat-2.png");
+	
+	border-radius: 0;
+	width: 24px;
+	height: 22px;
+	border: 0px none;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+.ui-icon-glyphish-diagnostic {
+	background-size: 24px 24px;
+	background-image: url("../img/icons/55-network.png");
+	
+	border-radius: 0;
+	width: 24px;
+	height: 24px;
+	border: 0px none;
+	box-shadow: none;
+	background-color: transparent;
+}
+
+
+.ui-hide-label input.ui-input-text, .ui-hide-label textarea.ui-input-text, .ui-hide-label .ui-input-search {
+	padding: .4em .4em .4em 1em;
+}
+
+.search-intro {
+	padding-bottom: .4em;
+}
+
+
+#queue-page li h3:before,
+#announce-page li h3:before {
+	content: "";
+	display: block;
+	float: left;
+	width: 18px;
+	height: 18px;
+	background-image: url("../img/queue-icons.svg");
+	background-repeat: no-repeat;
+	margin: 0 5px 0 0;
+}
+
+#queue-page li.queued h3:before, 
+#queue-page li.finished h3:before, 
+#announce-page li.queued h3:before {
+	background-position: 0px 0px;
+}
+
+#queue-page li.ready h3:before {
+	background-position: 0px -18px;
+}
+ 
+#queue-page li.playing h3:before {
+	background-position: 0px -36px;
+}
+
+#queue-page li.stopped h3:before, 
+#announce-page li.finished h3:before {
+	background-position: 0px -54px;
+}
+
+#queue-page li.paused h3:before {
+	background-position: 0px -72px;
+}
+
+#queue-page li.error h3:before {
+	background-position: 0px -90px;
+}
+
+#announce-page li.finished .separated-descriptions {
+  display: none;
+}
+
+.separated-descriptions em:before {
+	content: " – ";
+}
+
+.separated-descriptions em:first-child:before {
+	content: "";
+}
+
+
+/* Lock Screen */
+#pin-entry .ui-btn, #pin-entry .ui-input-text {
+  padding: 10px;
+}
+
+/* Inline search */
+
+.ui-hide-label .ui-input-search {
+  width: 70%;
+}
+
+.ui-hide-label .ui-input-search + .ui-btn {
+  width: 20%;
+}
+

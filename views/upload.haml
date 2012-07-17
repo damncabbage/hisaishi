@@ -1,0 +1,76 @@
+!!! 5
+%html
+  %head
+    %title= "Karaoke: Add Song"
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+  %body{:id => "hisaishi-add-song"}
+    %h1= "Add song"
+    %form{:action => "/upload", :method => "post", :enctype=>"multipart/form-data"}
+      %div{:class => "field-wrap"}
+        %label{:for => "title"}= "Song title"
+        %input{:name => "title", :id => "title", :size => 40}
+      %div{:class => "field-wrap"}
+        %label{:for => "artist"}= "Artist"
+        %input{:name => "artist", :id => "artist", :size => 40}
+      %div{:class => "field-wrap"}
+        %label{:for => "album"}= "Album"
+        %input{:name => "album", :id => "album", :size => 40}
+      %div{:class => "field-wrap"}
+        %label{:for => "origin_title"}= "Series Title"
+        %input{:name => "origin_title", :id => "origin_title", :size => 40}
+      %div{:class => "field-wrap"}
+        %label{:for => "origin_type"}= "Series Type"
+        %input{:name => "origin_type", :id => "origin_type", :size => 40}
+      %div{:class => "field-wrap"}
+        %label{:for => "origin_medium"}= "Series Medium"
+        %select{:name => "origin_medium", :id => "origin_medium"}
+          %option{:value => "N/A"}= "N/A"
+          %option{:value => "TV"}= "TV"
+          %option{:value => "Movie"}= "Movie"
+          %option{:value => "Game"}= "Game"
+          %option{:value => "Other"}= "Other"
+      %div{:class => "field-wrap"}
+        %label{:for => "genre"}= "Genre"
+        %select{:name => "genre", :id => "genre"}
+          %option{:value => "Pop"}= "Pop"
+          %option{:value => "Rock"}= "Rock"
+          %option{:value => "Folk"}= "Folk"
+          %option{:value => "Classical"}= "Classical"
+          %option{:value => "Dance"}= "Dance"
+          %option{:value => "R&B"}= "R&B"
+          %option{:value => "Hip-Hop"}= "Hip-Hop"
+          %option{:value => "Metal"}= "Metal"
+          %option{:value => "Choral"}= "Choral"
+          %option{:value => "Standard"}= "Standard"
+          %option{:value => "Rave"}= "Rave"
+          %option{:value => "Denpa"}= "Denpa"
+          %option{:value => "Enka"}= "Enka"
+          %option{:value => "Other"}= "Other"
+      %div{:class => "field-wrap"}
+        %label{:for => "language"}= "Language"
+        %select{:name => "language", :id => "language"}
+          %option{:value => "JP"}= "Japanese"
+          %option{:value => "EN"}= "English"
+          %option{:value => "ZH"}= "Chinese"
+          %option{:value => "KR"}= "Korean"
+          %option{:value => "FR"}= "French"
+          %option{:value => "DE"}= "German"
+          %option{:value => "RU"}= "Russian"
+          %option{:value => "UNK"}= "Unknown"
+      %div{:class => "field-wrap"}
+        %label{:for => "karaoke"}= "Karaoke"
+        %select{:name => "karaoke", :id => "karaoke"}
+          %option{:value => "true"}= "Yes"
+          %option{:value => "false"}= "No"
+          %option{:value => "unknown"}= "Don't know"
+      %div{:class => "field-wrap"}
+        %label{:for => "audio_file"}= "Audio file"
+        %input{:type => "file", :name => "audio_file", :id => "audio_file"}
+      %div{:class => "field-wrap"}
+        %label{:for => "lyrics_file"}= "Lyrics file"
+        %input{:type => "file", :name => "lyrics_file", :id => "lyrics_file"}
+      %div{:class => "field-wrap"}
+        %label{:for => "image_file"}= "Image file"
+        %input{:type => "file", :name => "image_file", :id => "image_file"}
+      %div{:class => "field-wrap"}
+        %input{:type => "submit", :value => "Add song"}

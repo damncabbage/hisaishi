@@ -1,0 +1,42 @@
+!!! 5
+%html
+	%head
+		%title= "Karaoke Diagnostics"
+		= haml :_ios_meta
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+		%link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+		%script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+		%script{:type => "text/javascript", :src  => "/lib/jquery.ui.touch-punch.min.js"}
+		:javascript
+			var csrf = "";
+			var list = null;
+	%body{:id => "hisaishi-announce-list"}
+		#diagnostic-page{"data-role" => "page"}
+			%div{"data-role" => "header"}
+				%h1= "Diagnostics"
+				= haml :_lock_button
+			%div{"data-role" => "content"}
+				%div{"data-role" => "fieldcontain"}
+					%p
+						%strong= "Host"
+						%br
+						= "#{scheme}://#{host}"
+				%div{"data-role" => "fieldcontain"}
+					%p
+						%strong= "IP"
+						%br
+						= ip
+				%div{"data-role" => "fieldcontain"}
+					%p
+						%strong= "Queue URL"
+						%br
+						= "#{scheme}://#{ip}:#{port}/queue"
+				%div{"data-role" => "fieldcontain"}
+					%p= "Hi."
+				%div{"data-role" => "fieldcontain"}
+					%p
+						= "Toolbar icons by "
+						%a{:href => "http://glyphish.com/"}= "Glyphish"
+			= haml :menubar

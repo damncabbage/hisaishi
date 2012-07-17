@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'fileutils'
 require File.expand_path('environment.rb', File.dirname(__FILE__))
 
 namespace :db do
@@ -8,6 +9,7 @@ namespace :db do
     Vote.auto_migrate!
     Reason.auto_migrate!
     HisaishiQueue.auto_migrate!
+    Announcement.auto_migrate!    
   end
   
   desc 'Upgrade db tables to most recent state.'
@@ -16,6 +18,7 @@ namespace :db do
     Vote.auto_upgrade!
     Reason.auto_upgrade!
     HisaishiQueue.auto_upgrade!
+    Announcement.auto_upgrade!
   end
 
   desc 'Load the seed data from data/seeds.rb.'
@@ -65,5 +68,30 @@ namespace :hisaishi do
       end
       puts "Length: #{s.length} secs"
     end
+  end
+end
+
+namespace :apache do
+  desc 'Creates vhost for files directory.'
+  task :vhostfiles do
+    tpl = '<VirtualHost *:80>
+  DocumentRoot {path}
+  ServerName hisaishi-files.local
+  <Directory {path}>
+    Options +Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+  </Directory>
+  ErrorLog /var/log/apache2/hisaishi-files-error.log
+  CustomLog /var/log/apache2/hisaishi-files-access.log combined
+</VirtualHost>'
+    vhost = tpl.gsub('{path}', File.join(File.dirname(__FILE__), 'public'))
+    
+    filename = "hisaishi-files.local.conf"
+    f = File.new(filename, "w")
+    f.write(vhost)
+    f.close
+    puts "Wrote #{filename}"
   end
 end
