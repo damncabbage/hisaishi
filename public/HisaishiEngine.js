@@ -6,55 +6,56 @@ var HisaishiEngine = function(params) {
   
   var that = {
     state: {
-      playing:   false,
-      timer:    null,
-      time:    0,
-      audio:    null,
-      timecodeKey:0,
-      errorState: false
+      playing:        false,
+      canplay:        false,
+      timer:          null,
+      time:           0,
+      audio:          null,
+      timecodeKey:    0,
+      errorState:     false
     },
     lyrics: {
-      numlines:     0,
-      lines:       {},
-      words:       {},
-      timecode:     {},
+      numlines:       0,
+      lines:          {},
+      words:          {},
+      timecode:       {},
       timecodeKeys:   [],
-      groups:      {},
-      hasGroups:    1
+      groups:         {},
+      hasGroups:      1
     },
     classes: {
-      wordHighlight:   'word-highlight',
-      hidden:      'hidden-line',
-      queued:     'queued-line',
-      current:    'current-line',
-      complete:    'complete-line'
+      wordHighlight:  'word-highlight',
+      hidden:         'hidden-line',
+      queued:         'queued-line',
+      current:        'current-line',
+      complete:       'complete-line'
     },
     params: {
       preroll: {
-        queue:   0,
-        line:   0,
-        word:   0
+        queue:        0,
+        line:         0,
+        word:         0
       },
       transition: {
-        line:  200,
-        word:  0
+        line:         200,
+        word:         0
       },
-      offset: 0,
+      offset:         0,
       src: {
-        lyrics: null,
-        audio:   null
+        lyrics:       null,
+        audio:        null
       },
       containers: {
-        lyrics:    null,
-        audio:    null,
-        controls:   null
+        lyrics:       null,
+        audio:        null,
+        controls:     null
       },
-      onComplete: function(){},
-      onError: function(){}
+      onComplete:     function(){},
+      onError:        function(){}
     },
     loaded: {
-      lyrics: false,
-      audio:   false
+      lyrics:         false,
+      audio:          false
     }
   };
   
@@ -471,6 +472,10 @@ var HisaishiEngine = function(params) {
           }
         });
         
+        mediaElement.addEventListener('canplay', function(me) {
+          that.state.canplay = true;
+        });
+        
           that.loaded.audio = true;
         $(that).trigger('checkload');
       }
@@ -512,7 +517,7 @@ var HisaishiEngine = function(params) {
     
     if (!this.state.playing) {
       that.state.playing = true;
-      if (!!this.state.audio) {
+      if (!!this.state.audio && !!this.state.canplay) {
         this.state.audio.setVolume(1);
         this.state.audio.play();
         that.runLoop(10);
@@ -547,7 +552,7 @@ var HisaishiEngine = function(params) {
     }
     if (!!this.state.audio) {
       try {
-        if (this.state.audio.currentTime != 0) {
+        if (this.state.audio.currentTime != 0 && !!this.state.canplay) {
           this.state.audio.setCurrentTime(0);
         }
         this.state.audio.pause();
@@ -714,11 +719,12 @@ var HisaishiEngine = function(params) {
   that.destroy = function() {
     this.state = {
       playing:      false,
-      timer:       null,
+      canplay:      false,
+      timer:        null,
       time:         0,
-      audio:       null,
-      timecodeKey: 0,
-      errorState:  false
+      audio:        null,
+      timecodeKey:  0,
+      errorState:   false
     };
     $(this.params.containers.lyrics).children().remove();
     $(this.params.containers.audio).children().remove();
