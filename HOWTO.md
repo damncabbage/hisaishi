@@ -16,6 +16,12 @@ SERIOUSLY WHAT IS THIS
 We recommend that you use RVM and a Ruby version of at least 1.9.2.  
 Check out [rvm.io](https://rvm.io/) for info on how to install it.
 
+## Setting up Apache to serve files
+
+Run setup-files.sh  
+Enter root password when prompted  
+That is all
+
 ## Setting up the player to run at startup (Mac OS X)
 
 **NOTE:** this requires a little technical know-how and the administrator password.
