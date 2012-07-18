@@ -71,14 +71,6 @@ var HisaishiPlayer = function(params) {
 			id: 'controls-container-' + ident,
 			'class': 'controls-container'
 		});
-		
-		var img = $(new Image);
-		img.load(function(){
-		  $('#track-image-' + ident).attr('src', img.src);
-		}).error(function(){}).attr('src', track.compiledCover);
-		if (img.get(0).complete) {
-		  $('#track-image-' + ident).attr('src', img.get(0).src);
-		}
 
 		controlbar
 		  .append(controls);
@@ -91,6 +83,14 @@ var HisaishiPlayer = function(params) {
 
 		if (settings.containers.display) {
 			$(settings.containers.display).append(display);
+			
+			var img = $(new Image);
+      img.load(function(){
+        $('.track-image', '#scaffold-' + ident).attr('src', img.src);
+      }).error(function(){}).attr('src', track.compiledCover);
+      if (img.get(0).complete) {
+        $('.track-image', '#scaffold-' + ident).attr('src', img.get(0).src);
+      }
 			
 			if (!!setupTrack) {
 				priv.setupTrack(ident);

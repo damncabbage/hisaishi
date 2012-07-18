@@ -99,25 +99,18 @@ get '/song/:song_id/audio.mp3' do
   if !song.nil? then
     audio_path = song.local_audio_path
     if !audio_path.nil? then
-      puts audio_path
-      logger.info "sending audio for " + params[:song_id]
-      
-      #response['Content-Type'] = 'application/octet-stream'
-      #response['Content-Disposition'] = 'inline'
-      #blk_size = 65536
-      #file_size = 0
-      #f = File.open(audio_path)
-      #stream do |out|
-      #  while blk = f.read(blk_size)
-      #    file_size += blk_size
-      #    out << blk
-      #    logger.info file_size
-      #  end
-      #end
-      
       send_file(audio_path)
     else
-      redirect song.path
+      begin
+        open(song.audio_path).read[0, 50]
+        if io.status[0] == "200" then
+          redirect song.audio_path
+        else
+          halt(404, "Audio not found.")
+        end
+      rescue StandardError => bang
+        halt(404, "Audio not found.")
+      end
     end
   else
     halt(404, "Song not found.")
@@ -132,7 +125,16 @@ get '/song/:song_id/lyrics.txt' do
       puts lyrics_path
       send_file(lyrics_path)
     else
-      'None'
+      begin
+        open(song.lyrics_path).read[0, 50]
+        if io.status[0] == "200" then
+          redirect song.lyrics_path
+        else
+          'None'
+        end
+      rescue StandardError => bang
+        'None'
+      end
     end
   else
     halt(404, "Song not found.")
@@ -144,10 +146,18 @@ get '/song/:song_id/image' do
   if !song.nil? then
     image_path = song.local_image_path
     if !image_path.nil? then
-      puts image_path
       send_file(image_path)
     else
-      halt(404, "Image not found.")
+      begin
+        open(song.image_path).read[0, 50]
+        if io.status[0] == "200" then
+          redirect song.image_path
+        else
+          halt(404, "Image not found.")
+        end
+      rescue StandardError => bang
+        halt(404, "Image not found.")
+      end
     end
   else
     halt(404, "Song not found.")

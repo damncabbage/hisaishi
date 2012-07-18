@@ -8,9 +8,9 @@ include Net::IpHelpers
 # Local Dev
 configure :development do
   require 'sqlite3'
-  #set :files, "http://#{local_private_or_loopback_ipv4}:4567/music/"
-  set :files, "http://hisaishi-files.local/music/"
-  set :files_local, FALSE
+  set :files, "http://#{local_private_or_loopback_ipv4}:4567/music/"
+  #set :files, "http://hisaishi-files.local/music/"
+  set :files_local, TRUE
   set :database_url, "sqlite3://#{File.expand_path('../db/development.sqlite3', File.dirname(__FILE__))}"
   set :admin_pin, '1234'
   use Rack::Session::Cookie, :secret => "aaaaaaaaaaaaaaaboop"
