@@ -1,4 +1,4 @@
-class HisaishiQueue
+class KaraokeQueue
   include DataMapper::Resource
   property :id,      		Serial
   property :song_id,     	Integer
@@ -10,7 +10,7 @@ class HisaishiQueue
   
   def self.normalise_all
   	i = 0
-	HisaishiQueue.all(:order => [:queue_order.asc, :play_state.asc]).each do |q|
+	KaraokeQueue.all(:order => [:queue_order.asc, :play_state.asc]).each do |q|
 		q.update(:queue_order => i)
 		i += 1
 	end
@@ -31,10 +31,10 @@ class HisaishiQueue
   end
   
   def mass_queue_cleanup(id)
-    current = HisaishiQueue.get(id)
-    (HisaishiQueue.all(:queue_order.lt => self.queue_order) - current).update(:play_state => :finished)
-    (HisaishiQueue.all(:queue_order.gt => self.queue_order) - current).update(:play_state => :queued)
-    HisaishiQueue.normalise_all
+    current = KaraokeQueue.get(id)
+    (KaraokeQueue.all(:queue_order.lt => self.queue_order) - current).update(:play_state => :finished)
+    (KaraokeQueue.all(:queue_order.gt => self.queue_order) - current).update(:play_state => :queued)
+    KaraokeQueue.normalise_all
   end
   
   def stop
@@ -59,10 +59,10 @@ class HisaishiQueue
   
   # Forward playback head to this song
   def play_now
-    playing = HisaishiQueue.all(:play_state => :ready) + 
-    	HisaishiQueue.all(:play_state => :playing) + 
-    	HisaishiQueue.all(:play_state => :paused) + 
-    	HisaishiQueue.all(:play_state => :stopped)
+    playing = KaraokeQueue.all(:play_state => :ready) + 
+    	KaraokeQueue.all(:play_state => :playing) + 
+    	KaraokeQueue.all(:play_state => :paused) + 
+    	KaraokeQueue.all(:play_state => :stopped)
     
     playing.each do |q|
       if q.queue_order < queue_order
@@ -71,11 +71,11 @@ class HisaishiQueue
         q.prep
       end
     end
-    HisaishiQueue.all(:queue_order.gt => queue_order).each do |q|
+    KaraokeQueue.all(:queue_order.gt => queue_order).each do |q|
       q.prep
     end
     
-    HisaishiQueue.get(id).update(:play_state => :ready)
+    KaraokeQueue.get(id).update(:play_state => :ready)
     mass_queue_cleanup(id)
   end
   
@@ -83,35 +83,35 @@ class HisaishiQueue
   def play_next
     q_ord = -1
     
-    q = HisaishiQueue.all(:play_state => :ready) | 
-    	HisaishiQueue.all(:play_state => :playing) | 
-    	HisaishiQueue.all(:play_state => :paused) | 
-    	HisaishiQueue.all(:play_state => :stopped)
+    q = KaraokeQueue.all(:play_state => :ready) | 
+    	KaraokeQueue.all(:play_state => :playing) | 
+    	KaraokeQueue.all(:play_state => :paused) | 
+    	KaraokeQueue.all(:play_state => :stopped)
     
     unless q.length == 0
     	q_ord = q[0].queue_order + 1
     end
     
-    HisaishiQueue.all(:queue_order.gte => q_ord).each do |q|
+    KaraokeQueue.all(:queue_order.gte => q_ord).each do |q|
       q.update(:queue_order => q.queue_order + 1)
     end
     
   	self.update(:play_state => :queued, :queue_order => q_ord)
-  	HisaishiQueue.normalise_all
+  	KaraokeQueue.normalise_all
   end
   
   # Move this song to end of queue
   def play_last
   	self.update(
   		:play_state => :queued, 
-  		:queue_order => HisaishiQueue.all.length
+  		:queue_order => KaraokeQueue.all.length
   	)
-  	HisaishiQueue.normalise_all
+  	KaraokeQueue.normalise_all
   end
   
   # Play the next song
   def play_next_now
-  	q = HisaishiQueue.first(:queue_order.gt => queue_order, :order => [:queue_order.asc, :play_state.asc])
+  	q = KaraokeQueue.first(:queue_order.gt => queue_order, :order => [:queue_order.asc, :play_state.asc])
   	q.play_now
   end
   
@@ -202,8 +202,8 @@ class HisaishiQueue
   
   # Nukes the queue and 
   def self.overwrite_queue(queue_id)
-    HisaishiQueue.all.destroy
-    queue_base = HisaishiQueue.predefined_queues[queue_id]
+    KaraokeQueue.all.destroy
+    queue_base = KaraokeQueue.predefined_queues[queue_id]
     unless queue_base.nil?
       queue_base.each do |i|
         song = Song.get(i[:song_id])

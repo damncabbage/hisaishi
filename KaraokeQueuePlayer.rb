@@ -5,14 +5,14 @@ require 'natural_time'
 require 'socket'
 
 module Sinatra
-  module HisaishiQueuePlayer
+  module KaraokeQueuePlayer
     
     module Helpers
       
     end
     
     def self.registered(app)
-      	app.helpers HisaishiQueuePlayer::Helpers
+      	app.helpers KaraokeQueuePlayer::Helpers
       
 		app.get '/player' do
 		  haml :player, :locals => {}
@@ -20,5 +20,5 @@ module Sinatra
     end
   end
   
-  register HisaishiQueuePlayer
+  register KaraokeQueuePlayer
 end

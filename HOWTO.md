@@ -1,6 +1,6 @@
 # Hisaishi Player
 
-a web-based Karaoke player  
+A web-based karaoke player
 by the IT guys from SMASH!
 
 [smash.org.au](http://www.smash.org.au/)
@@ -27,7 +27,7 @@ That is all
 **NOTE:** this requires a little technical know-how and the administrator password.
 
 We've got a plist that sets up the player to run on startup.  To set it up for your 
-username, open **au.org.smash.hisaishi.playerlaunch.plist** and change the following: 
+username, open **au.org.smash.karaoke.playerlaunch.plist** and change the following: 
 
 **UserName**  
 Should be the user that owns the directory you put Hisaishi in.
@@ -38,11 +38,11 @@ The path to the directory you put Hisaishi in.  You can find this out by typing
 into the command line.
 
 To load the updated plist, type  
-<code>sudo launchctl load au.org.smash.hisaishi.playerlaunch.plist</code>  
+<code>sudo launchctl load au.org.smash.karaoke.playerlaunch.plist</code>  
 and Hisaishi should run when you start your Mac.
 
 To remove it, type  
-<code>sudo launchctl remove au.org.smash.hisaishi.playerlaunch</code>  
+<code>sudo launchctl remove au.org.smash.karaoke.playerlaunch</code>  
 and it should shut down and no longer launch on startup.
 
 ## Starting the player
@@ -51,10 +51,10 @@ and it should shut down and no longer launch on startup.
 
 The computer is set up with a particular directory that has all of Hisaishi's 
 stuff in.  Open up Terminal and type  
-**cd path/to/hisaishi**
+**cd path/to/karaoke**
 
 Once there, type
-**./hisaishi.sh**  
+**./karaoke.sh**  
 to run Hisaishi.
 
 It will tell you something along the lines of:

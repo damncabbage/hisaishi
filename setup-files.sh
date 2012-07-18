@@ -2,7 +2,7 @@
 rake apache:vhostfiles
 
 FOUND=0
-FILENAME="hisaishi-files.local.conf"
+FILENAME="karaoke-files.local.conf"
 LOCALHOSTREF="127.0.0.1 $FILENAME"
 
 if [ -d "/etc/apache2/sites-available" ]; then
@@ -26,8 +26,8 @@ if [ $FOUND == "1" ]; then
 			echo "Hosts file updated."
 		fi
 	fi
-	echo "Restart apache to activate hisaishi-files.local."
-	echo "Note: if hisaishi-files.local keeps giving you 403 errors, try adding"
+	echo "Restart apache to activate karaoke-files.local."
+	echo "Note: if karaoke-files.local keeps giving you 403 errors, try adding"
 	echo "NameVirtualHost *:80"
 	echo "to your httpd.conf file."
 fi
