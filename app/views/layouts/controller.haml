@@ -1,0 +1,21 @@
+!!! 5
+%html
+  %head
+    %title= (@title || "Karaoke Controller")
+
+    %meta{:name => "viewport", :content => "user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"}
+    %meta{:name => "apple-mobile-web-app-capable", :content => "yes"}
+    %meta{:name => "apple-mobile-web-app-status-bar-style", :content => "black"}
+
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/lib/jquery.mobile-1.1.0.css"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/css/jquery-custom.css"}
+    %script{:type => "text/javascript", :src  => "/lib/jquery-1.7.2.min.js"}
+    %script{:type => "text/javascript", :src  => "/jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"}
+    %script{:type => "text/javascript", :src  => "/lib/jquery.mobile-1.1.0.js"}
+    %script{:type => "text/javascript", :src  => "/lib/jquery.json-2.3.js"}
+    %script{:type => "text/javascript", :src  => "/lib/reconnecting-websocket.js"}
+    %script{:type => "text/javascript", :src  => "/lib/jquery.websocket-0.0.1.js"}
+    %script{:type => "text/javascript", :src  => "/lib/jquery.ui.touch-punch.min.js"}
+    = yield_content(:header_javascript)
+
+  %body{:class => body_classes}

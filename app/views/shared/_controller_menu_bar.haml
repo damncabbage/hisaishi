@@ -1,0 +1,11 @@
+%div{"data-role" => "footer", "data-position" => "fixed"}
+  %div{"data-role" => "navbar"}
+    %ul
+      %li
+        %a{:href => "/queue", "data-icon" => "glyphish-queue", :class => request.path_info == 'queue' ? "ui-btn-active" : "", "data-ajax" => "false"}= "Queue"
+      %li
+        %a{:href => "/search", "data-icon" => "glyphish-search", :class => request.path_info == 'search' ? "ui-btn-active" : "", "data-ajax" => "false"}= "Search"
+      %li
+        %a{:href => "/announce", "data-icon" => "glyphish-announce", :class => request.path_info == 'announce' ? "ui-btn-active" : "", "data-ajax" => "false"}= "Announce"
+      %li
+        %a{:href => "/diagnostic", "data-icon" => "glyphish-diagnostic", :class => request.path_info == 'diagnostic' ? "ui-btn-active" : "", "data-ajax" => "false"}= "Diagnostic"
