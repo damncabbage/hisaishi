@@ -3,7 +3,7 @@
   %div{"data-role" => "header"}
     %a{:class => "ui-btn-left", "data-icon" => "gear", :href => "#", :id => "edit-toggle"} Edit
     %h1 Queue
-    = partial
+    = partial 'shared/controller_lock_button'
 
   %div{"data-role" => "content"}
     %div{"data-role" => "fieldcontain"}
@@ -12,7 +12,7 @@
     %ul{"data-role" => "listview", "data_inset" => "true", :id => "queue-listview"}
       - @queue_items.each do |q|
         %li{"data_theme" => "c", :id => "queue_#{q.id}", :class => q.play_state}
-          %a{"data-rel" => "dialog", "data-transition" => "none", :href => "/queue-info/#{q.id}"}
+          %a{"data-rel" => "dialog", "data-transition" => "none", :href => "/queue/#{q.id}"}
             %h3= q.requester
             %p{:class => "separated-descriptions"}
               %em= q.song.artist
@@ -63,7 +63,7 @@
       var sendOrder = function() {
         var newOrder = $(this).sortable('serialize');
         if (oldOrder != null && newOrder != oldOrder) {
-          $.post('/queue-reorder', newOrder + '&_csrf=' + csrf);
+          $.post('/queue/reorder', newOrder + '&_csrf=' + csrf);
           oldOrder = newOrder;
         }
       },
@@ -72,7 +72,7 @@
         e.preventDefault();
         var item = $(this).parents('li');
         var info = item.attr('id').split('_');
-        $.post('/queue-delete-process', {q_id: info[1]}, function(){});
+        $.post('/queue/' + escape(info[1]) + '/delete', {}, function(){});
         item.remove();
         $('#queue-listview').addClass('editing-list').listview('refresh');
       },

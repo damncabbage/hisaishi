@@ -151,9 +151,8 @@ var HisaishiPlayer = function(params) {
 	};
 
 	priv.queueStat = function(q_id, state) {
-		$.post('/queue-info-update', {
+		$.post('/queue/' + escape(q_id), {
 			_csrf: csrf,
-			queue_id: q_id,
 			state: state
 		});
 	};

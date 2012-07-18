@@ -26,7 +26,7 @@
         sh = new HisaishiSocketHandler('ws://' + document.location.host + '/socket');
         
         hisaishiPlayer = new HisaishiPlayer({
-          source: '/queue.jsonp',
+          source: '/queue.json',
           socket: 'ws://' + document.location.host + '/socket',
           hsParams: {
             preroll: {
