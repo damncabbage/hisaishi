@@ -1,2 +1,2 @@
-require './karaoke'
+require './hisaishi'
 run Sinatra::Application

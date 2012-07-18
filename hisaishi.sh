@@ -14,4 +14,4 @@ fi
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Fire it up.
-bundle exec ruby karaoke.rb
+bundle exec ruby hisaishi.rb

@@ -12,20 +12,20 @@ Installation
 ------------
 
 ```bash
-git clone git://github.com/smashcon/karaoke.git  # Warning: read-only.
-cd karaoke
+git clone git://github.com/smashcon/hisaishi.git  # Warning: read-only.
+cd hisaishi
 
 bundle install
 alias be="bundle exec"
-be rake karaoke:install  # Sets up config/environments.rb
+be rake hisaishi:install  # Sets up config/environments.rb
 be rake db:create
 
 # Optional:
-be rake karaoke:example # Sets up an example seed and song.
+be rake hisaishi:example # Sets up an example seed and song.
 be rake db:seed          # Seeds the example from data/seeds.csv
 
 # Kick it off in development mode
-be ruby karaoke.rb
+be ruby hisaishi.rb
 ```
 
 Now go and open http://localhost:4567/ in your browser and sample the *PHAT BEATS*.

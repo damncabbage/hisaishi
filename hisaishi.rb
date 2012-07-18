@@ -8,7 +8,7 @@ require 'fileutils'
 # Pulls in settings and required gems.
 require File.expand_path('environment.rb', File.dirname(__FILE__))
 
-# Base karaoke functionality
+# Base hisaishi functionality
 use Rack::Session::Cookie
 # apply_csrf_protection unless settings.environment == :test
 
@@ -53,7 +53,7 @@ end
 
 # ##### PULLS IN INCLUDED ROUTES
 
-require File.expand_path('KaraokeQueuePlayer.rb', File.dirname(__FILE__))
+require File.expand_path('HisaishiQueuePlayer.rb', File.dirname(__FILE__))
 
 # ##### PLAYER ROUTES
 
@@ -199,7 +199,7 @@ end
 
 get '/queue-info/:q_id' do
   pin_auth!
-  q = KaraokeQueue.get(params[:q_id])
+  q = HisaishiQueue.get(params[:q_id])
   puts q
   song = Song.get(q.song_id)
   haml :queue_info, :locals => {
@@ -210,7 +210,7 @@ end
 
 post '/queue-info-process' do
   pin_auth!
-  q = KaraokeQueue.get(params[:q_id])
+  q = HisaishiQueue.get(params[:q_id])
   puts params[:action]
 
   trigger_action = "queue_update"
@@ -255,7 +255,7 @@ end
 
 get '/queue-delete/:q_id' do
   pin_auth!
-  q = KaraokeQueue.get(params[:q_id])
+  q = HisaishiQueue.get(params[:q_id])
   song = Song.get(q.song_id)
   haml :queue_delete_confirm, :locals => {
     :song => song,
@@ -265,7 +265,7 @@ end
 
 post '/queue-delete-process' do
   pin_auth!
-  q = KaraokeQueue.get(params[:q_id])
+  q = HisaishiQueue.get(params[:q_id])
   q.destroy
   
   send_to_sockets("queue_update", {
@@ -294,7 +294,7 @@ end
 post '/queue-info-update' do
   result = false
   unless params[:queue_id].nil? && params[:state].nil?
-    q = KaraokeQueue.get(params[:queue_id])
+    q = HisaishiQueue.get(params[:queue_id])
     unless q.nil? then
       q.update(:play_state => params[:state])
       
@@ -605,7 +605,7 @@ end
 
 post '/queue-control' do
   pin_auth
-  KaraokeQueue.overwrite_queue(params[:queue_id])
+  HisaishiQueue.overwrite_queue(params[:queue_id])
   'Success! <br /> <a href="/queue">go to queue</a> <br /> <a href="/queue-control">go to queue control</a>'
 end
 
@@ -659,7 +659,7 @@ end
 
 def queue_songs
   song_list = {}
-  queue = KaraokeQueue.all(:order => [:queue_order.asc])
+  queue = HisaishiQueue.all(:order => [:queue_order.asc])
   queue.each do |q|
     s = Song.get(q.song_id)
     unless song_list.has_key? s.id then
@@ -676,7 +676,7 @@ end
 def reorder_queue(queue_ids)
   i = 0
   queue_ids.each do |q_id|
-    q = KaraokeQueue.get(q_id);
+    q = HisaishiQueue.get(q_id);
     q.update(:queue_order => i)
     i += 1
   end
@@ -704,7 +704,7 @@ end
 # Song addition
 
 def last_song_by_requester(requester)
-  KaraokeQueue.first(
+  HisaishiQueue.first(
     :requester => requester,
     :order => [ :created_at.desc ]
   )

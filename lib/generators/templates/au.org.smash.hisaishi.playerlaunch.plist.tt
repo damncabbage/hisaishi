@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>au.org.smash.karaoke.playerlaunch</string>
+  <string>au.org.smash.hisaishi.playerlaunch</string>
   <key>ProgramArguments</key>
   <array>
     <string>sh</string>
     <string>-i</string>
     <string>-c</string>
-    <string>$SHELL --login -c "'./karaoke.sh'"</string>
+    <string>$SHELL --login -c "'./hisaishi.sh'"</string>
   </array>
   <key>KeepAlive</key>
   <true/>
   <key>RunAtLoad</key>
   <true/>
   <key>UserName</key>
-  <string><%= @karaoke_user %></string>
+  <string>hisaishiuser</string>
   <key>WorkingDirectory</key>
-	<string><%= @karaoke_path %></string>
+	<string>/path/to/hisaishi</string>
 </dict>
 </plist>

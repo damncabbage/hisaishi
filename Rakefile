@@ -8,7 +8,7 @@ namespace :db do
     Song.auto_migrate!
     Vote.auto_migrate!
     Reason.auto_migrate!
-    KaraokeQueue.auto_migrate!
+    HisaishiQueue.auto_migrate!
     Announcement.auto_migrate!    
   end
   
@@ -17,7 +17,7 @@ namespace :db do
     Song.auto_upgrade!
     Vote.auto_upgrade!
     Reason.auto_upgrade!
-    KaraokeQueue.auto_upgrade!
+    HisaishiQueue.auto_upgrade!
     Announcement.auto_upgrade!
   end
 
@@ -28,7 +28,7 @@ namespace :db do
   end
 end
 
-namespace :karaoke do
+namespace :hisaishi do
   desc 'Generate the installation-specific config file.'
   task :install do
     template = File.expand_path('tasks/templates/environments.rb', File.dirname(__FILE__))
@@ -76,19 +76,19 @@ namespace :apache do
   task :vhostfiles do
     tpl = '<VirtualHost *:80>
   DocumentRoot {path}
-  ServerName karaoke-files.local
+  ServerName hisaishi-files.local
   <Directory {path}>
     Options +Indexes FollowSymLinks MultiViews
     AllowOverride All
     Order allow,deny
     allow from all
   </Directory>
-  ErrorLog /var/log/apache2/karaoke-files-error.log
-  CustomLog /var/log/apache2/karaoke-files-access.log combined
+  ErrorLog /var/log/apache2/hisaishi-files-error.log
+  CustomLog /var/log/apache2/hisaishi-files-access.log combined
 </VirtualHost>'
     vhost = tpl.gsub('{path}', File.join(File.dirname(__FILE__), 'public'))
     
-    filename = "karaoke-files.local.conf"
+    filename = "hisaishi-files.local.conf"
     f = File.new(filename, "w")
     f.write(vhost)
     f.close
