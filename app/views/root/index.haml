@@ -1,0 +1,10 @@
+.choice
+  %h2 What is this?
+  %ul
+    %li.player
+      = link_to "Player", url(:player)
+    %li.controller 
+      = link_to "Controller", url(:queue)
+  .address
+    The starting URL for both Player and Controller is
+    = link_to @app_url
