@@ -3,6 +3,7 @@
   %head
     %title= "Karaoke"
     %link{:rel => "stylesheet", :type => "text/css", :href => "/hisaishi-style.css?1"}
+    %link{:rel => "stylesheet", :type => "text/css", :href => "/lib/progress-polyfill/progress-polyfill.css"}
     %script{:type => "text/javascript",:src  => "/lib/jquery-1.7.2.min.js"}
     %script{:type => "text/javascript",:src  => "/lib/jquery.json-2.3.js"}
     %script{:type => "text/javascript",:src  => "/lib/reconnecting-websocket.js"}
@@ -56,3 +57,4 @@
     #hisaishi-display
     #hisaishi-announcements
     %ol{:id => "hisaishi-list"}
+    %script{:type => "text/javascript",:src  => "/lib/progress-polyfill/progress-polyfill.js"}
