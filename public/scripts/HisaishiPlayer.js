@@ -376,10 +376,10 @@ var HisaishiPlayer = function(params) {
 				if (!!state.tracks[i].loaded) continue;
 
 				var id   = state.tracks[i].id,
-					folder = state.tracks[i].folder,
-					lyrics = state.tracks[i].lyrics,
-					audio  = state.tracks[i].audio,
-					cover  = state.tracks[i].cover;
+					folder = '/songs/' + escape(state.tracks[i].id),
+					lyrics = '/lyrics',
+					audio  = '/audio',
+					cover  = '/image';
 
 				state.tracks[i].compiledLyrics 	= folder + lyrics;
 				state.tracks[i].compiledAudio 	= folder + audio;

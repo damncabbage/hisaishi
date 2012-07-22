@@ -13,6 +13,7 @@ class Hisaishi < Padrino::Application
 
   ### Application configuration ###
   set :files, ENV['HISAISHI_FILES'] || "http://#{HostHelpers.my_first_non_loopback_ipv4}:#{settings.port}/music/"
+  set :files_are_local, TRUE
   set :admin_pin, ENV['HISAISHI_PIN'] || '1234'
   set :socket_pool, SocketPool.new
 
