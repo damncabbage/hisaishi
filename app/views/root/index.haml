@@ -2,9 +2,9 @@
   %h2 What is this?
   %ul
     %li.player
-      = link_to "Player", url(:player)
+      = link_to "Player", url(:player, :index)
     %li.controller 
-      = link_to "Controller", url(:queue)
+      = link_to "Controller", url(:queue, :index)
   .address
     The starting URL for both Player and Controller is
     = link_to @app_url
